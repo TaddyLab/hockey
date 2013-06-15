@@ -9,8 +9,9 @@ system(sprintf("mkdir -p %s",EXT))
 ## you need to have installed...
 library(bitops, lib.loc=LIB)
 library(RCurl, lib.loc=LIB)
-library(doMC, lib.loc=LIB)
+library(rjson, lib.loc=LIB)
 library(nhlscrapr, lib.loc=LIB)
+library(doMC, lib.loc=LIB)
 
 ## start cluster
 registerDoMC(NC)
@@ -18,9 +19,10 @@ registerDoMC(NC)
 allgames <- full.game.database()
 ## you can subset here to scrape fewer seasons
 games <- allgames[as.numeric(allgames$season)==20022003,]
-chunk <- ceiling( (0:NC)*(nrow(games)/NC) )
 
 ## grab and process games in parallel
+chunk <- ceiling( (0:NC)*(nrow(games)/NC) )
+print(chunk)
 mcproc <- foreach (k=1:NC) %dopar% {
 	G <- games[(chunk[k]+1):chunk[k+1],]
 	for(i in 1:nrow(G)){
@@ -41,6 +43,41 @@ warnings()
 ## write empty games table to file
 write.table(games, file="../data/games.txt", 
  	sep="|", row.names=FALSE, quote=FALSE)
+
+
+## build out roster material
+roster.main <- construct.rosters(games, rdata.folder = EXT)
+roster <- roster.main$master.list
+roster.unique <- roster.main$unique.list
+game.table <- roster.main$game.table
+print(mean(game.table$valid))
+
+## write output to file
+write.table(game.table, file="../data/game.table.txt", 
+ 	sep="|", row.names=FALSE, quote=FALSE)
+write.table(roster, file="../data/roster.txt", 
+ 	sep="|", row.names=FALSE, quote=FALSE)
+write.table(roster.unique, file="../data/roster.unique.txt", 
+ 	sep="|", row.names=FALSE, quote=FALSE)
+
+## augment the game information
+chunk <- ceiling( (0:NC)*(nrow(game.table)/NC) )
+print(chunk)
+mcaug <- foreach (k=1:NC) %dopar% {
+	G <- game.table[(chunk[k]+1):chunk[k+1],]
+	for(i in 1:nrow(G))if(G$valid[i]){
+		tryCatch({pl.table <- open.game(G$season[i], G$gcode[i],EXT)
+			  if (length(pl.table$game.record) > 0){ 
+			   	rec <- augment.game(pl.table,roster, 
+				 		G$season[i], G$gcode[i])
+				write.table(rec, file=sprintf("%s/%s-%s-gamerec.txt",
+						EXT,G$season[i], G$gcode[i]), 
+						sep="|", quote=FALSE) }},
+			error = function(e) 
+			      message(paste("WARNING in",G$season[i],G$gcode[i],":",e)))  
+		if (i%%10 == 0) message(paste("augment: game", i, "of chunk ", k))}
+}
+warnings()
 
 print(date())
 
