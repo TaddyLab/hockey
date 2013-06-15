@@ -10,7 +10,7 @@ library(doMC, lib.loc=LIB)
 library(nhlscrapr, lib.loc=LIB)
 
 games <- read.table(file="../data/games.txt", 
- 				sep="|", comment="", quote="")
+ 				sep="|", comment="", quote="",header=TRUE)
 
 ## build out roster material
 roster.main <- construct.rosters(games, rdata.folder = EXT)
