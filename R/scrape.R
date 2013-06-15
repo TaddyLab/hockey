@@ -18,7 +18,7 @@ registerDoMC(NC)
 
 allgames <- full.game.database()
 ## you can subset here to scrape fewer seasons
-games <- allgames[as.numeric(allgames$season)>=20022003,]
+games <- allgames[as.numeric(allgames$season)==20022003,]
 chunk <- ceiling( (0:NC)*(nrow(games)/NC) )
 
 ## grab and process games in parallel
@@ -54,7 +54,9 @@ write.table(roster.unique, file="../data/roster.unique.txt",
  	sep="|", row.names=FALSE, quote=FALSE)
 
 ## augment the game information
+registerDoMC(NC)
 chunk <- ceiling( (0:NC)*(nrow(games)/NC) )
+print(chunk)
 mcaug <- foreach (k=1:NC) %dopar% {
 	G <- games[(chunk[k]+1):chunk[k+1],]
 	for(i in 1:nrow(G)){
