@@ -26,12 +26,12 @@ mcproc <- foreach (k=1:NC) %dopar% {
 	for(i in 1:nrow(G)){
 	    tryCatch(item <- process.single.game(
     	    		G[i,1],
-        			G$gcode[i],
-          			rdata.folder = EXT,
-          			save.to.file=TRUE),
-	    		error = function(e)
-	    			message(paste("WARNING in game",
-	    						G[i,1],G$gcode[i],":",e)))
+        		G$gcode[i],
+          		rdata.folder = EXT,
+          		save.to.file=TRUE),
+	    	error = function(e)
+	    		message(paste("WARNING in game",
+	    				G[i,1],G$gcode[i],":",e)))
 	    if (i%%100 == 0) 
 	        message(paste("proc game", i, "of chunk", k))
 	}

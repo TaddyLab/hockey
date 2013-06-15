@@ -1,4 +1,4 @@
-##### Code to augment the dowloaded gams
+##### Code to augment the dowloaded games
 ##### Relies on A.C. Thomas's nhlcrapr package
 
 source("args.R")
@@ -10,13 +10,14 @@ library(doMC, lib.loc=LIB)
 library(nhlscrapr, lib.loc=LIB)
 
 games <- read.table(file="../data/games.txt", 
- 				sep="|", comment="", quote="",header=TRUE)
+ 		sep="|", comment="", quote="",header=TRUE)
 
 ## build out roster material
 roster.main <- construct.rosters(games, rdata.folder = EXT)
 roster <- roster.main$master.list
 roster.unique <- roster.main$unique.list
 game.table <- roster.main$game.table
+print(mean(game.table$valid))
 
 ## write output to file
 write.table(game.table, file="../data/game.table.txt", 
@@ -32,8 +33,7 @@ chunk <- ceiling( (0:NC)*(nrow(game.table)/NC) )
 print(chunk)
 mcaug <- foreach (k=1:NC) %dopar% {
 	G <- game.table[(chunk[k]+1):chunk[k+1],]
-	for(i in 1:nrow(G)){
-	      if(G$valid[i])
+	for(i in 1:nrow(G))if(G$valid[i]){
 		tryCatch({pl.table <- open.game(G$season[i], G$gcode[i],EXT)
 			  if (length(pl.table$game.record) > 0){ 
 			   	rec <- augment.game(pl.table,roster, 
@@ -43,7 +43,7 @@ mcaug <- foreach (k=1:NC) %dopar% {
 						sep="|", quote=FALSE) }},
 			error = function(e) 
 			      message(paste("WARNING in",G$season[i],G$gcode[i],":",e)))  
-		if (i%%100 == 0) message(paste("augment: game", i, "of chunk ", k))
+		if (i%%10 == 0) message(paste("augment: game", i, "of chunk ", k))}
 }
 warnings()
 
