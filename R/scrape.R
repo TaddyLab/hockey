@@ -44,29 +44,15 @@ warnings()
 write.table(games, file="../data/games.txt", 
  	sep="|", row.names=FALSE, quote=FALSE)
 
-
 ## build out roster material
-roster.main <- construct.rosters(games, rdata.folder = EXT)
-roster <- roster.main$master.list
-roster.unique <- roster.main$unique.list
-game.table <- roster.main$game.table
-print(mean(game.table$valid))
-
-## write output to file
-write.table(game.table, file="../data/game.table.txt", 
- 	sep="|", row.names=FALSE, quote=FALSE)
-write.table(roster, file="../data/roster.txt", 
- 	sep="|", row.names=FALSE, quote=FALSE)
-write.table(roster.unique, file="../data/roster.unique.txt", 
- 	sep="|", row.names=FALSE, quote=FALSE)
+roster <- construct.rosters(games, rdata.folder = EXT)
+save(roster, file="../data/roster.RData")
 
 ## augment the game information
-chunk <- ceiling( (0:NC)*(nrow(game.table)/NC) )
-print(chunk)
 mcaug <- foreach (k=1:NC) %dopar% {
-	G <- game.table[(chunk[k]+1):chunk[k+1],]
+	G <- games[(chunk[k]+1):chunk[k+1],]
 	for(i in 1:nrow(G))if(G$valid[i]){
-		tryCatch({pl.table <- open.game(G$season[i], G$gcode[i],EXT)
+		tryCatch({pl.table <- retrieve.game(G$season[i], G$gcode[i],EXT)
 			  if (length(pl.table$game.record) > 0){ 
 			   	rec <- augment.game(pl.table,roster, 
 				 		G$season[i], G$gcode[i])
