@@ -40,13 +40,10 @@ mcproc <- foreach (k=1:NC) %dopar% {
 }
 warnings()
 
-## write empty games table to file
-write.table(games, file="../data/games.txt", 
- 	sep="|", row.names=FALSE, quote=FALSE)
-
 ## build out roster material
 roster <- construct.rosters(games, rdata.folder = EXT)
 save(roster, file="../data/roster.RData")
+games <- roster$games
 
 ## augment the game information
 mcaug <- foreach (k=1:NC) %dopar% {
