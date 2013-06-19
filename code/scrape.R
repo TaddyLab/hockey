@@ -12,6 +12,7 @@ library(RCurl, lib.loc=LIB)
 library(rjson, lib.loc=LIB)
 library(nhlscrapr, lib.loc=LIB)
 library(doMC, lib.loc=LIB)
+sessionInfo()
 
 ## start cluster
 registerDoMC(NC)
