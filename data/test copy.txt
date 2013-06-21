@@ -1,0 +1,2 @@
+season|gcode|refdate|event|period|seconds|etype|a1|a2|a3|a4|a5|a6|h1|h2|h3|h4|h5|h6|ev.team|ev.player.1|ev.player.2|ev.player.3|distance|type|homezone|xcoord|ycoord|awayteam|hometeam|home.score|away.score|event.length|away.G|home.G
+20022003|20128|300|41|1|786|GOAL|827|2472|1031|1|1237|488|241|2082|1560|2184|1|339|DAL|827|1031|1237|56|Slap|Def|NA|NA|DAL|EDM|0|0|38|2274|1348
