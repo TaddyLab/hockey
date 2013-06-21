@@ -1,19 +1,23 @@
 
-library(doMC)
+## code to build a goals matrix
+source("args.R")
+grecs <- Sys.glob(sprintf("%s/*-gamerec.txt",EXT))
 
-registerDoMC(4)
-EXT = "../data"
+NG <- length(grecs)
+cat(readLines(grecs[1],n=1),file="../data/goals.txt",sep="\n")
 
-G <- read.table("../data/games.txt", 
- 		sep="|", comment="", quote="")
+i <- 0
+for(g in grecs){
+	rec <- read.table(g, sep="|", 
+	                  comment="", quote="",
+	                  as.is=TRUE,header=TRUE)
 
-res <- foreach (i=1:nrow(G)) %dopar% {
-	gr <- read.table(sprintf("%s/%d-%d-gamerec.txt",
-						EXT,G$season[i], G$gcode[i]), 
-						sep="|", comment="", quote="")
-
-	write.table( append=TRUE)
-
-	if (i%%100 == 0) 
-        message(paste("matrix assembly: game", i, "of", nrow(G)))
+	write.table(rec[rec$etype=="GOAL",], 
+	            file="../data/goals.txt", 
+	            sep="|", quote=FALSE, 
+	            col.names=FALSE, row.names=FALSE, 
+	            append=TRUE)
+	i <- i+1
+	if (i%%1000 == 0) 
+        message(paste("goal matrix assembly: game", i, "of", NG))
 }
