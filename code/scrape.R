@@ -3,7 +3,7 @@
 
 source("args.R")
 
-## does not pre-delete previous scrapes
+## does not write over previous scrapes
 system(sprintf("mkdir -p %s",EXT))
 
 ## you need to have installed...
@@ -17,25 +17,40 @@ sessionInfo()
 ## start cluster
 registerDoMC(NC)
 
+## grab the full game data
 allgames <- full.game.database()
-## you can subset here to scrape fewer seasons
-games <- allgames[as.numeric(allgames$season)>=20022003,]
+## subset for only valid ones we don't have
+grexist <- sub("-",".",
+		gsub(sprintf("%s|/|-gamerec.txt",EXT),"",
+			 Sys.glob(sprintf("%s/*-gamerec.txt",EXT))))
+grcode <- apply(allgames[,c("season","gcode")],
+				1, function(r) paste(r,collapse="."))
+games <- allgames[grcode>max(grexist) & allgames$valid,]
+print(ng <- nrow(games))
 
 ## process games in parallel
-chunk <- ceiling( (0:NC)*(nrow(games)/NC) )
+NCP = NC
+if(NCP>ng) NCP = ng
+chunk <- ceiling( (0:NCP)*(nrow(games)/NCP) )
 print(chunk)
-mcproc <- foreach (k=1:NC) %dopar% {
+mcproc <- foreach (k=1:NCP) %dopar% {
 	G <- games[(chunk[k]+1):chunk[k+1],]
 	for(i in 1:nrow(G)){
-	    tryCatch(item <- process.single.game(G[i,1],G$gcode[i],EXT,save.to.file=TRUE),
+	    tryCatch(item <- process.single.game(G$season[i],G$gcode[i],EXT,save.to.file=TRUE),
 	    		  error = function(e) print(paste("CAUGHT at",G[i,1],G$gcode[i],":",e))) 
 	    if (i%%100 == 0) message(paste("proc game", i, "of chunk", k))
 	}
 } 
 warnings()
 
+######  up to here works for augmentation; 
+######  beyond does not because those player IDs 
+######  are not universal; they are created anew each time.
+######  instead I need to reprocess the games anew...
+
 ## build out roster material and save
-roster <- construct.rosters(games, rdata.folder = EXT)
+roster <- construct.rosters(allgames[allgames$valid,], 
+							rdata.folder = EXT)
 save(roster, file="../data/roster.RData")
 
 ## extract valid games
