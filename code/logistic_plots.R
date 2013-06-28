@@ -1,12 +1,7 @@
-#########  unchanged from Bobby
-
-load('hockey_data.RData')
-load('hockey_fit_rl.RData')
-load('hockey_fit_rl2.RData')
-library(textir)
-library(reglogit)
+load("nhlscrapr_logit_fits.RData")
 
 ## find the columns of XP indicating players active in seasion 20122013
+XG <- as.data.frame(XG)
 active <- rep(FALSE, ncol(XP))
 for(i in 1:ncol(XP)) {
   if(max(XG$Season[XP[,i] != 0]) == 20122013)
