@@ -9,11 +9,11 @@ googlechart <- function(M, headfile, footfile, outfile)
  	cat(header, sep="\n", file=outfile)
 
  	cn <- colnames(M)
-	cat("[\'", cn[1], "\', \'", paste(cn[-1], collapse="\',\'"), "\'],\n", 
+	cat("\t[\'", cn[1], "\', \'", paste(cn[-1], collapse="\',\'"), "\'],\n", 
         	file=outfile, sep="", append=TRUE)
 
 	for(i in 1:nrow(M)) {
-        cat("[\'", M[i,1], "\', ", paste(M[i,-1], collapse=","), "],\n", 
+        cat("\t[\'", M[i,1], "\', ", paste(M[i,-1], collapse=","), "],\n", 
         	file=outfile, sep="", append=TRUE)
 	}
 
