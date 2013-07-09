@@ -3,37 +3,16 @@
 ## looking at various MAP estimators.  Uses pre-CRAN gamlr_1.x ##
 #################################################################
 
-### Data extraction and output for gamlr
-## follows the naming steps in bobby's code
-
-library(Matrix)
-load("../data/nhlscrapr_logit_data.RData")
-
-player <- Matrix(XP,sparse=TRUE)
-colnames(player) <- uN2
-onice <- Matrix(XS,sparse=TRUE)
-goal <- data.frame(whoscored=goals$g,
-			season=goals$season, 
-			team.away=goals$awayteam,
-			team.home=goals$hometeam,
-			period=goals$period,
-			differential=goals$home.score-goals$away.score,
-			session=goals$session,
-			gamecode=goals$gcode)
-rownames(player) <- rownames(goal) <- rownames(onice) <- 1:nrow(player)
-save(goal,player,onice,compress="xz",file="../data/hockey.rda")
 
 ### analysis and model comparison
-### clear everything and load clean
 
-rm(list=ls())
 load("../data/hockey.rda")
 
 ## run the two at lasso; 
 ## BIC should give exact same result
 ## CV will differ due to MC variance
-library(glmnet)
-library(gamlr)
+library(glmnet, lib=LIB)
+library(gamlr, lib=LIB)
 
 x <- cBind(onice,player)
 y <- as.numeric(goal$who=="HOME")

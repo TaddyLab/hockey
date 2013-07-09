@@ -215,4 +215,26 @@ XG[,6] <- goals$seconds
 save(uN2, goals, Y, XP, XT, Ppm, Tpm, pos2,
      XS, XG, file="../data/nhlscrapr_logit_data.RData")
 
+## extra cleaning and output for gamlr
+library(Matrix, lib=LIB)
+player <- Matrix(XP,sparse=TRUE)
+colnames(player) <- uN2
+onice <- Matrix(XS,sparse=TRUE)
+goal <- data.frame(whoscored=goals$g,
+      season=goals$season, 
+      team.away=goals$awayteam,
+      team.home=goals$hometeam,
+      period=goals$period,
+      differential=goals$home.score-goals$away.score,
+      session=goals$session,
+      gamecode=goals$gcode)
+rownames(player) <- rownames(goal) <- rownames(onice) <- 1:nrow(player)
+save(goal,player,onice,compress="xz",file="../data/hockey.rda")
+
+
+
+
+
+
+
 
