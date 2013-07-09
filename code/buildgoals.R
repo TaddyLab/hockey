@@ -1,5 +1,8 @@
 source("args.R")
 
+## load the roster object containing player/game info
+load("../data/roster.RData")
+
 game.goals <- function(file, session)
   {
   	## make sure the file exists
@@ -49,12 +52,6 @@ game.goals <- function(file, session)
 	return(eg)
 }
   
-
-## load the roster object containing player info
-## and game info
-
-load("../data/roster.RData")
-
 ## extract games, and prefix for location of files
 G <- roster$games
 
