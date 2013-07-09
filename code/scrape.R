@@ -19,13 +19,15 @@ registerDoMC(NC)
 
 ## grab the full game data
 allgames <- full.game.database()
-## subset for only valid ones we don't have
-grexist <- sub("-",".",
-		gsub(sprintf("%s|/|-gamerec.txt",EXT),"",
-			 Sys.glob(sprintf("%s/*-gamerec.txt",EXT))))
-grcode <- apply(allgames[,c("season","gcode")],
-				1, function(r) paste(r,collapse="."))
-games <- allgames[grcode>max(grexist) & allgames$valid,]
+# ## subset for only valid ones we don't have
+# grexist <- sub("-",".",
+# 		gsub(sprintf("%s|/|-gamerec.txt",EXT),"",
+# 			 Sys.glob(sprintf("%s/*-gamerec.txt",EXT))))
+# grcode <- apply(allgames[,c("season","gcode")],
+# 				1, function(r) paste(r,collapse="."))
+# allgames <- allgames[grcode>max(grexist),]
+
+games <- allgames[allgames$valid,]
 print(ng <- nrow(games))
 
 ## process games in parallel
@@ -42,11 +44,6 @@ mcproc <- foreach (k=1:NCP) %dopar% {
 	}
 } 
 warnings()
-
-######  up to here works for augmentation; 
-######  beyond does not because those player IDs 
-######  are not universal; they are created anew each time.
-######  instead I need to reprocess the games anew...
 
 ## build out roster material and save
 roster <- construct.rosters(allgames[allgames$valid,], 
