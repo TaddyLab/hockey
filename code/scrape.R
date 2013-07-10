@@ -19,15 +19,18 @@ registerDoMC(NC)
 
 ## grab the full game data
 allgames <- full.game.database()
-# ## subset for only valid ones we don't have
-# grexist <- sub("-",".",
-# 		gsub(sprintf("%s|/|-gamerec.txt",EXT),"",
-# 			 Sys.glob(sprintf("%s/*-gamerec.txt",EXT))))
-# grcode <- apply(allgames[,c("season","gcode")],
-# 				1, function(r) paste(r,collapse="."))
-# allgames <- allgames[grcode>max(grexist),]
+games <- allgames
 
-games <- allgames[allgames$valid,]
+## subset for only valid ones we don't have
+grexist <- sub("-",".",
+		gsub(sprintf("%s|/|-gamerec.txt",EXT),"",
+			 Sys.glob(sprintf("%s/*-gamerec.txt",EXT))))
+
+grcode <- apply(allgames[,c("season","gcode")],
+				1, function(r) paste(r,collapse="."))
+games <- games[grcode>max(grexist),]
+
+games <- games[games$valid,]
 print(ng <- nrow(games))
 
 ## process games in parallel
@@ -45,14 +48,13 @@ mcproc <- foreach (k=1:NCP) %dopar% {
 } 
 warnings()
 
-## build out roster material and save
-roster <- construct.rosters(allgames[allgames$valid,], 
-							rdata.folder = EXT)
+## build out roster material and save (note we use allgames here)
+roster <- construct.rosters(allgames[allgames$valid,], rdata.folder = EXT)
 save(roster, file="../data/roster.RData")
 
 ## extract valid games
 validgames <- roster$games[roster$games$valid,]
-master <- roster$master.list
+master <- roster$roster.master
 
 ## augment the game information in parallel
 chunk <- ceiling( (0:NC)*(nrow(validgames)/NC) )
@@ -61,7 +63,8 @@ mcaug <- foreach (k=1:NC) %dopar% {
 	G <- validgames[(chunk[k]+1):chunk[k+1],]
 	for(i in 1:nrow(G)){
 		tryCatch({
-			rec <- augment.game(retrieve.game(G$season[i], G$gcode[i], EXT),master)
+			g <- retrieve.game(G$season[i], G$gcode[i], EXT)
+			rec <- augment.game(g,master)
 			write.table(rec, file=sprintf("%s/%s-%s-gamerec.txt",
 					EXT,G$season[i], G$gcode[i]), 
 					sep="|", quote=FALSE) },

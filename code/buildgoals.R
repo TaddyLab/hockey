@@ -98,11 +98,11 @@ TH <- as.numeric(goals$hometeam)
 
 ## create unique names --
 ## this is overkill given the new roster structure
-uID <- 1:nrow(roster$unique.list)
-uN <- paste(roster$unique.list$first, roster$unique.list$last, sep="_")
+uID <- 1:nrow(roster$roster.unique)
+uN <- paste(roster$roster.unique$first, roster$roster.unique$last, sep="_")
 positions <- uniqueNames <- rep(NA, length(unique(uID)))
 uniqueNames[uID] <- uN
-positions[uID] <- roster$unique.list$pos
+positions[uID] <- roster$roster.unique$pos
 
 ## home and away player indicators
 PA <- as.matrix(goals[,c(6:11,22)])
@@ -111,7 +111,7 @@ PH <- as.matrix(goals[,c(12:17,23)])
 PH[PH == 1] <- NA
 
 ## build design matrix and make Plus-minus comparison
-nplayers <- nrow(roster$unique.list)
+nplayers <- nrow(roster$roster.unique)
 T <- nrow(PH)
 ## players the design matrix
 XP <- matrix(0, ncol=nplayers, nrow=T)
