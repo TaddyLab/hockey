@@ -21,15 +21,15 @@ registerDoMC(NC)
 allgames <- full.game.database()
 games <- allgames
 
+grcode <- apply(games[,c("season","gcode")], 1, function(r) paste(r,collapse="."))
+
 ## subset for only valid ones we don't have
-grexist <- sub("-",".",
-		gsub(sprintf("%s|/|-gamerec.txt",EXT),"",
-			 Sys.glob(sprintf("%s/*-gamerec.txt",EXT))))
+grexist <- sub("-",".", gsub(sprintf("%s|/|-gamerec.txt",EXT),"",
+ 		Sys.glob(sprintf("%s/*-gamerec.txt",EXT))))
+if(length(grexist) > 0)
+	games <- games[grcode>max(grexist),]
 
-grcode <- apply(allgames[,c("season","gcode")],
-				1, function(r) paste(r,collapse="."))
-games <- games[grcode>max(grexist),]
-
+## subset to valid games
 games <- games[games$valid,]
 print(ng <- nrow(games))
 
