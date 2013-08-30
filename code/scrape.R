@@ -34,19 +34,21 @@ games <- games[games$valid,]
 print(ng <- nrow(games))
 
 ## process games in parallel
-NCP = NC
-if(NCP>ng) NCP = ng
-chunk <- ceiling( (0:NCP)*(nrow(games)/NCP) )
-print(chunk)
-mcproc <- foreach (k=1:NCP) %dopar% {
-	G <- games[(chunk[k]+1):chunk[k+1],]
-	for(i in 1:nrow(G)){
-	    tryCatch(item <- process.single.game(G$season[i],G$gcode[i],EXT,save.to.file=TRUE),
-	    		  error = function(e) print(paste("CAUGHT at",G[i,1],G$gcode[i],":",e))) 
-	    if (i%%100 == 0) message(paste("proc game", i, "of chunk", k))
-	}
-} 
+if(ng > 0) {
+	NCP = NC
+	if(NCP>ng) NCP = ng
+	chunk <- ceiling( (0:NCP)*(nrow(games)/NCP) )
+	print(chunk)
+	mcproc <- foreach (k=1:NCP) %dopar% {
+		G <- games[(chunk[k]+1):chunk[k+1],]
+		for(i in 1:nrow(G)){
+	    	tryCatch(item <- process.single.game(G$season[i],G$gcode[i],EXT,save.to.file=TRUE),
+	    		  	error = function(e) print(paste("CAUGHT at",G[i,1],G$gcode[i],":",e))) 
+	    	if (i%%100 == 0) message(paste("proc game", i, "of chunk", k))
+		}
+	} 
 warnings()
+}
 
 ## build out roster material and save (note we use allgames here)
 roster <- construct.rosters(allgames[allgames$valid,], rdata.folder = EXT)
