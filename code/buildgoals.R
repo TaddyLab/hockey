@@ -213,7 +213,7 @@ save(uN2, goals, Y, XP, XT, Ppm, Tpm, pos2,
      XS, XG, file="../data/nhlscrapr_logit_data.RData")
 
 ## extra cleaning and output for gamlr
-library(Matrix, lib=LIB)
+library(Matrix)
 player <- Matrix(XP,sparse=TRUE)
 colnames(player) <- uN2
 onice <- Matrix(XS,sparse=TRUE)
