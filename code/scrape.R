@@ -76,5 +76,3 @@ mcaug <- foreach (k=1:NC) %dopar% {
 warnings()
 
 print(date())
-
-

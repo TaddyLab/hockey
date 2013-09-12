@@ -15,20 +15,12 @@ game.goals <- function(file, session)
 	goals <- game[which(game$etype == "GOAL"),]
 
 	## remove <= period 4 for regular season games
-	if(session == "Regular")
+	if(session == "Regular") {
 		goals <- goals[goals$period <= 4,]
+		if(nrow(goals) == 0) return(NULL)
+	}
 
-	## check to make sure there were any goals in regulation time
-	if(nrow(goals) == 0) return(NULL)
-
-	## check for even strength and goalie-in-net
-	## 8:12 is a1:a5, 14:18 is h1:h5
-	# even <- goals[,8:12] != 1 & goals[,14:18] != 1 
-	# gin <- goals$a6 == 1 & goals$h6 == 1 & goals$away.G != 1 & goals$home.G != 1
-	# w <- which(apply(cbind(even, gin), 1, function(x) { all(x) }))
-	# eg <- goals[w,]
-
-	## instead check to make sure there are skaters on the ice
+	## check to make sure there are skaters on the ice
 	## (i.e., not shootout or penalty shot)
 	shootout <- goals[,c(8:12,14:18)] != 1 
 	w <- which(apply(shootout, 1, function(x) { sum(x) > 6 }))
@@ -44,7 +36,7 @@ game.goals <- function(file, session)
 	g <- rep(NA, nrow(eg))
 	g[eg$ev.team == eg$awayteam] <- "AWAY"
 	g[is.na(g)] <- "HOME"
-	session <- rep(session, nrow(eg))  ## also add session variable
+	session <- rep(session, nrow(eg)) 
 	eg <- cbind(eg, g, session) 
 	eg$ev.team <- NULL
 
@@ -227,11 +219,3 @@ goal <- data.frame(whoscored=goals$g,
       gamecode=goals$gcode)
 rownames(player) <- rownames(goal) <- rownames(onice) <- 1:nrow(player)
 save(goal,player,onice,compress="xz",file="../data/hockey.rda")
-
-
-
-
-
-
-
-
