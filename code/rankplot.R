@@ -4,7 +4,7 @@ n <- nrow(rs)
 
 pdf("brank.pdf", height=200)
 xrange <- range(rs[,-(1:3)])
-par(mai=c(0.01,2,0.01,0.5), mgp=c(-1,0,0))
+par(mai=c(0,2,0.0,0.5), mgp=c(-1,0,0))
 plot(rs$TPmed, ((n:1)+0.1), axes=FALSE, col="red", 
 	 ylab="", cex=0.5, xlim=xrange, xlab="player rank")
 segments(rs$TPq10, ((n:1)+0.1), rs$TPq90, ((n:1)+0.1), col="red")
