@@ -76,7 +76,7 @@ goals$hometeam <- as.factor(goals$hometeam)
 goals$awayteam <- as.factor(goals$awayteam)
 
 ## save to file
-save(goals, file="../data/nhlscrapr_goals.RData")
+## save(goals, file="../data/nhlscrapr_goals.RData")
 
 ## now build design matrix and response -- 
 ## this comes from the newdata.R script
