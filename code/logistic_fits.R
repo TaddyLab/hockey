@@ -1,12 +1,12 @@
 source("args.R")
 
 load("../data/nhlscrapr_logit_data.RData")
-library(slam, lib=LIB)
-library(textir, lib=LIB)
-library(mvtnorm, lib=LIB)
-library(Matrix, lib=LIB)
-library(reglogit, lib=LIB)
-## library(gputools, lib=LIB)
+library(slam)
+library(textir)
+library(mvtnorm)
+library(Matrix)
+library(reglogit)
+## library(gputools)
 
 ## team+player model with special teams indicators
 penSTP <- c(rep(0,ncol(XS)+ncol(XT)+1), rep(data.frame(c(7.5,1/2)), ncol(XP)))

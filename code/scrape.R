@@ -7,11 +7,11 @@ source("args.R")
 system(sprintf("mkdir -p %s",EXT))
 
 ## you need to have installed...
-library(bitops, lib.loc=LIB)
-library(RCurl, lib.loc=LIB)
-library(rjson, lib.loc=LIB)
-library(nhlscrapr, lib.loc=LIB)
-library(doMC, lib.loc=LIB)
+library(bitops)
+library(RCurl)
+library(rjson)
+library(nhlscrapr)
+library(doMC)
 sessionInfo()
 
 ## start cluster
