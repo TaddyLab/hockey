@@ -1,8 +1,10 @@
-rs <- read.csv("../results/logistic_pranks_betas_20130702.csv")
+rs <- read.csv("../results/logistic_pranks_betas.csv")
 
 n <- nrow(rs)
 
-pdf("brank.pdf", height=200)
+prankfile <- paste("../results/prank_all_", 
+	format(Sys.time(), "%Y%m%d"), ".pdf", sep="")
+pdf(prankfile, height=200)
 xrange <- range(rs[,-(1:3)])
 par(mai=c(0,2,0.0,0.5), mgp=c(-1,0,0))
 plot(rs$TPmed, ((n:1)+0.1), axes=FALSE, col="red", 

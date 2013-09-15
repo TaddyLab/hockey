@@ -1,3 +1,7 @@
+## googlechart:
+##
+## create a google chart with the specified data, header, footer,
+## and output file
 
 googlechart <- function(M, headfile, footfile, outfile)
  {
@@ -23,21 +27,26 @@ googlechart <- function(M, headfile, footfile, outfile)
 	cat(footer, sep = "\n", file=outfile, append=TRUE)
 }
 
-map.betas <- read.csv("~/hockey-git/results/logistic_map_betas_20130628.csv")
+## extract the map betas residing in Git version control
+map.betas <- read.csv("~/hockey-git/results/logistic_map_betas.csv")
 map.betas$Player <- as.character(map.betas$Player)
 
 ## get non-zero rows
 rows <- which(apply(map.betas[,2:4], 1, function(x) { all(x != 0) }))
 map.betas.nz <- map.betas[rows,]
 
+## append last active year info
 map.betas.nz.all <- map.betas.nz[,-2]
 map.betas.nz.all$Player <- paste(map.betas.nz$Player, map.betas.nz$Last.Active.Year, sep=" : ")
 
-googlechart(map.betas.nz.all, 
-			"~/hockey-git/code/header.html", 
-			"~/hockey-git/code/footer.html",
-			"~/hockey-git/results/mapbetas_all.html")
+## write out all player stats
+mapallfile <- paste("../results/mapbetas_all_", 
+	format(Sys.time(), "%Y%m%d"), ".html", sep="")
+googlechart(map.betas.nz.all, "~/hockey-git/code/header.html", 
+	"~/hockey-git/code/footer.html", mapallfile)
 
+## write out just those active in 20122013
+mapfilecur <- paste("../results/mapbetas_20122013_", 
+	format(Sys.time(), "%Y%m%d"), ".html", sep="")
 googlechart(map.betas.nz[map.betas.nz[,2] == 20122013,-2], 
-			"~/hockey-git/code/header.html", "~/hockey-git/code/footer.html",
-			"~/hockey-git/results/mapbetas_20122013.html")
+	"~/hockey-git/code/header.html", "~/hockey-git/code/footer.html", mapfilecur)

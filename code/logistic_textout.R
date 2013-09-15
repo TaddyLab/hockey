@@ -18,7 +18,7 @@ tab$Player <- as.character(tab$Player)
 ## order rows
 o <- order(tab[,3], tab[,4], decreasing=TRUE)
 ## write table out to files\
-outfile <- paste("../results/logistic_map_betas_", format(Sys.time(), "%Y%m%d"), ".csv", sep="")
+outfile <- "../results/logistic_map_betas.csv"
 write.csv(tab[o,], file=outfile, row.names=FALSE, quote=FALSE)
 
 ## load the fully Bayesian outputs
@@ -37,7 +37,7 @@ btab$Player <- as.character(btab$Player)
 
 ## order and write out to file
 bo <- order(btab[,3], btab[,4], decreasing=TRUE)
-boutfile <- paste("../results/logistic_mean_betas_", format(Sys.time(), "%Y%m%d"), ".csv", sep="")
+boutfile <- "../results/logistic_mean_betas.csv"
 write.csv(btab[bo,], file=boutfile, row.names=FALSE, quote=FALSE)
 
 ## posterior ranks with teams
