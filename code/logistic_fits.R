@@ -35,7 +35,7 @@ reglogit.chunk <- function(chunk, S, Y, XS, XT, XP)
 	
 reglogit.snow2 <- function(cls, S, Y, XS, XT, XP)
 	{
-		if(length(cls) != 2) stop("only makes sense to use this function with a 2-clister")
+		if(length(cls) != 2) stop("only makes sense to use this function with a 2-cluster")
 		chunks <- list("team-player", "player")
 		clusterEvalQ(cls, library(mvtnorm))
 		clusterEvalQ(cls, library(Matrix))
