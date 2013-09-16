@@ -18,7 +18,14 @@ fitSP <- mnlm(counts=Y, covars=cbind(XS,XP), verb=1, penalty=penSP, normalize=FA
 ## save the output, does not include the inputs
 save(fitSP, fitSTP, file="../results/logistic_map_fits.RData")
 
+## for parallel reglogits
 library(parallel)
+
+
+## reglogit.chunk:
+##
+## this is just a switch function calling the player-team fit or the player-only fit
+## -- designed to work with reglogit.snow2
 
 reglogit.chunk <- function(chunk, S, Y, XS, XT, XP)
 	{
@@ -32,6 +39,13 @@ reglogit.chunk <- function(chunk, S, Y, XS, XT, XP)
 
 		return(out)
 	}
+
+
+## reglogit.snow2:
+## 
+## wrapper funtion that calls a clusterApply on the reglogit.chunk functoin
+## in order to parallelize the calculation of the player-team fit and the player-only
+## fit
 	
 reglogit.snow2 <- function(cls, S, Y, XS, XT, XP)
 	{
