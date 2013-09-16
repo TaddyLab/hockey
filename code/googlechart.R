@@ -1,3 +1,5 @@
+source("args.R")
+
 ## googlechart:
 ##
 ## create a google chart with the specified data, header, footer,
@@ -41,7 +43,7 @@ map.betas.nz.all$Player <- paste(map.betas.nz$Player, map.betas.nz$Last.Active.Y
 
 ## write out all player stats
 resultpath <- paste(EXT, "/results_20122013", sep="")
-system(sprintf("mkdir -p %s", gamepath))
+system(sprintf("mkdir -p %s", resultpath))
 
 mapallfile <- paste(resultpath, "/mapbetas_all_", 
 	format(Sys.time(), "%Y%m%d"), ".html", sep="")
