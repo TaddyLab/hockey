@@ -40,13 +40,16 @@ map.betas.nz.all <- map.betas.nz[,-2]
 map.betas.nz.all$Player <- paste(map.betas.nz$Player, map.betas.nz$Last.Active.Year, sep=" : ")
 
 ## write out all player stats
-mapallfile <- paste("../results/mapbetas_all_", 
+resultpath <- paste(EXT, "/results_20122013", sep="")
+system(sprintf("mkdir -p %s", gamepath))
+
+mapallfile <- paste(resultpath, "/mapbetas_all_", 
 	format(Sys.time(), "%Y%m%d"), ".html", sep="")
 googlechart(map.betas.nz.all, "~/hockey-git/code/header.html", 
 	"~/hockey-git/code/footer.html", mapallfile)
 
 ## write out just those active in 20122013
-mapfilecur <- paste("../results/mapbetas_20122013_", 
+mapfilecur <- paste(resultpath, "/mapbetas_active_", 
 	format(Sys.time(), "%Y%m%d"), ".html", sep="")
 googlechart(map.betas.nz[map.betas.nz[,2] == 20122013,-2], 
 	"~/hockey-git/code/header.html", "~/hockey-git/code/footer.html", mapfilecur)

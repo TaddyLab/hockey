@@ -4,7 +4,8 @@
 source("args.R")
 
 ## does not write over previous scrapes
-system(sprintf("mkdir -p %s",EXT))
+gamepath <- paste(EXT, "/nhlgames", sep="")
+system(sprintf("mkdir -p %s", gamepath))
 
 ## you need to have installed...
 library(bitops)
@@ -24,8 +25,8 @@ games <- allgames
 grcode <- apply(games[,c("season","gcode")], 1, function(r) paste(r,collapse="."))
 
 ## subset for only valid ones we don't have
-grexist <- sub("-",".", gsub(sprintf("%s|/|-gamerec.txt",EXT),"",
- 		Sys.glob(sprintf("%s/*-gamerec.txt",EXT))))
+grexist <- sub("-",".", gsub(sprintf("%s|/|-gamerec.txt",gamepath),"",
+ 		Sys.glob(sprintf("%s/*-gamerec.txt",gamepath))))
 if(length(grexist) > 0)
 	games <- games[grcode>max(grexist),]
 
@@ -42,7 +43,7 @@ if(ng > 0) {
 	mcproc <- foreach (k=1:NCP) %dopar% {
 		G <- games[(chunk[k]+1):chunk[k+1],]
 		for(i in 1:nrow(G)){
-	    	tryCatch(item <- process.single.game(G$season[i],G$gcode[i],EXT,save.to.file=TRUE),
+	    	tryCatch(item <- process.single.game(G$season[i],G$gcode[i],gamepath,save.to.file=TRUE),
 	    		  	error = function(e) print(paste("CAUGHT at",G[i,1],G$gcode[i],":",e))) 
 	    	if (i%%100 == 0) message(paste("proc game", i, "of chunk", k))
 		}
@@ -51,7 +52,7 @@ warnings()
 }
 
 ## build out roster material and save (note we use allgames here)
-roster <- construct.rosters(allgames[allgames$valid,], rdata.folder = EXT)
+roster <- construct.rosters(allgames[allgames$valid,], rdata.folder = gamepath)
 save(roster, file="../data/roster.RData")
 
 ## extract valid games
@@ -65,10 +66,10 @@ mcaug <- foreach (k=1:NC) %dopar% {
 	G <- validgames[(chunk[k]+1):chunk[k+1],]
 	for(i in 1:nrow(G)){
 		tryCatch({
-			g <- retrieve.game(G$season[i], G$gcode[i], EXT)
+			g <- retrieve.game(G$season[i], G$gcode[i], gamepath)
 			rec <- augment.game(g,master)
 			write.table(rec, file=sprintf("%s/%s-%s-gamerec.txt",
-					EXT,G$season[i], G$gcode[i]), 
+					gamepath,G$season[i], G$gcode[i]), 
 					sep="|", quote=FALSE) },
 			error = function(e) print(paste("CAUGHT at",G[i,1],G$gcode[i],":",e)))
 		if (i%%100 == 0) message(paste("write game", i, "of chunk ", k))}

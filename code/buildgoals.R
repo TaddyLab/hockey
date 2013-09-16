@@ -57,7 +57,7 @@ for(i in 1:nrow(G)) {
 	if(! (G[i,]$valid)) { games[[i]] <- NULL; next }
 
 	## construct the filke
-	file <- sprintf("%s/%s-%s-gamerec.txt", EXT, G$season[i], G$gcode[i])
+	file <- sprintf("%s/nhlgames/%s-%s-gamerec.txt", EXT, G$season[i], G$gcode[i])
 
 	## get the game
 	games[[i]] <- game.goals(file, G[i,]$session)
