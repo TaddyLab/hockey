@@ -58,7 +58,7 @@ reglogit.snow2 <- function(cls, S, Y, XS, XT, XP)
 	}
 
 ## length of MCMC run
-S <- 10000
+S <- 1000# 0
 
 ## do the two reglogits in parallel
 cls <- makeCluster(rep("localhost", 2), type="PSOCK")
