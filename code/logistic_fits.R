@@ -70,7 +70,7 @@ S <- 10000
 ## fitSTP.rl <- reglogit(S, Y, cbind(XS, XT, XP), save.latents=FALSE, normalize=FALSE, sparse=TRUE)
 fitSTP.rl <- outs[[1]]
 ## save the output
-save(fitSTP.rl, file="../results/logistic_rl_fits.RData")
+## save(fitSTP.rl, file="../results/logistic_rl_fits.RData")
 
 ## player-only model
 ## fitSP.rl <- reglogit(S, Y, cbind(XS,XP), save.latents=FALSE, normalize=FALSE, sparse=TRUE)
