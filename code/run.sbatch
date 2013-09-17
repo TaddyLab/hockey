@@ -9,11 +9,11 @@
 module load R/3.0
 module load openmpi
 
-## R CMD BATCH --no-save scrape.R 
-## R CMD BATCH --no-save buildgoals.R 
+R CMD BATCH --no-save scrape.R 
+R CMD BATCH --no-save buildgoals.R 
 ~/R-3.0.1/bin/R CMD BATCH --no-save logistic_fits.R 
-## R CMD BATCH --no-save logistic_textout.R 
-## R CMD BATCH --no-save googlechart.R 
+R CMD BATCH --no-save logistic_textout.R 
+R CMD BATCH --no-save googlechart.R 
 
-## module load git
-## git commit -a -m "nightly update"
+module load git
+git commit -a -m "nightly update"

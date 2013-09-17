@@ -58,7 +58,7 @@ reglogit.snow2 <- function(cls, S, Y, XS, XT, XP)
 	}
 
 ## length of MCMC run
-S <- 1000# 0
+S <- 10000
 
 ## do the two reglogits in parallel
 cls <- makeCluster(rep("localhost", 2), type="PSOCK")
@@ -66,7 +66,6 @@ outs <- reglogit.snow2(cls, S, Y, XS, XT, XP)
 stopCluster(cls)
 
 ## fully Bayesian team+player model with special teams indicators
-S <- 10000
 ## fitSTP.rl <- reglogit(S, Y, cbind(XS, XT, XP), save.latents=FALSE, normalize=FALSE, sparse=TRUE)
 fitSTP.rl <- outs[[1]]
 ## save the output
