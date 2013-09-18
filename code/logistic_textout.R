@@ -65,5 +65,5 @@ for(i in 1:ncol(ranksSTP)) {
 
 ## order by median and write out to file
 or <- order(rsumm$TPmed, rsumm$Pmed, rsumm$TPq90 - rsumm$TPq10)
-routfile <- paste("../results/logistic_pranks_betas_", format(Sys.time(), "%Y%m%d"), ".csv", sep="")
+routfile <- "../results/logistic_pranks_betas.csv"
 write.csv(rsumm[or,], file=routfile, row.names=FALSE, quote=FALSE)
