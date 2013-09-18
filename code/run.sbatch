@@ -17,3 +17,4 @@ R CMD BATCH --no-save googlechart.R
 
 module load git
 git commit -a -m "nightly update"
+git push
