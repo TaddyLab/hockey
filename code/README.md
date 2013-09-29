@@ -9,7 +9,7 @@ abilities; and format the output for the results folder.
 They are executed in the following order:
 
 <ul>
-	<li> scrape.R: uses the nhlscrapr tool to update a games database stored locally
+	<li> scrape.R: uses the nhlscrapr tool to update a games database stored locally (i.e., off-line)
 	<li> buildgoals.R: generates goals data from the local database, storing the results in the data folder
 	<li> logistic_fits.R: fits several flavors of regularized logistic regressions on the goals data,
 		storing the output objects locally
