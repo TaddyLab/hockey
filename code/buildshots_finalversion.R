@@ -217,9 +217,20 @@ for(t in 1:T){
 }
 proc.time() - ptm
 
+# function for calculating the variance of columns in a matrix
+colVars <- function(x, na.rm=FALSE, dims=1, unbiased=TRUE, SumSquares=FALSE,
+                    twopass=FALSE) {
+  if (SumSquares) return(colSums(x^2, na.rm, dims))
+  N <- colSums(!is.na(x), FALSE, dims)
+  Nm1 <- if (unbiased) N-1 else N
+  if (twopass) {x <- if (dims==length(dim(x))) x - mean(x, na.rm=na.rm) else
+    sweep(x, (dims+1):length(dim(x)), colMeans(x,na.rm,dims))}
+  (colSums(x^2, na.rm, dims) - colSums(x, na.rm, dims)^2/N) / Nm1
+}
+
 ## see which cols are all the same, and remove from df
 ptm <- proc.time()
-same <- which(apply(XP, 2, var) == 0)
+same <- which(colVars == 0)
 XP <- XP[,-same]
 uN2 <- uniqueNames[-same]
 pos2 <- positions[-same]
@@ -243,4 +254,4 @@ shot <- data.frame(whoshoted=shots$ev.side,
                    session=shots$session,
                    gamecode=shots$gcode)
 rownames(config_shots) <- rownames(shot) <- rownames(onice_shots) <- 1:nrow(config_shots)
-save(shot,player_shots,onice_shots,config_shots,compress="xz",file="results/hockey_shots.rda")
+save(shot,player_shots,onice_shots,config_shots,compress="xz",file="results/hockey_shots_finalversion.rda")
