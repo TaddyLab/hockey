@@ -1,10 +1,10 @@
 load("nhlscrapr_logit_fits.RData")
 
-## find the columns of XP indicating players active in seasion 20122013
+## find the columns of XP indicating players active in seasion 20132014
 XG <- as.data.frame(XG)
 active <- rep(FALSE, ncol(XP))
 for(i in 1:ncol(XP)) {
-  if(max(XG$Season[XP[,i] != 0]) == 20122013)
+  if(max(XG$Season[XP[,i] != 0]) == 20132014)
     active[i] <- TRUE
 }
 not.active <- which(! active)
