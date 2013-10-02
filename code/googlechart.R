@@ -1,4 +1,4 @@
-source("args.R")
+## source("args.R")
 
 ## googlechart:
 ##
@@ -30,16 +30,24 @@ googlechart <- function(M, headfile, footfile, outfile)
 }
 
 ## extract the map betas residing in Git version control
-map.betas <- read.csv("~/hockey-git/results/logistic_map_betas.csv")
-map.betas$Player <- as.character(map.betas$Player)
+map.betas.all <- read.csv("~/hockey-git/results/logistic_map_betas.csv")
+map.betas.all$Player <- as.character(map.betas.all$Player)
 
-## get non-zero rows
-rows <- which(apply(map.betas[,2:4], 1, function(x) { all(x != 0) }))
-map.betas.nz <- map.betas[rows,]
+## get just current year
+map.betas <- map.betas.all[map.betas.all[,2] == 20122013,]
 
 ## append last active year info
-map.betas.nz.all <- map.betas.nz[,-2]
-map.betas.nz.all$Player <- paste(map.betas.nz$Player, map.betas.nz$Last.Active.Year, sep=" : ")
+map.betas.all$Player <- paste(map.betas.all$Player, " (", map.betas.all$Last.Active.Year, ")", sep="")
+
+## add ranks
+map.betas$Player <- paste(map.betas$Player, 1:nrow(map.betas), sep=" - ")
+map.betas.all$Player <- paste(map.betas.all$Player, 1:nrow(map.betas.all), sep=" - ")
+
+## get non-zero rows
+rows <- which(apply(map.betas[,3:4], 1, function(x) { all(x != 0) }))
+map.betas.nz <- map.betas[rows,-2]
+rows <- which(apply(map.betas.all[,3:4], 1, function(x) { all(x != 0) }))
+map.betas.nz.all <- map.betas.all[rows,-2]
 
 ## write out all player stats
 resultpath <- paste(EXT, "/results_20122013", sep="")
@@ -53,5 +61,5 @@ googlechart(map.betas.nz.all, "~/hockey-git/code/header.html",
 ## write out just those active in 20122013
 mapfilecur <- paste(resultpath, "/mapbetas_active_", 
 	format(Sys.time(), "%Y%m%d"), ".html", sep="")
-googlechart(map.betas.nz[map.betas.nz[,2] == 20122013,-2], 
+googlechart(map.betas.nz, 
 	"~/hockey-git/code/header.html", "~/hockey-git/code/footer.html", mapfilecur)
