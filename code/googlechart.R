@@ -5,10 +5,9 @@ source("args.R")
 ## create a google chart with the specified data, header, footer,
 ## and output file
 
-googlechart <- function(M, headfile, footfile, outfile)
+googlechart <- function(M, header, footer, outfile)
  {
- 	header <- readLines(headfile)
- 	footer <- readLines(footfile)
+
  	footer <- gsub("5016", as.character(24*nrow(M)), footer)
 
  	unlink(outfile)
@@ -34,7 +33,7 @@ map.betas.all <- read.csv("~/hockey-git/results/logistic_map_betas.csv")
 map.betas.all$Player <- as.character(map.betas.all$Player)
 
 ## get just current year
-map.betas <- map.betas.all[map.betas.all[,2] == 20132014,]
+map.betas <- map.betas.all[map.betas.all[,2] == 20122013,]
 
 ## append last active year info
 map.betas.all$Player <- paste(map.betas.all$Player, " (", map.betas.all$Last.Active.Year, ")", sep="")
@@ -50,16 +49,30 @@ rows <- which(apply(map.betas.all[,3:4], 1, function(x) { all(x != 0) }))
 map.betas.nz.all <- map.betas.all[rows,-2]
 
 ## write out all player stats
-resultpath <- paste(EXT, "/results_20132014", sep="")
+resultpath <- paste(EXT, "/results_20122013", sep="")
 system(sprintf("mkdir -p %s", resultpath))
 
-mapallfile <- paste(resultpath, "/mapbetas_all_", 
-	format(Sys.time(), "%Y%m%d"), ".html", sep="")
-googlechart(map.betas.nz.all, "~/hockey-git/code/header.html", 
-	"~/hockey-git/code/footer.html", mapallfile)
+## read in header and footer files
+header <- readLines("~/hockey-git/code/header.html")
+footer <- readLines("~/hockey-git/code/footer.html")
 
-## write out just those active in 20132014
-mapfilecur <- paste(resultpath, "/mapbetas_active_", 
-	format(Sys.time(), "%Y%m%d"), ".html", sep="")
-googlechart(map.betas.nz, 
-	"~/hockey-git/code/header.html", "~/hockey-git/code/footer.html", mapfilecur)
+## file names
+date <- format(Sys.time(), "%Y%m%d")
+mapallfile <- paste("mapbetas_all_", date, ".html", sep="")
+fullmapallfile <- paste(resultpath, "/", mapallfile, sep="")
+mapfilecur <- paste("mapbetas_active_", date, ".html", sep="")
+fullmapfilecur <- paste(resultpath, "/", mapfilecur, sep="")
+
+## changes to footer for all
+footer.all <- gsub("ability", "ability (all: 2001/02-today)", footer)
+footer.all[17] <- paste("show <a href=\"", mapfilecur, "\"> only current players</a>", sep="")
+footer <- gsub("ability", "ability (active)", footer)
+footer[17] <- paste("show <a href=\"", mapallfile, "\">all players</a>", sep="")
+footer[16] <- footer.all[16] <- paste(Sys.time(), "<br>", sep="")
+
+## write out all
+googlechart(map.betas.nz.all, header, footer.all, fullmapallfile)
+system(paste("ln -sf ", paste(mapallfile, " ", resultpath, "/mapbetas_all_today.html", sep="")))
+## write out just those active in 20122013
+googlechart(map.betas.nz, header, footer, fullmapfilecur)
+system(paste("ln -sf ", paste(mapfilecur, " ", resultpath, "/mapbetas_active_today.html", sep="")))

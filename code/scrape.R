@@ -18,6 +18,49 @@ sessionInfo()
 ## start cluster
 registerDoMC(NC)
 
+full.games.database <- function()
+{
+    game.roster <- NULL
+    seasons <- c("20022003", "20032004", "20052006", "20062007", 
+        "20072008", "20082009", "20092010", "20102011", "20112012", 
+        "20122013", "20132014")
+    games <- c(rep(1230, 9), 720, 1230)
+    bad.game.list <- list(c(1:127, 134, 135, 582, 598, 872), 
+        c(10, 251, 453, 456, 482, 802), c(18, 140, 298, 458, 
+            974), c(1024), c(), c(259, 409, 1077), c(81, 827, 
+            836, 857, 863, 874), c(429), c(259), c(), c())
+    bad.playoff <- matrix(c("20032004", "0134", "20052006", "0233"), 
+        nrow = 2)
+    game.rec <- array(NA, c(7 * 15, 3))
+    count <- 0
+    for (kk in 1:4) for (ll in 1:2^(4 - kk)) for (mm in 1:7) {
+        count <- count + 1
+        game.rec[count, ] <- c(kk, ll, mm)
+    }
+    gnum <- paste0("0", game.rec[, 1], game.rec[, 2], game.rec[, 
+        3])
+    for (ss in 1:length(seasons)) {
+        gn1 <- as.character(1:games[ss])
+        while (any(nchar(gn1) < 4)) gn1[nchar(gn1) < 4] <- paste0("0", 
+            gn1[nchar(gn1) < 4])
+        df1 <- data.frame(season = seasons[ss], session = c(rep("Regular", 
+            games[ss]), rep("Playoffs", length(gnum))), gamenumber = c(gn1, 
+            gnum), awayteam = "", hometeam = "", awayscore = "", 
+            homescore = "", date = "", valid = c(!(1:games[ss] %in% 
+                bad.game.list[[ss]]), rep(TRUE, length(gnum))), 
+            stringsAsFactors = FALSE)
+        game.roster <- rbind(game.roster, df1)
+    }
+    game.roster[, 1] <- as.character(game.roster[, 1])
+    game.roster[, 2] <- as.character(game.roster[, 2])
+    for (kk in 1:dim(bad.playoff)[2]) game.roster$valid[game.roster$season == 
+        bad.playoff[1, kk] & game.roster$session == "Playoffs" & 
+        game.roster$gamenumber == bad.playoff[2, kk]] <- FALSE
+    game.roster$gcode <- paste0(2 + 1 * (game.roster$session == 
+        "Playoffs"), game.roster$gamenumber)
+    return(game.roster)
+}
+
 ## grab the full game data
 allgames <- full.game.database()
 games <- allgames
