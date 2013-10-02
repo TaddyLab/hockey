@@ -1,4 +1,4 @@
-## source("args.R")
+source("args.R")
 
 ## googlechart:
 ##
