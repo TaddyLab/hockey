@@ -115,6 +115,8 @@ registerDoMC(NC)
 # list of files for output (number of files=number of cores)
 flist_XP <- sprintf("XP_%s.mm", 1:NC)
 flist_XS <- sprintf("XS_%s.mm", 1:NC)
+# seperate the works to each core
+chunk <- round(seq.int(0,T,length=NC+1))
 # update of the design matrix for players and special teams
 # the general idea is to update each row of design matrix according to shots info
 # and output each row to the file and read back in as the design matrix
@@ -126,19 +128,21 @@ ptm <- proc.time()
 # prevent scintific notations or numbers like (1e+5)
 options(scipen=10)
 matrix_update <- foreach(i=1:NC) %dopar% {
+  # number of rows
+  num_row <- chunk[i+1]-chunk[i]
   # head of the Matrix Making file
   cat("%%MatrixMarket matrix coordinate integer general",file=flist_XP[i], sep="\n",append=TRUE)
   cat("%%MatrixMarket matrix coordinate integer general",file=flist_XS[i], sep="\n",append=TRUE)
   # output the dimensions of the matrices
-  cat(c(T/NC,nplayers,T*nplayers/NC),file=flist_XP[i],sep=" ",append=TRUE)
-  cat(c(T/NC,7,T*7/NC),file=flist_XS[i],sep=" ",append=TRUE)
+  cat(c(num_row,nplayers,num_row*nplayers),file=flist_XP[i],sep=" ",append=TRUE)
+  cat(c(num_row,7,num_row*7),file=flist_XS[i],sep=" ",append=TRUE)
   cat("\n",file=flist_XP[i],append=TRUE)
   cat("\n",file=flist_XS[i],append=TRUE)
   
   # separate the works to each core
-  for(j in ((i-1)*T/NC+1):(T*i/NC)){
+  for(j in (chunk[i]+1):chunk[i+1]){
     # indicator of rows
-    t = j - T*(i-1)/NC
+    t = j - num_row*(i-1)
     # onice players for the home team and away team
     pht <- PH[j,!is.na(PH[j,])]
     pat <- PA[j,!is.na(PA[j,])]
@@ -147,7 +151,6 @@ matrix_update <- foreach(i=1:NC) %dopar% {
     out_XP <- data.frame(cbind(rep(t,length(pat)+length(pht)),c(pht,pat),c(rep(1,length(pht)),rep(-1,length(pat)))))
     # write to the file
     write.table(out_XP,file=flist_XP[i],sep=" ",eol = "\n",append=TRUE,row.names=FALSE,col.names=FALSE)
-    
     
     # update the design matrix for special team
     # data frame for output
