@@ -22,8 +22,11 @@ game.goals <- function(file, session)
 
 	## check to make sure there are skaters on the ice
 	## (i.e., not shootout or penalty shot)
-	shootout <- goals[,c(8:12,14:18)] != 1 
-	w <- which(apply(shootout, 1, function(x) { sum(x) > 6 }))
+	# shootout <- goals[,c(8:12,14:18)] != 1 
+	# w <- which(apply(shootout, 1, function(x) { sum(x) > 6 }))
+  shootout <- goals[,c(8:19,34:35)] != 1 
+  w <- which(apply(shootout, 1, function(x) { sum(x) >= 8 }))
+
 	eg <- goals[w,]
 
 	## remove un-needed columns
@@ -206,9 +209,10 @@ save(uN2, goals, Y, XP, XT, Ppm, Tpm, pos2,
 
 ## extra cleaning and output for gamlr
 library(Matrix)
-player <- Matrix(XP,sparse=TRUE)
-colnames(player) <- uN2
-onice <- Matrix(XS,sparse=TRUE)
+player <- data.frame(name=uN2,position=pos2,plus.minus=Ppm)
+onice <- Matrix(XP,sparse=TRUE)
+colnames(onice) <- uN2
+config <- Matrix(XS,sparse=TRUE)
 goal <- data.frame(whoscored=goals$g,
       season=goals$season, 
       team.away=goals$awayteam,
@@ -217,5 +221,5 @@ goal <- data.frame(whoscored=goals$g,
       differential=goals$home.score-goals$away.score,
       session=goals$session,
       gamecode=goals$gcode)
-rownames(player) <- rownames(goal) <- rownames(onice) <- 1:nrow(player)
-save(goal,player,onice,compress="xz",file="../data/hockey.rda")
+rownames(onice) <- rownames(goal) <- rownames(config) <- 1:nrow(goal)
+save(goal,player,onice,config,compress="xz",file="../data/hockey.rda")
