@@ -16,5 +16,5 @@ module load openmpi
 ~/R-3.0.1/bin/R CMD BATCH --no-save googlechart.R 
 
 module load git
-git commit -a -m "nightly update"
+git commit -a -m "weekly update"
 git push

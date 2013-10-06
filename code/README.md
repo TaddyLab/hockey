@@ -1,7 +1,7 @@
 Code folder
 ======
 
-This folder contains the scripts that are run nightly to scrape data from the
+This folder contains the scripts that are run regularly (weekly for now) to scrape data from the
 web and clean it for analysis (saving the results in the data folder); run
 several flavors of regularized logistic regression methods to estimate player
 abilities; and format the output for the results folder.
