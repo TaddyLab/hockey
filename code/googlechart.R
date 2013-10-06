@@ -33,7 +33,7 @@ map.betas.all <- read.csv("~/hockey-git/results/logistic_map_betas.csv")
 map.betas.all$Player <- as.character(map.betas.all$Player)
 
 ## get just current year
-map.betas <- map.betas.all[map.betas.all[,2] == 20122013,]
+map.betas <- map.betas.all[map.betas.all[,2] == 20132014,]
 
 ## append last active year info
 map.betas.all$Player <- paste(map.betas.all$Player, " (", map.betas.all$Last.Active.Year, ")", sep="")
@@ -49,7 +49,7 @@ rows <- which(apply(map.betas.all[,3:4], 1, function(x) { all(x != 0) }))
 map.betas.nz.all <- map.betas.all[rows,-2]
 
 ## write out all player stats
-resultpath <- paste(EXT, "/results_20122013", sep="")
+resultpath <- paste(EXT, "/results_20132014", sep="")
 system(sprintf("mkdir -p %s", resultpath))
 
 ## read in header and footer files
@@ -73,6 +73,6 @@ footer[38] <- footer.all[38] <- paste(Sys.time(), "<br>", sep="")
 ## write out all
 googlechart(map.betas.nz.all, header, footer.all, fullmapallfile)
 system(paste("ln -sf ", paste(mapallfile, " ", resultpath, "/mapbetas_all_today.html", sep="")))
-## write out just those active in 20122013
+## write out just those active in 20132014
 googlechart(map.betas.nz, header, footer, fullmapfilecur)
 system(paste("ln -sf ", paste(mapfilecur, " ", resultpath, "/mapbetas_active_today.html", sep="")))
