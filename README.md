@@ -23,7 +23,8 @@ regression-adjusted Plus-Minus.
 <strong> Content </strong>
 
 The repository contains R code to first pull the relevant data from nhl.com
-(using the nhlscrapr tool from <a href="http://www.acthomas.ca/comment/">A.C.
+(using the <a href="https://github.com/acthomasca/nhlscrapr">nhlscrapa</a>
+r tool from <a href="http://www.acthomas.ca/comment/">A.C.
 Thomas</a>), and then do a series of analyses using sparse regularized
 regression. Details are provided in the README inside the data, code, and
 results folders respectively.  The repository will be accompanied by a blog by
