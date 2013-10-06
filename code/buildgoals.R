@@ -3,6 +3,10 @@ source("args.R")
 ## load the roster object containing player/game info
 load("../data/roster.RData")
 
+## game.goals:
+##
+## extract the (valid) goals for a particular game
+
 game.goals <- function(file, session)
   {
   	## make sure the file exists
@@ -22,10 +26,8 @@ game.goals <- function(file, session)
 
 	## check to make sure there are skaters on the ice
 	## (i.e., not shootout or penalty shot)
-	# shootout <- goals[,c(8:12,14:18)] != 1 
-	# w <- which(apply(shootout, 1, function(x) { sum(x) > 6 }))
-  shootout <- goals[,c(8:19,34:35)] != 1 
-  w <- which(apply(shootout, 1, function(x) { sum(x) >= 8 }))
+	shootout <- goals[,c(8:19,34:35)] != 1 
+	w <- which(apply(shootout, 1, function(x) { sum(x) >= 8 }))
 
 	eg <- goals[w,]
 
@@ -47,6 +49,7 @@ game.goals <- function(file, session)
 	return(eg)
 }
   
+
 ## extract games, and prefix for location of files
 G <- roster$games
 
@@ -214,12 +217,12 @@ onice <- Matrix(XP,sparse=TRUE)
 colnames(onice) <- uN2
 config <- Matrix(XS,sparse=TRUE)
 goal <- data.frame(whoscored=goals$g,
-      season=goals$season, 
-      team.away=goals$awayteam,
-      team.home=goals$hometeam,
-      period=goals$period,
-      differential=goals$home.score-goals$away.score,
-      session=goals$session,
-      gamecode=goals$gcode)
+		season=goals$season, 
+		team.away=goals$awayteam,
+		team.home=goals$hometeam,
+		period=goals$period,
+		differential=goals$home.score-goals$away.score,
+		session=goals$session,
+		gamecode=goals$gcode)
 rownames(onice) <- rownames(goal) <- rownames(config) <- 1:nrow(goal)
 save(goal,player,onice,config,compress="xz",file="../data/hockey.rda")
