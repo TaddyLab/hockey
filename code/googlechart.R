@@ -89,10 +89,10 @@ fullmapfilecur <- paste(resultpath, "/", mapfilecur, sep="")
 
 ## changes to footer for all
 footer.all <- gsub("ability", "ability (all: 2001/02-today)", footer)
-footer.all[39] <- paste("show <a href=\"", mapfilecur, "\"> only current players</a>", sep="")
+footer.all[37] <- paste("show <a href=\"", mapfilecur, "\"> only current players</a>", sep="")
 footer <- gsub("ability", "ability (active)", footer)
-footer[39] <- paste("show <a href=\"", mapallfile, "\">all players</a>", sep="")
-footer[38] <- footer.all[38] <- paste(Sys.time(), "<br>", sep="")
+footer[37] <- paste("show <a href=\"", mapallfile, "\">all players</a>", sep="")
+footer[37] <- footer.all[36] <- paste(Sys.time(), "<br>", sep="")
 
 ## write out all
 googlechart(map.betas.nz.all, header, footer.all, fullmapallfile)
