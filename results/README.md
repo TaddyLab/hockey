@@ -1,7 +1,7 @@
 Results folder
 ======
 
-This folder contains the nightly-updated player ability summaries.
+This folder contains the weekly-updated player ability summaries.
 
 <ul>
 	<li> logistic_map_betas.csv: sparse (MAP) point-estimates under the player-team and player-only models, via mnlm
