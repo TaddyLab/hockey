@@ -24,8 +24,8 @@
 
 
 ## check that libraries are loaded
-load(slam)
-load(textir)
+library(slam)
+library(textir)
 
 ## load the goals data
 load("../data/nhlscrapr_logit_data.RData")

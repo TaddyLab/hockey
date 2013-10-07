@@ -96,7 +96,7 @@ footer[38] <- footer.all[38] <- paste(Sys.time(), "<br>", sep="")
 
 ## write out all
 googlechart(map.betas.nz.all, header, footer.all, fullmapallfile)
-system(paste("ln -sf ", paste(mapallfile, " ", resultpath, "/mapbetas_all_today.html", sep="")))
+system(paste("cp -f ", paste(fullmapallfile, " ", resultpath, "/mapbetas_all_today.html", sep="")))
 ## write out just those active in 20132014
 googlechart(map.betas.nz, header, footer, fullmapfilecur)
-system(paste("ln -sf ", paste(mapfilecur, " ", resultpath, "/mapbetas_active_today.html", sep="")))
+system(paste("cp -f ", paste(fullmapfilecur, " ", resultpath, "/mapbetas_active_today.html", sep="")))
