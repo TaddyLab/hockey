@@ -88,15 +88,15 @@ mapfilecur <- paste("mapbetas_active_", date, ".html", sep="")
 fullmapfilecur <- paste(resultpath, "/", mapfilecur, sep="")
 
 ## changes to footer for all
-footer.all <- gsub("ability", "ability (all: 2001/02-today)", footer)
-footer.all[37] <- paste("show <a href=\"", mapfilecur, "\"> only current players</a>", sep="")
+footer.all <- gsub("ability", "ability (since 2001)", footer)
+footer.all[39] <- paste("<a href=\"", mapfilecur, "\"> show only current players</a>", sep="")
 footer <- gsub("ability", "ability (active)", footer)
-footer[37] <- paste("show <a href=\"", mapallfile, "\">all players</a>", sep="")
-footer[37] <- footer.all[36] <- paste(Sys.time(), "<br>", sep="")
+footer[39] <- paste("<a href=\"", mapallfile, "\">show all players</a>", sep="")
+footer[38] <- footer.all[38] <- paste(Sys.time(), "<br>", sep="")
 
 ## write out all
 googlechart(map.betas.nz.all, header, footer.all, fullmapallfile)
-system(paste("cp -f ", paste(fullmapallfile, " ", resultpath, "/mapbetas_all_today.html", sep="")))
+system(paste("cp -f ", paste(fullmapallfile, " ", resultpath, "/mapbetas_all_latest.html", sep="")))
 ## write out just those active in 20132014
 googlechart(map.betas.nz, header, footer, fullmapfilecur)
-system(paste("cp -f ", paste(fullmapfilecur, " ", resultpath, "/mapbetas_active_today.html", sep="")))
+system(paste("cp -f ", paste(fullmapfilecur, " ", resultpath, "/mapbetas_active_latest.html", sep="")))

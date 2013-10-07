@@ -3,7 +3,9 @@
         var options = {
           fontSize: 11,
           colors: ['black', '#C80000'],
-          chartArea:{left:250,top:10,width:"100%",height:"99%"}
+          legend: {position: 'none'},
+          hAxis:{minValue:-1,maxValue:1,viewWindow:{min:-1,max:1}},
+          chartArea:{left:300,top:0,width:375,height:"99%"}
         };
 
         var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
@@ -35,8 +37,8 @@
       <p align="center">
       <!-- DATE --!>
       <!-- LINKS TO OTHER TABLES --!>
-      : back to <a href="https://github.com/mataddy/hockey">GitHub</a> : 
-      back to <a href="http://osbxdc2.mzinga.com/blog/Hockey/booth10000b9?redirCnt=2&adminopen=y%2c">Blog</a>
+      : <a href="https://github.com/mataddy/hockey">back to GitHub</a> : 
+      <a href="http://blogs.chicagobooth.edu/HockeyAnalytics">back to Blog</a>
       </p><br>
       <div id="chart_div" style="width: 700px; height: 5016px;"></div>
 
