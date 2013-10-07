@@ -17,3 +17,5 @@ They are executed in the following order:
 </ul>
 
 The other files are for development purposes only.
+
+The code is licensed under the GNU Lesser Public License.
