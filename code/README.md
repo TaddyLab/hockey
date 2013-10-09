@@ -14,6 +14,9 @@ They are executed in the following order:
 	<li> logistic_fits.R: fits several flavors of regularized logistic regressions on the goals data,
 		storing the output objects locally
 	<li> logistic_textout.R: interprets the local output objects to build the text/csv files output to the results folder
+	<li> googlecharts.R: converts the text/csv files into the
+		<a href="http://faculty.chicagobooth.edu/robert.gramacy/hockey/mapbetas_active_latest.html">weekly charts</a>
+		which are linked from the <a href="http://blogs.chicagobooth.edu/hockeyanalytics">blog</a>
 </ul>
 
 The other files are for development purposes only.

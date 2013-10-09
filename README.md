@@ -3,7 +3,10 @@ Chicago Hockey Analytics
 
 This repository will contain a set of analyses of player ability in the NHL.
 It is designed to be a hub for experimentation, demonstration, and teaching
-about both data mining and hockey analysis.
+about both data mining and hockey analysis.  It also serves as the back-end
+for the results published weekly on our <a
+href="http://blogs.chicagobooth.edu/hockeyanalytics">blog</a>.  Note those are
+a subset of the full suite provided by the codes stored here.
 
 <strong> Background </strong>
 
@@ -24,11 +27,11 @@ regression-adjusted Plus-Minus.
 
 The repository contains R code to first pull the relevant data from nhl.com
 (using the <a href="https://github.com/acthomasca/nhlscrapr">nhlscrapar</a>
-tool from <a href="http://www.acthomas.ca/comment/">A.C.
-Thomas</a>), and then do a series of analyses using sparse regularized
-regression. Details are provided in the README inside the data, code, and
-results folders respectively.  The repository will be accompanied by a blog by
-Gramacy and Taddy.
+tool from <a href="http://www.acthomas.ca/comment/">A.C. Thomas</a>), and then
+do a series of analyses using sparse regularized regression. Details are
+provided in the README inside the data, code, and results folders
+respectively.  Note that the code linked here is licensed under the GNU Lesser
+Public License.
 
 <strong> Teaching </strong>
 
