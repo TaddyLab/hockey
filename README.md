@@ -30,8 +30,8 @@ The repository contains R code to first pull the relevant data from nhl.com
 tool from <a href="http://www.acthomas.ca/comment/">A.C. Thomas</a>), and then
 do a series of analyses using sparse regularized regression. Details are
 provided in the README inside the data, code, and results folders
-respectively.  Note that the code linked here is licensed under the GNU Lesser
-Public License.
+respectively.  Note that the code linked here is licensed under the <a href="http://www.gnu.org/copyleft/lesser.html">GNU Lesser
+Public License</a>.
 
 <strong> Teaching </strong>
 

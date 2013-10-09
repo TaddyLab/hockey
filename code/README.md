@@ -21,4 +21,4 @@ They are executed in the following order:
 
 The other files are for development purposes only.
 
-The code is licensed under the GNU Lesser Public License.
+The code is licensed under the <a href="http://www.gnu.org/copyleft/lesser.html"GNU Lesser Public License</a>.
