@@ -1,7 +1,7 @@
 #Code folder
 
 
-To install the lattest [gamlr](https://github.com/mataddy/gamlr) package, you need to wirte the following lines in R. 
+To install the lattest [gamlr](https://github.com/mataddy/gamlr) package, you need to download the package from Github and wirte the following lines in R. 
 
 	require(devtools)
 	install("../gamlr-master")
