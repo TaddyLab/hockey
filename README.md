@@ -9,3 +9,5 @@ I (Sen Tian) start from conducting the hockey analysis by using **'hockey_shots.
 
 The shot quality prediction is the next focus of my analysis. 
 
+I then apply the Gamma Lasso Regression for each season. The career performance as well as the performance by season are examined. 
+
