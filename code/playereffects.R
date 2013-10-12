@@ -42,11 +42,17 @@ for (i in 1:length(x_byyear)){
 }
 
 # beta matrix with dim=nplayers*(1+nseasons), 1 here represents career
-beta <- cbind(beta_career,do.call("cbind", beta_season))
+beta <- Matrix(cbind(beta_career,do.call("cbind", beta_season)), sparse=TRUE)
 colnames(beta) <- c("career",levels(factor(goal$season)))
 
-# write the result to a file
-write.table(beta,file="playereffect.txt")
+# output the beta matrix to a file
+# rows with all zero entries are deleted
+beta_summary <- summary(beta) # including the row, col, val of nonzero elements
+beta_df <- data.frame(player=rownames(beta)[beta_summary$i], season=colnames(beta)[beta_summary$j], 
+                      effect=beta_summary$x)
+write.table(beta_df,row.names=FALSE,sep="|",file="playereffect.txt")
 
 # read it back to check
-# beta_check <- as.matrix(read.table(file="playereffect.txt", header=TRUE, row.names=1, check.names=FALSE))
+beta_df_check <- read.table("playereffect.txt",colClasses=c("factor","factor","numeric"),header=TRUE,sep="|")
+beta_check <- sparseMatrix(i=as.numeric(beta_df_check$player),j=as.numeric(beta_df_check$season),
+              x=beta_df_check$effect,dimnames=list(levels(beta_df_check$player),levels(beta_df_check$season)))
