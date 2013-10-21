@@ -75,26 +75,6 @@ if(ng > 0) {
 warnings()
 }
 
-
-## remove downloaded files for unplayed games -- this is 
-## needed until Andrew updates nhlscrapr for new season
-
-## get the 2013-2014 game records
-fs <- list.files(EXT, pattern="20132014-[0-9]*-gamerec.txt")
-games <- strsplit(fs, "-")
-played <- as.numeric(unlist(lapply(games, function(x) x[2])))
-## get 2013-2014 processed.RData files
-fs <- list.files(EXT, pattern="20132014-[0-9]*-processed.RData")
-games <- strsplit(fs, "-")
-all <- as.numeric(unlist(lapply(games, function(x) x[2])))
-## remove those which do not have a gamerec
-unlink(fs[!(all %in% played)])
-## same for raw .RData files
-fs <- list.files(EXT, pattern="20132014-[0-9]*.RData")
-unlink(fs[!(all %in% played)])
-
-## done
-
 ## build out roster material and save (note we use allgames here)
 roster <- construct.rosters(allgames[allgames$valid,], rdata.folder = gamepath)
 save(roster, file="../data/roster.RData")
@@ -119,5 +99,25 @@ mcaug <- foreach (k=1:NC) %dopar% {
 		if (i%%100 == 0) message(paste("write game", i, "of chunk ", k))}
 }
 warnings()
+
+## remove downloaded files for unplayed games -- this is 
+## needed until Andrew updates nhlscrapr for new season
+
+## get the 2013-2014 game records
+fs <- list.files(EXT, pattern="20132014-[0-9]*-gamerec.txt")
+games <- strsplit(fs, "-")
+played <- as.numeric(unlist(lapply(games, function(x) x[2])))
+## get 2013-2014 processed.RData files
+fs <- list.files(EXT, pattern="20132014-[0-9]*-processed.RData")
+games <- strsplit(fs, "-")
+all <- as.numeric(unlist(lapply(games, function(x) x[2])))
+## remove those which do not have a gamerec
+unlink(fs[!(all %in% played)])
+## same for raw .RData files
+fs <- list.files(EXT, pattern="20132014-[0-9]*.RData")
+unlink(fs[!(all %in% played)])
+
+## done
+
 
 print(date())
