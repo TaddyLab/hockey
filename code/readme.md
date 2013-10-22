@@ -14,6 +14,8 @@ This folder contains all the coding files.
 
 **'playereffect.R'** generates a matrix of regression parameters, **'playereffect.txt'** (in the results foler). The parameters are obtained by applying 'gamlr' regression for the entire career as well as each individual season.
 
+**'shot_quality.R'** is the code for generating results in the report, **'shot_quality.pdf'** (in the results foler). 
+
 
 	
 	
