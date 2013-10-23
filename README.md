@@ -9,5 +9,7 @@ I (Sen Tian) start from conducting the hockey analysis by using **'hockey_shots.
 
 The shot quality prediction is the second task. The analysis is mainly about the influence of factors 'distance of shots', 'session' and 'type of shots' on the goals making. The results are shown in **'shot_quality.pdf'** with R code **'shot_quality.R'**. 
 
-I then apply the Gamma Lasso Regression for each season. The career performance as well as the performance by season are examined. 
+I then apply the Gamma Lasso Regression for each season. The career performance as well as the performance by season are examined. The results are shown in **'playereffects.txt'** with R code **'playereffects.R'**.
+
+The second part of my work is to analyze whether the players are paid porperly. The salary data are obtained from BlackHawk Zone, which has salary history for each player in the NHL league starting from season 2002 to the current season. 
 
