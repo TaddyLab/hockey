@@ -16,6 +16,8 @@ This folder contains all the coding files.
 
 **'shot_quality.R'** is the code for generating results in the report, **'shot_quality.pdf'** (in the results foler). 
 
+**'salary_pm.R'** is the code for cleaning and merging seasonal salary data obtained from BlackHawk Zone, **'nhlsalaries_bhz.txt'**. Also the player effects are added to the data set, **'salary_pm.txt'**. 
+
 
 	
 	
