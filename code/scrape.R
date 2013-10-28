@@ -104,18 +104,18 @@ warnings()
 ## needed until Andrew updates nhlscrapr for new season
 
 ## get the 2013-2014 game records
-fs <- list.files(EXT, pattern="20132014-[0-9]*-gamerec.txt")
+fs <- list.files(gamepath, pattern="20132014-[0-9]*-gamerec.txt")
 games <- strsplit(fs, "-")
 played <- as.numeric(unlist(lapply(games, function(x) x[2])))
 ## get 2013-2014 processed.RData files
-fs <- list.files(EXT, pattern="20132014-[0-9]*-processed.RData")
+fs <- list.files(gamepath, pattern="20132014-[0-9]*-processed.RData")
 games <- strsplit(fs, "-")
 all <- as.numeric(unlist(lapply(games, function(x) x[2])))
 ## remove those which do not have a gamerec
-unlink(fs[!(all %in% played)])
+unlink(paste(gamepath, fs[!(all %in% played)], sep="/"))
 ## same for raw .RData files
-fs <- list.files(EXT, pattern="20132014-[0-9]*.RData")
-unlink(fs[!(all %in% played)])
+fs <- list.files(gamepath, pattern="20132014-[0-9]*.RData")
+unlink(paste(gamepath, fs[!(all %in% played)], sep="/"))
 
 ## done
 
