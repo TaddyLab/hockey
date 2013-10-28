@@ -100,3 +100,15 @@ system(paste("cp -f ", paste(fullmapallfile, " ", resultpath, "/mapbetas_all_lat
 ## write out just those active in 20132014
 googlechart(map.betas.nz, header, footer, fullmapfilecur)
 system(paste("cp -f ", paste(fullmapfilecur, " ", resultpath, "/mapbetas_active_latest.html", sep="")))
+
+## write out an index
+index <- readLines("~/hockey-git/code/index.html")
+active <- rev(list.files(resultpath, "active"))[-1]
+active <- paste("<a href=\"", active, "\">", active, "</a>", sep="")
+active <- paste("<tr><td>", active, "</td>", sep="")
+all <- rev(list.files(resultpath, "all"))[-1]
+all <- paste("<a href=\"", all, "\">", all, "</a>", sep="")
+all <- paste("<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<td>", all, "</td></tr>\n", sep="")
+both <- paste(as.vector(rbind(active, all)), collapse="\n")
+index[39] <- paste("<table align=\"center\", cellpadding=\"5\">", both, "</table>", sep="")
+cat(index, file=paste(resultpath, "index.html", sep="/"))
