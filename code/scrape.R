@@ -115,6 +115,8 @@ all <- as.numeric(unlist(lapply(games, function(x) x[2])))
 unlink(paste(gamepath, fs[!(all %in% played)], sep="/"))
 ## same for raw .RData files
 fs <- list.files(gamepath, pattern="20132014-[0-9]*.RData")
+games <- strsplit(fs, "[-.]")
+all <- as.numeric(unlist(lapply(games, function(x) x[2])))
 unlink(paste(gamepath, fs[!(all %in% played)], sep="/"))
 
 ## done
