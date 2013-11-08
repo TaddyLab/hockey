@@ -10,3 +10,5 @@ A data set containing all information of each game play is obtained by using [nu
 The seasonal salary data sets for each player from season 2002 until the current season is obtained from BlackHawk Zone. The data sets are cleaned and merged to a single set (**'nhlsalaries_bhz.txt'**).
 
 Player effects, including the plus.minus value and position, are added to the salary data set (**'salary_pm.txt'**). 
+
+**'nhlsalaries_hzp.txt'** is another salary data set obtained from Hockeyzone Plus. The two salary data sets both have some missing values. But in general, the data from BlackHawk Zone is better to use. More comparisons of these two data sets are summarized in **'comparison_salarydata.md'**. (Use them at your own risk)
