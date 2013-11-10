@@ -13,3 +13,5 @@ I then apply the Gamma Lasso Regression for each season. The career performance 
 
 The second part of my work is to analyze whether the players are paid porperly. The salary data are obtained from BlackHawk Zone, which has salary history for each player in the NHL league starting from season 2002 to the current season. 
 
+The team involvement rate indicating the length of time the player has spent in this team over a specific season or his career, is calculated in **teaminvolve_rate.R** (the output is stored in **team_inv_rate.txt**). For example, the career team involvement matrix shows that the player AARON_GAGNON spent more than half of his career in DAL (rate/weight=0.5526316) and he spent the rest his career in WPG (rate/weight=0.4473684). I randomly picked 20 players to do sanity check of the team involvement rates. For each player, I compared the rates with the career path shown in nhl.com. The results proves the rationality of team involvement rates. 
+
