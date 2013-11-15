@@ -16,7 +16,7 @@ This folder contains all the coding files.
 
 **'shot_quality.R'** is the code for generating results in the report, **'shot_quality.pdf'** (in the results foler). 
 
-**'salary_pm.R'** is the code for cleaning and merging seasonal salary data obtained from BlackHawk Zone. The merged salary data is given in **'nhlsalaries_bhz.txt'**. Also the player effects are added to the data set, **'salary_pm.txt'**. 
+**'clean_salary_bhz.R'** is the code for cleaning and merging seasonal salary data obtained from BlackHawk Zone. The merged salary data is given in **'nhlsalaries_bhz.txt'**. Also the player names in the salary data are corrected by matching with the names in the roster data, **'nhlsalaries_bhz_nc.txt'**. 
 
 **'teaminvolve_rate.R'** calculates the team involvement rate (seasonal and career) for each player in the nhl league. We have 2412 players and 31 nhl teams (note: ATL was the former of WPG, we treat them separately). The outputs are eleven 2412*31 matrices (10 seasons and 1 career), **'team_inv_rate.txt'**. 
 
