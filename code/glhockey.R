@@ -1,67 +1,44 @@
-#*******************************************************************************
-#
-# Chicago Hockey Analytics: Robert B, Gramacy and Matt Taddy
-# Copyright (C) 2013, The University of Chicago
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-#
-# Questions? Contact Robert B. Gramacy (rbgramacy@chicagobooth.edu), or
-#                    Matt Taddy (taddy@chicagobooth.edu)
-#
-#*******************************************************************************
+library(gamlr)
 
+load("../data/nhlscrapr_logit_data.RData")
 
-#################################################################
-## looking at various MAP estimators.  Uses pre-CRAN gamlr_1.x ##
-#################################################################
+XSP <- as(cbind(XS,XP),"dgCMatrix")
+XTSP <- cBind(XT,XSP)
 
+fitSP <- gamlr(XSP, Y, gamma=1, 
+	family="binomial", free=1:ncol(XS), verb=1)
+fitTSP <- gamlr(XTSP, Y, gamma=1, 
+	family="binomial", free=1:(ncol(XS)+ncol(XT)), verb=1)
 
-### analysis and model comparison
-
-load("../data/hockey.rda")
-
-## run the two at lasso; 
-## BIC should give exact same result
-## CV will differ due to MC variance
-library(glmnet, lib=LIB)
-library(gamlr, lib=LIB)
-
-x <- cBind(onice,player)
-y <- as.numeric(goal$who=="HOME")
-
-gltime <- system.time(fit <- cv.gamlr(x=x, y=y, 
-						family="binomial", 
-						standardize=FALSE,
-        				varpen=0, 
-        				pen.min.ratio=0.0001,
-        				verb=TRUE) )	
-coef(fit, s="min")
-print(which.min(BIC(fit$gamlr)))
-
-nettime <- system.time(fitnet <- cv.glmnet(x=x, y=y, 
-						family="binomial", 
-						standardize=FALSE))	
-coef(fitnet, s="lambda.min")
-devnet <- (1-fitnet$glmnet$dev.ratio)*fitnet$glmnet$nulldev
-print(which.min( devnet + log(fitnet$glmnet$nobs)*(fitnet$nzero+1) ))
-
+## plot
+png("glpaths.png", width=9, height=4, units="in", res=300)
 par(mfrow=c(1,2))
-plot(fit)
-plot(fitnet)
+plot(fitTSP, col=NULL)
+mtext("team effects", font=2, line=2, cex=1.2)
+plot(fitSP, col=NULL)
+mtext("player only", font=2, line=2, cex=1.2)
+dev.off()
 
-print(gltime-nettime)
+## coef
+BSP <- coef(fitSP,k=2)[-c(1,fitSP$free+1),]
+BTSP <- coef(fitTSP,k=2)[-c(1,fitTSP$free+1),]
+## number of nonzero team-model effects
+sum(BTSP!=0)
+## number of nonzero player-only effects
+sum(BSP!=0)
+
+## output in player table
+XG <- as.data.frame(XG)
+active <- rep(NA, ncol(XP))
+for(i in 1:ncol(XP)) active[i] <- max(XG$Season[XP[,i] != 0])
+
+tab <- cbind(data.frame(uN2, active),BTSP,BSP)
+names(tab) <- c("Player", "Last Active Year", 
+	"Player-Team Model", "Player-Only Model")
+tab$Player <- as.character(tab$Player)
+outfile <- "../results/glhockey_betas.csv"
+write.csv(tab[order(-tab[,3], -tab[,4]),], 
+	file=outfile, row.names=FALSE, quote=FALSE)
 
 
 
