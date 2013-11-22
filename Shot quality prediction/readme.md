@@ -1,0 +1,4 @@
+#Shot quality prediction
+
+
+Factors including 'distance of shots', 'session' and 'type of shots' are considered that can determine the probability of making goals. A nonparametric model is trained by using all  the game information before the current season. And the probability of making goals for the current season is predicted. The prediction is compared to the real data as the season goes on. The results show that the model performs quite badly. More information are needed to learn a better model, such as the location of making the shots (x & y coordinates). The detailed model and analysis can be found in the report **'shot_quality.pdf'** and the corresponding code **'shot_quality.R'**.

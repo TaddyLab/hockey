@@ -1,0 +1,11 @@
+# Players' Salaries analysis
+
+The seasonal salary data sets for each player from season 2002 until the current season is obtained from BlackHawk Zone. The data sets are cleaned and merged to a single set (**'nhlsalaries_bhz.txt'**). Also the correction of players' names by matching with the ones in the roster data set is conducted, **'nhlsalaries_bhz_nc.txt'**. The detailed cleaning and merging works can be found in the code **'clean_salary_bhz.R'**. 
+
+Another comprehensive salary data set from Hockeyzone Plus, **'nhlsalaries_hzp.txt'**,  is provided by Prof. Matt Taddy. The comparison between the two salary data sets is summerized in **'comparison_salarydata.md'**. Although both salary data sets have some missing values, we prefer using the data from BlackHawk Zone since it gives salary records for more players. Please use them at your own risk. 
+
+The team involvement rate indicating the length of time the player has spent in this team over a specific season or his career, is calculated in **teaminvolve_rate.R** (the output is stored in **team_inv_rate.txt**). The outputs are eleven (10 seasons and 1 career) 2412*31 matrices, since we have 2412 players and 31 nhl teams (note: ATL was the former of WPG, we treat them separately). 
+
+Basically, for each season, and for each team, the number of games that each player has played is counted by using the shots information we had when analyzing players' performances. This means that when a player was onice for a shot in the game, we add 1 to the counter of this player. Then by normalizing according to the total number of games the player has palyed in that season, the team involvement rates for this player can be obtained. An illustration of the team involvement rate is as follows. For example, the career team involvement matrix shows that the player AARON_GAGNON spent more than half of his career in DAL (rate/weight=0.5526316) and he spent the rest his career in WPG (rate/weight=0.4473684). 
+
+The verification of the team involvement rates is also conducted. I randomly picked 20 players to do the sanity check. For each player, I compared the rates with the career path given by [nhl.com](http://nhl.com). The result proves the rationality of team involvement rates we obtained. 

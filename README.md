@@ -5,13 +5,19 @@ This repository will contain analyses for the hockey players performance. This h
 
 ####Content
 
-I (Sen Tian) start from conducting the hockey analysis by using **'hockey_shots.rda'** data, which is the output from **'buildshots.R'**. More details are provided in the README inside data or code branch. The main tool is the regularized logistic regression, and more specifically the [Gamma Lasso Regression](https://github.com/mataddy/gamlr), which is included in the *'gamlr'* package in R. The comparison of the results between using the 'goals' and 'shots' data sets is summarized in **'compare_shots_goals.pdf'** with R code **'gamlr_shots.R'**. 
+The data set I have used, containing all events within a single game for all games from season 2002 to the current season, is scraped from [nhl.com](https://nhl.com) by using [nhlscraper](https://github.com/acthomasca/nhlscrapr) tool from [A.C. Thomas](http://www.acthomas.ca/comment/). 
 
-The shot quality prediction is the second task. The analysis is mainly about the influence of factors 'distance of shots', 'session' and 'type of shots' on the goals making. The results are shown in **'shot_quality.pdf'** with R code **'shot_quality.R'**. 
+One of the main tools/methods is the regularized logistic regression, and more specifically the [Gamma Lasso Regression](https://github.com/mataddy/gamlr), which can be installed in R as the *'gamlr'* package.
 
-I then apply the Gamma Lasso Regression for each season. The career performance as well as the performance by season are examined. The results are shown in **'playereffects.txt'** with R code **'playereffects.R'**.
+I (Sen Tian) first pull relevent information (goals and shots information) from this data set and calculate the players' plus-minus values as well as special team effects. The details can be found in the **'General data sets'** folder. The data sets in this folder are shared throughout all the tasks.
 
-The second part of my work is to analyze whether the players are paid porperly. The salary data are obtained from BlackHawk Zone, which has salary history for each player in the NHL league starting from season 2002 to the current season. 
+The gamma lasso regularized model is applied to analyze players' performances. Both the onice players as well as special team effects are considered as factors that can influence the ability of making goals or shots. More details can be consulted to the **'Player performance'** folder.
 
-The team involvement rate indicating the length of time the player has spent in this team over a specific season or his career, is calculated in **teaminvolve_rate.R** (the output is stored in **team_inv_rate.txt**). For example, the career team involvement matrix shows that the player AARON_GAGNON spent more than half of his career in DAL (rate/weight=0.5526316) and he spent the rest his career in WPG (rate/weight=0.4473684). I randomly picked 20 players to do sanity check of the team involvement rates. For each player, I compared the rates with the career path shown in nhl.com. The results proves the rationality of team involvement rates. 
+The shot quality prediction is the next task. The influence of factors including 'distance of shots', 'session' and 'type of shots' on the ability of making goals, is analyzed by using a nonparametric ensemble method. More details can be refered to the **'Shot quality'** folder.
+
+The second part of my work is to analyze whether the players are paid porperly. The salary data are obtained from BlackHawk Zone, which has salary history for each player in the NHL league starting from season 2002 to the current season.
+
+I first analyze whether a team pays along the metric of the players' performances. The cleaned salary data set as well as details about the analysis can be found in the **'Player salary'** folder.
+
+
 
