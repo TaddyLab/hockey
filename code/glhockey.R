@@ -33,9 +33,9 @@ dev.off()
 BSP <- coef(fitSP, k=2)[-c(1,fitSP$free+1),]
 BTSP <- coef(fitTSP, k=2)[-c(1,fitTSP$free+1),]
 ## number of nonzero team-model effects
-sum(BTSP!=0)
+print(sum(BTSP!=0))
 ## number of nonzero player-only effects
-sum(BSP!=0)
+print(sum(BSP!=0))
 ## output in player table
 tab <- cbind(who,BTSP,BSP)[order(-BTSP,-BSP),]
 names(tab) <- c("Player", "Last Active Year", 
@@ -44,7 +44,7 @@ tab$Player <- as.character(tab$Player)
 tab[1:20,]
 
 
-outfile <- "../results/glhockey_betas.csv"
+outfile <- "../results/logistic_map_betas.csv"
 write.csv(tab, file=outfile, row.names=FALSE, quote=FALSE)
 
 
