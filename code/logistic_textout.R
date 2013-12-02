@@ -24,31 +24,32 @@
 
 
 ## check that libraries are loaded
-library(slam)
-library(textir)
+library(gamlr)
 
 ## load the goals data
 load("../data/nhlscrapr_logit_data.RData")
+
+## MAP
 
 ## load the map outputs
 load(file="../results/logistic_map_fits.RData")
 
 ## create beta table
-XG <- as.data.frame(XG)
-active <- rep(NA, ncol(XP))
-for(i in 1:ncol(XP)) active[i] <- max(XG$Season[XP[,i] != 0])
-tab <- data.frame(uN2, active, matrix(fitSTP$loadings[,-(1:38)], ncol=1))
-
-## augment beta table
-tab <- cbind(tab, matrix(fitSP$loadings[,-(1:7)], ncol=1))
-names(tab) <- c("Player", "Last Active Year", "Player-Team Model", "Player-Only Model")
+active <- XG[,'Season'][XP@i[tail(XP@p,-1)] + 1]
+who <- data.frame(uN2, active) 
+SP <- coef(fitSP, k=2)[-c(1,fitSP$free+1),]
+BTSP <- coef(fitTSP, k=2)[-c(1,fitTSP$free+1),]
+## output in player table
+tab <- cbind(who,BTSP,BSP)[order(-BTSP,-BSP),]
+names(tab) <- c("Player", "Last Active Year", 
+	"Player-Team Model", "Player-Only Model")
 tab$Player <- as.character(tab$Player)
 
-## order rows
-o <- order(tab[,3], tab[,4], decreasing=TRUE)
-## write table out to files\
+## write table out to files
 outfile <- "../results/logistic_map_betas.csv"
-write.csv(tab[o,], file=outfile, row.names=FALSE, quote=FALSE)
+write.csv(tab, file=outfile, row.names=FALSE, quote=FALSE)
+
+## full Bayes
 
 ## load the fully Bayesian outputs
 load(file="../results/logistic_rl_fits.RData")

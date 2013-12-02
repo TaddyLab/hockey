@@ -1,24 +1,55 @@
-source("args.R")
+#*******************************************************************************
+#
+# Chicago Hockey Analytics: Robert B, Gramacy and Matt Taddy
+# Copyright (C) 2013, The University of Chicago
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+#
+# Questions? Contact Robert B. Gramacy (rbgramacy@chicagobooth.edu), or
+#                    Matt Taddy (taddy@chicagobooth.edu)
+#
+#*******************************************************************************
 
+
+## load the data
 load("../data/nhlscrapr_logit_data.RData")
-library(slam)
-library(textir)
-library(mvtnorm)
-library(Matrix)
-library(reglogit)
 
-## team+player model with special teams indicators
-penSTP <- c(rep(0,ncol(XS)+ncol(XT)+1), rep(data.frame(c(7.5,1/2)), ncol(XP)))
-fitSTP <- mnlm(counts=Y, covars=cbind(XS,XT,XP), verb=1, penalty=penSTP, normalize=FALSE)
+## load gamlr for MAP analysis
+library(gamlr)
 
-## player-only model with special teams indicators
-penSP <- c(rep(0,ncol(XS)+1), rep(data.frame(c(7.5,1/2)), ncol(XP)))
-fitSP <- mnlm(counts=Y, covars=cbind(XS,XP), verb=1, penalty=penSP, normalize=FALSE)
+## design matrices
+XP <- as(XP,"dgCMatrix")
+stopifnot(all(colSums(XP!=0)!=0))
+XSP <- cBind(XS,XP)
+XTSP <- cBind(XT,XSP)
+
+## fit player-only model
+fitSP <- gamlr(XSP, Y, gamma=10, standardize=FALSE,
+	family="binomial", free=1:ncol(XS), verb=1)
+## fit player-team model
+fitTSP <- gamlr(XTSP, Y, gamma=10, standardize=FALSE,
+	family="binomial", free=1:(ncol(XS)+ncol(XT)), verb=1)
 
 ## save the output, does not include the inputs
 save(fitSP, fitSTP, file="../results/logistic_map_fits.RData")
 
-## for parallel reglogits
+
+## now for reglogit
+library(mvtnorm)
+library(Matrix)
+library(reglogit)
 library(parallel)
 
 
