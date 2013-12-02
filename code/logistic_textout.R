@@ -37,7 +37,7 @@ load(file="../results/logistic_map_fits.RData")
 ## create beta table
 active <- XG[,'Season'][XP@i[tail(XP@p,-1)] + 1]
 who <- data.frame(uN2, active) 
-SP <- coef(fitSP, k=2)[-c(1,fitSP$free+1),]
+BSP <- coef(fitSP, k=2)[-c(1,fitSP$free+1),]
 BTSP <- coef(fitTSP, k=2)[-c(1,fitTSP$free+1),]
 ## output in player table
 tab <- cbind(who,BTSP,BSP)[order(-BTSP,-BSP),]

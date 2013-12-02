@@ -43,7 +43,7 @@ fitTSP <- gamlr(XTSP, Y, gamma=10, standardize=FALSE,
 	family="binomial", free=1:(ncol(XS)+ncol(XT)), verb=1)
 
 ## save the output, does not include the inputs
-save(fitSP, fitSTP, file="../results/logistic_map_fits.RData")
+save(fitSP, fitTSP, file="../results/logistic_map_fits.RData")
 
 
 ## now for reglogit
