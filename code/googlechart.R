@@ -75,6 +75,7 @@ map.betas.nz.all <- map.betas.all[rows,-2]
 ## write out all player stats
 resultpath <- paste(EXT, "/results_20132014", sep="")
 system(sprintf("mkdir -p %s", resultpath))
+## note that the url requires the directory be created on the server already
 
 ## read in header and footer files
 header <- readLines("~/hockey-git/code/header.html")
@@ -97,9 +98,13 @@ footer[38] <- footer.all[38] <- paste(Sys.time(), "<br>", sep="")
 ## write out all
 googlechart(map.betas.nz.all, header, footer.all, fullmapallfile)
 system(paste("cp -f ", paste(fullmapallfile, " ", resultpath, "/mapbetas_all_latest.html", sep="")))
+system(paste("scp ", paste(fullmapallfile, " ", URL, "/mapbetas_all_latest2.html", sep="")))
+system(paste("scp ", paste(fullmapallfile, " ", URL, "/2", mapallfile, sep="")))
 ## write out just those active in 20132014
 googlechart(map.betas.nz, header, footer, fullmapfilecur)
 system(paste("cp -f ", paste(fullmapfilecur, " ", resultpath, "/mapbetas_active_latest.html", sep="")))
+system(paste("scp ", paste(fullmapfilecur, " ", URL, "/mapbetas_active_latest2.html", sep="")))
+system(paste("scp ", paste(fullmapfilecur, " ", URL, "/2", mapfilecur, sep="")))
 
 ## write out an index
 index <- readLines("~/hockey-git/code/index.html")
@@ -111,4 +116,6 @@ all <- paste("<a href=\"", all, "\">", all, "</a>", sep="")
 all <- paste("<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<td>", all, "</td></tr>\n", sep="")
 both <- paste(as.vector(rbind(active, all)), collapse="\n")
 index[39] <- paste("<table align=\"center\", cellpadding=\"5\">", both, "</table>", sep="")
-cat(index, file=paste(resultpath, "index.html", sep="/"))
+indexfile <- paste(resultpath, "index.html", sep="/")
+cat(index, file=indexfile)
+system(paste("scp ", paste(indexfile, " ", URL, "/index2.html", sep="")))
