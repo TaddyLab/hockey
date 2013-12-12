@@ -98,13 +98,13 @@ footer[38] <- footer.all[38] <- paste(Sys.time(), "<br>", sep="")
 ## write out all
 googlechart(map.betas.nz.all, header, footer.all, fullmapallfile)
 system(paste("cp -f ", paste(fullmapallfile, " ", resultpath, "/mapbetas_all_latest.html", sep="")))
-system(paste("scp ", paste(fullmapallfile, " ", URL, "/mapbetas_all_latest2.html", sep="")))
-system(paste("scp ", paste(fullmapallfile, " ", URL, "/2", mapallfile, sep="")))
+system(paste("scp ", paste(fullmapallfile, " ", URL, "/mapbetas_all_latest.html", sep="")))
+system(paste("scp ", paste(fullmapallfile, " ", URL, "/", mapallfile, sep="")))
 ## write out just those active in 20132014
 googlechart(map.betas.nz, header, footer, fullmapfilecur)
 system(paste("cp -f ", paste(fullmapfilecur, " ", resultpath, "/mapbetas_active_latest.html", sep="")))
-system(paste("scp ", paste(fullmapfilecur, " ", URL, "/mapbetas_active_latest2.html", sep="")))
-system(paste("scp ", paste(fullmapfilecur, " ", URL, "/2", mapfilecur, sep="")))
+system(paste("scp ", paste(fullmapfilecur, " ", URL, "/mapbetas_active_latest.html", sep="")))
+system(paste("scp ", paste(fullmapfilecur, " ", URL, "/", mapfilecur, sep="")))
 
 ## write out an index
 index <- readLines("~/hockey-git/code/index.html")
@@ -118,4 +118,4 @@ both <- paste(as.vector(rbind(active, all)), collapse="\n")
 index[39] <- paste("<table align=\"center\", cellpadding=\"5\">", both, "</table>", sep="")
 indexfile <- paste(resultpath, "index.html", sep="/")
 cat(index, file=indexfile)
-system(paste("scp ", paste(indexfile, " ", URL, "/index2.html", sep="")))
+system(paste("scp ", paste(indexfile, " ", URL, "/index.html", sep="")))
