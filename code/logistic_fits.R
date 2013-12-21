@@ -30,9 +30,9 @@ load("../data/nhlscrapr_logit_data.RData")
 library(gamlr)
 
 ## design matrices
-XP <- as(XP,"dgCMatrix")
-stopifnot(all(colSums(XP!=0)!=0))
-XSP <- cBind(XS,XP)
+XPs <- as(XP,"dgCMatrix")
+stopifnot(all(colSums(XPs!=0)!=0))
+XSP <- cBind(XS,XPs)
 XTSP <- cBind(XT,XSP)
 
 ## fit player-only model
