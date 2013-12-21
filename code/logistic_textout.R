@@ -28,6 +28,7 @@ library(gamlr)
 
 ## load the goals data
 load("../data/nhlscrapr_logit_data.RData")
+XP <- as(XP,"dgCMatrix")
 
 ## MAP
 
