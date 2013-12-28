@@ -59,17 +59,17 @@ season.goals <- function(gmat){
   do.call(rbind,glist)
 }
   
-## grab games, break into list, and loop
+## grab games, break into list, and par-loop
 load("data/roster.RData")
 G <- roster$games
 rownames(G) <- sprintf("%s-%s", G$season, G$gcode)
 G <- lapply(unique(G$season), function(s) G[G$season==s,])
+clusterExport(cl,"game.goals")
 goals <- do.call(rbind,parLapply(cl,G,season.goals))
 
-## deal with types of columns and fix team names
+## deal with types of columns 
 goals$g <- as.factor(goals$g)
-goals$awayteam <- as.character(goals$awayteam)
-goals$hometeam <- as.character(goals$hometeam)
+## first fix team names
 goals$awayteam[goals$awayteam == "S.J"] <- "SJS"
 goals$awayteam[goals$awayteam == "L.A"] <- "LAK"
 goals$awayteam[goals$awayteam == "T.B"] <- "TBL"
@@ -83,113 +83,122 @@ goals$awayteam <- as.factor(goals$awayteam)
 
 ## goal indicator(s)
 Y <- goals$g == "HOME"
+names(Y) <- rownames(goals)
 ngoals <- nrow(goals)
 
 ## unique player info
 nplayers <- nrow(roster$roster.unique)
-unames <- paste(roster$roster.unique$first, 
+upnames <- paste(roster$roster.unique$first, 
             roster$roster.unique$last, sep="_")
 positions <- roster$roster.unique$pos
 
-goals.design <- function(gmat){
+## function to build designsÏ
+design.goals <- function(gmat){
+  require(Matrix)
 
   ## Design matrices
-  XP <- Matrix(0, nrow=ngoals,ncol=nplayers,
-        dimnames=list(rownames(goals),unames))
+  T <- nrow(gmat)
+  XP <- Matrix(0, nrow=T, ncol=length(upnames),
+        dimnames=list(rownames(gmat),upnames))
+  XS <- Matrix(0, ncol=7, nrow=T,
+    dimnames=list(rownames(gmat),
+      c("S6v5", "S6v4", "S6v3", "S5v4", "S5v3", "S4v3", "SNG")))
 
+  ## skater and goalie columns
+  hp <- c(paste("h",1:6,sep=""),"home.G")
+  ap <- c(paste("a",1:6,sep=""),"away.G")
 
-  ## home and away player indicators
-  PA <- as.matrix(goals[,c(6:11,22)])
-  PA[PA == 1] <- NA
-  PH <- as.matrix(goals[,c(12:17,23)])
-  PH[PH == 1] <- NA
+  ## build the matrices and plus-minus
+  for(t in 1:T) {
 
-## special teams design matrix
-XS <- matrix(0, ncol=7, nrow=T)
-colnames(XS) <- c("S6v5", "S6v4", "S6v3", "S5v4", "S5v3", "S4v3", "SNG")
-XS <- as.data.frame(XS)
+    ## players on ice    
+    pht <- gmat[t,hp]
+    pat <- gmat[t,ap]
 
-## split into chgunks
-chunks <- round(seq.int(0,ngoals,length=NC*2+1))
-G <- lapply(1:(NC*2), function(i) goals[(chunk[i]+1):chunk[i+1],])
+    ## player design rows
+    XP[t, pht[pht!=1]] <- 1
+    XP[t, pat[pat!=1]] <- -1
 
+    ## number of actual skaters
+    sh <- sum(pht[1:6]!=1)
+    sa <- sum(pat[1:6]!=1)
 
+    ## design matrix for special teams
+    HvA <- sprintf("S%dv%d", sh, sa)
+    if(HvA %in% colnames(XS)) XS[t,HvA] <- 1
+    AvH <- sprintf("S%dv%d", sa, sh)
+    if(AvH %in% colnames(XS)) XS[t,AvH] <- -1
+  
+    ## checking for pulled-goalie situation at the end of the game
+    if(gmat[t,]$session == "Regular" 
+        && gmat[t,]$period == 3 && gmat[t,]$seconds > 3480){
+          if( (pht[7]==1) && (gmat[t,]$home.score < gmat[t,]$away.score)) 
+            XS[t,"SNG"] <- 1
+          if( (pat[7]==1) && (gmat[t,]$home.score > gmat[t,]$away.score)) 
+            XS[t,"SNG"] <- -1 
+        }
 
-## build the matrices and plus-minus
-for(t in 1:T) {
-
-  ## design matrix for players        
-  pht <- PH[t,!is.na(PH[t,])]
-  pat <- PA[t,!is.na(PA[t,])]
-  XP[t, pht] <- 1
-  XP[t, pat] <- -1
-
-  ## design matrix for special teams
-  spht <- sum(!is.na(PH[t,1:6]))
-  spat <- sum(!is.na(PA[t,1:6]))
-  if(spht == 6) {
-          if(spat == 5) XS[t,]$S6v5 <- 1
-          else if(spat == 4) XS[t,]$S6v4 <- 1
-          else if(spat == 3) XS[t,]$S6v3 <- 1
-  } else if(spht == 5) {
-          if(spat == 6) XS[t,]$S6v5 <- -1
-    else if(spat == 4) XS[t,]$S5v4 <- 1
-    else if(spat == 3) XS[t,]$S5v3 <- 1
-  } else if(spht == 4) {
-          if(spat == 3) XS[t,]$S4v3 <- 1
-          else if(spat == 5) XS[t,]$S5v4 <- -1
-          else if(spat == 6) XS[t,]$S6v4 <- -1
-  } else if(spht == 3) {
-          if(spat == 4) XS[t,]$S4v3 <- -1
-          else if(spat == 5) XS[t,]$S5v3 <- -1
-          else if(spat == 6) XS[t,]$S6v3 <- -1
-  }
-
-  ## checking for pulled-goalie situation at the end of the game
-  if(goals[t,]$session == "Regular" 
-          && goals[t,]$period == 3 && goals[t,]$seconds > 3480) {
-            if(is.na(PH[t,7]) && (goals[t,]$home.score < goals[t,]$away.score)) XS[t,]$SNG <- 1
-            if(is.na(PA[t,7]) && (goals[t,]$home.score > goals[t,]$away.score)) XS[t,]$SNG <- -1
-  }
-
-  ## plus-minus
-  if(Y[t]) { ## home goal
-    Ppm[pht] <- Ppm[pht] + 1
-    Ppm[pat] <- Ppm[pat] - 1
-  } else {
-    Ppm[pht] <- Ppm[pht] - 1
-    Ppm[pat] <- Ppm[pat] + 1
-  }
-
-  ## progress meter
-  if(t %% 1000 == 0) 
+    ## progress meter
+    if(t %% 1000 == 0) 
         cat(t, " of ", T, " goals processed\n", sep="")
+  }
+
+  cBind(XS,XP)
 }
 
-## back to matrix
-XS <- as.matrix(XS)
 
-## see which cols are all the same, and remove from df
-same <- which(apply(XP, 2, var) == 0)
-XP <- XP[,-same]
-uN2 <- uniqueNames[-same]
-pos2 <- positions[-same]
-Ppm <- Ppm[-same]
+## split into chunks and par-loop
+clusterExport(cl, "upnames")
+chunk <- round(seq.int(0,ngoals,length=NC+1))
+G <- lapply(1:NC, function(i) goals[(chunk[i]+1):chunk[i+1],])
+X <- do.call(rBind, parLapply(cl,G,design.goals))
+XS <- X[,1:7]
+XP <- X[,-(1:7)]
 
-## extra cleaning and output for gamlr
-library(Matrix, lib=LIB)
-onice <- Matrix(XP,sparse=TRUE)
-colnames(onice) <- uN2
-player <- data.frame(uN2, pos2, Ppm)
-colnames(player) <- c("name", "position", "plus.minus")
-config <- Matrix(XS,sparse=TRUE)
-goal <- data.frame(whoscored=goals$g,
-      season=goals$season, 
-      team.away=goals$awayteam,
-      team.home=goals$hometeam,
-      period=goals$period,
-      differential=goals$home.score-goals$away.score,
-      session=goals$session,
-      gamecode=goals$gcode)
-rownames(config) <- rownames(goal) <- rownames(onice) <- 1:nrow(config)
-save(goal,player,onice,config,compress="xz",file="results/hockey_goals.rda")
+## remove ne'r occurs
+allzero <- which(colSums(XP!=0)==0)
+XP <- XP[,-allzero]
+positions <- positions[-allzero]
+
+## goals
+goal <- data.frame(
+    whoscored=goals$g,
+    season=as.character(goals$season), 
+    awayteam=as.character(goals$awayteam),
+    hometeam=as.character(goals$hometeam),
+    period=goals$period,
+    differential=goals$home.score-goals$away.score,
+    session=as.character(goals$session),
+    seconds=goals$seconds,
+    gamecode=goals$gcode,
+    stringsAsFactors=FALSE)
+
+## players
+active <- goal$season[XP@i[tail(XP@p,-1)]+1]
+lastyear <- as.numeric(substr(active,5,8))
+player <- data.frame(position=positions,
+            plus.minus=colSums(XP),
+            active=active,lastyear=lastyear)
+rownames(player) <- colnames(XP)
+
+## add coach info
+source("code/coaches.R")
+hc <- coach[cbind(goal$hometeam,goal$season)]
+ac <- coach[cbind(goal$awayteam,goal$season)]
+
+## who is the missing washington coach?
+cf <- relevel(factor(c(hc,ac),levels=unique(c(hc,ac))),".")
+cw <- matrix(as.numeric(cf)-1,ncol=2)
+## turn binary
+XC <- Matrix(0,nrow=ngoals,ncol=nlevels(cf)-1,
+  dimnames=list(goals$gcode,levels(cf)[-1]))
+XC[cbind(1:ngoals,cw[,1])] <- 1
+XC[cbind(1:ngoals,cw[,2])] <- -1
+
+## save
+save(XS,XC,XP,Y,player,goal,coach, file="data/builtnhl.rda", compress=FALSE)
+
+## exit
+stopCluster(cl)
+
+

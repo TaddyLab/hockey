@@ -1,9 +1,3 @@
-library(gamlr)
-
-## grab data and drop all the useless zeros
-load("data/nhlscrapr_logit_data.RData")
-n <- length(Y)
-
 ## coach effects
 coach <- as.matrix(read.csv("data/coach.csv",
 	check.names=FALSE,row.names=1,as.is=TRUE))
@@ -22,21 +16,3 @@ coach[coach=="Rick Dudley, John Torchetti"] <- "Rick Dudley"
 coach[coach=="Gerard Gallant, Gary Agnew"] <- "Gerard Gallant"
 ## ... only 45 in 03-04 but was assistant to interm/gm DM for rest
 coach[coach=="Doug MacLean, Gerard Gallant"] <- "Gerard Gallant"
-
-saveRDS(coach,file="data/coach.rds")
-
-## create coach effects
-hc <- coach[cbind(goals$hometeam,goals$season)]
-ac <- coach[cbind(goals$awayteam,goals$season)]
-
-## who is the missing washington coach?
-cf <- relevel(factor(c(hc,ac),levels=unique(c(hc,ac))),".")
-p <- nlevels(cf)-1
-cw <- matrix(as.numeric(cf)-1,ncol=2)
-## turn binary
-XC <- Matrix(0,nrow=n,ncol=p,
-	dimnames=list(goals$gcode,levels(cf)[-1]))
-XC[cbind(1:n,cw[,1])] <- 1
-XC[cbind(1:n,cw[,2])] <- -1
-
-saveRDS(XC,file="data/coaches.rds")
