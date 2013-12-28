@@ -5,7 +5,7 @@ load("data/builtnhl.rda")
 
 ## build time dynamics
 delta <- 0.1
-XT <- list()
+XD <- list()
 pj <- summary(XP)$j
 year <- as.numeric(substr(goal$season,5,8))
 for(s in rev(unique(goal$season))[-1]){
@@ -13,18 +13,18 @@ for(s in rev(unique(goal$season))[-1]){
   xs <- XP
   xs@x <- xs@x*delta*(year[xs@i+1]<=t)*(lastyear[pj]>t)
   colnames(xs) <- paste(colnames(xs),s,sep=".")
-  XT[[s]] <- xs[,colSums(xs!=0)!=0]
+  XD[[s]] <- xs[,colSums(xs!=0)!=0]
   cat(t,"\n")
 }
-XT <- do.call(cBind,rev(XT))
+XD <- do.call(cBind,rev(XD))
 
 # # HASEK test: he sat out 02-03 and retired in 08.
-xtest <- XT[,grep("DOMINIK_HASEK",colnames(XT))]
+xtest <- XD[,grep("DOMINIK_HASEK",colnames(XD))]
 xtest <- xtest[apply(xtest,1,function(r) any(r!=0)),]
 xtest[c(1,100,400),]
 
 ## design X
-X <- cBind(XS,XC,XP,XT)
+X <- cBind(XS,XC,XP,XD)
 
 ## fit
 fit <- gamlr(X, Y, gamma=10, standardize=FALSE,
@@ -34,7 +34,7 @@ fit <- gamlr(X, Y, gamma=10, standardize=FALSE,
 B <- coef(fit, k=2)[-1,]
 BP <- B[colnames(XP)]
 cat("nonzero mains:", sum(BP!=0), "\n")
-BT <- B[colnames(XT)]
+BT <- B[colnames(XD)]
 cat("nonzero deltas:", sum(BT!=0), "\n")
 
 ## build player table
