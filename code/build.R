@@ -176,9 +176,14 @@ goal <- data.frame(
 ## players
 active <- goal$season[XP@i[tail(XP@p,-1)]+1]
 lastyear <- as.numeric(substr(active,5,8))
+entry <- goal$season[XP@i[tail(XP@p,-1)+1]+1]
+firstyear <- as.numeric(substr(entry,1,4))
+
 player <- data.frame(position=positions,
             plus.minus=colSums(XP),
-            active=active,lastyear=lastyear)
+            entry=entry,active=active,
+            firstyear=firstyear,lastyear=lastyear,
+            stringsAsFactors=FALSE)
 rownames(player) <- colnames(XP)
 
 ## add coach info
@@ -194,6 +199,7 @@ XC <- Matrix(0,nrow=ngoals,ncol=nlevels(cf)-1,
   dimnames=list(goals$gcode,levels(cf)[-1]))
 XC[cbind(1:ngoals,cw[,1])] <- 1
 XC[cbind(1:ngoals,cw[,2])] <- -1
+colnames(XC) <- paste("COACH",colnames(XC),sep="_")
 
 ## save
 save(XS,XC,XP,Y,player,goal,coach, file="data/builtnhl.rda", compress=FALSE)
