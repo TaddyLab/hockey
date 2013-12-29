@@ -158,6 +158,9 @@ X <- do.call(rBind, parLapply(cl,G,design.goals))
 XS <- X[,1:7]
 XP <- X[,-(1:7)]
 
+## stop
+stopCluster(cl)
+
 ## remove ne'r occurs
 allzero <- which(colSums(XP!=0)==0)
 XP <- XP[,-allzero]
@@ -206,17 +209,19 @@ colnames(XC) <- paste("COACH",colnames(XC),sep="_")
 
 ## add team info
 teams <- sort(unique(c(goal$hometeam,goal$awayteam)))
-XT <- Matrix(0, nrow=ngoals, ncol=length(teams),
-  dimnames=list(goal$gcode,teams))
-tf <- factor(c(goal$hometeam,goal$awayteam),levels=teams)
+seasons <- sort(unique(goal$season))
+team.season <- paste(rep(teams, length(seasons)), 
+  rep(seasons, each=length(teams)), sep=".")
+XT <- Matrix(0, nrow=ngoals, ncol=length(team.season),
+    dimnames=list(goal$gcode,team.season))
+tc <- paste(c(goal$hometeam,goal$awayteam),rep(goal$season,2), sep=".")
+tf <- factor(tc,levels=team.season)
 tw <- matrix(as.numeric(tf),ncol=2)
 XT[cbind(1:ngoals,tw[,1])] <- 1
 XT[cbind(1:ngoals,tw[,2])] <- -1
 
 ## save
-save(XS,XT,XC,XP,Y,player,goal,file="data/nhldesign.rda", compress=FALSE)
+save(XS,XT,XC,XP,Y,player,goal,teams,seasons,file="data/nhldesign.rda", compress=FALSE)
 
-## exit
-stopCluster(cl)
 
 
