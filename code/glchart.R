@@ -55,7 +55,7 @@ footer[38] <- footer.all[38] <- paste(Sys.time(), "<br>", sep="")
 
 ## extract the map betas residing in Git version control
 tab <- read.table("results/player_effects.txt", 
-	sep="|", header=TRUE, 
+	sep="|", header=TRUE, quote="", comment="",
 	colClasses=c("character","character","numeric","numeric"))
 
 ## write out nonzero carreer or current
