@@ -1,61 +1,61 @@
+## fitting the hockey gl model
 library(gamlr)
 
-## grab data and drop all the useless zeros
+## corrected AIC
+AICc <- function(fit){
+	ll <- logLik(fit)
+	d <- attributes(ll)$df
+	n <- attributes(ll)$nobs
+	ic <- -2*ll+ 2*n*(d+1)/(n-d-2)
+	attributes(ic) <- NULL
+	ic
+}
+
+## grab data
 load("data/nhldesign.rda")
 
-## design and penalization scheme
-## team effects
+## design 
 X <- cBind(XS,XT,XP)
-## coach effects
-#X <- cBind(XS,XC,XP)
-
-unpen <- 1:ncol(XS)
 
 ### career player effects
 fit <- gamlr(X, Y, 
-	gamma=0, standardize=FALSE, verb=0,
-	family="binomial", free=unpen)
-
-## corrected AIC
-d <- fit$df
-n <- nrow(X)
-ic <- fit$deviance + 2*n*(d+1)/(n-d-2)
-
-B <- coef(fit, s=which.min(ic))[-1,]
-cat("nonzero career effects:", sum(B[colnames(XP)]!=0),"\n")
-print(B[colnames(XP)][order(-B[colnames(XP)])[1:20]])
+	gamma=10, standardize=FALSE, verb=0,
+	family="binomial", free=1:ncol(XS))
+B <- coef(fit, s=which.min(AICc(fit)))[-1,]
+Bplayer <- B[colnames(XP)]
+cat("nonzero career effects:", sum(Bplayer!=0),"\n")
 
 ## pull out team effects
 teamtab <- matrix(0,
 	nrow=length(teams),ncol=length(seasons),
 	dimnames=list(teams,seasons))
 bt <- B[colnames(XT)]
-mean(bt!=0)
 bi <- t(matrix(unlist(strsplit(names(bt), "\\.")),nrow=2))
 teamtab[bi] <- bt
 write.table(teamtab,"results/team_effects.txt", quote=FALSE, sep="|")
 
-# # ## pull out coach effects
-# BC <- sort(B[colnames(XC)],decreasing=TRUE)
-# names(BC) <- sub("COACH_","",names(BC))
-# write.table(BC,"results/coach_effects.txt", quote=FALSE, col.names=FALSE, sep="|")
-
 ### current season effects
 thisseason<-"20132014"
 now <- goal$season==thisseason
-fit_now <- gamlr(X[now,colnames(XP)], Y[now], 
-	fix=X[now,]%*%B, gamma=0, verb=0,
-	standardize=FALSE, family="binomial")
-Bdif <- coef(fit_now, k=2)[-1,]
-cat("nonzero current effects:", sum(Bdif!=0),"\n")
 
-## print
-cbind(player[,c("position","active")],
-	B=B[colnames(XP)],Bdif=Bdif)[Bdif!=0,]
+## fit ignoring this season
+fit_past <- gamlr(X[!now,], Y[!now], 
+	free=1:ncol(XS), gamma=10, standardize=FALSE, family="binomial")
+seg_past <- which.min(AICc(fit_past))
+Bpast <- coef(fit_past, s=seg_past)[colnames(XP),]
+
+## fit any change in current season
+fit_now <- gamlr(X[now,], Y[now], 
+	fix=predict(fit_past,X[now,],s=seg_past),
+	gamma=10, standardize=FALSE, family="binomial")
+Bdif <- coef(fit_now, s=which.min(AICc(fit_now)))[colnames(XP),]
+cat("nonzero current differences:", sum(Bdif!=0),"\n")
+
+## combine
+Bcar <- B[colnames(XP)]
+Bnow <- (Bdif + Bpast)*(player$active==thisseason)
 
 ## tabulate
-Bcar <- B[colnames(XP)]
-Bnow <- (Bcar + Bdif)*(player$active==thisseason)
 tab <- data.frame(who=names(Bcar),
 			last_active=player$active,
 			career_effect=Bcar,

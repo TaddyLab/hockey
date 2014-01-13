@@ -46,10 +46,10 @@ curpath <- paste(resultpath, "/", curfile, sep="")
 
 ## changes to footer for all
 footer.all <- gsub("ability", 
-	'effect (since 2001): career/<font color="red">current</font>', footer)
+	'effect: career average / <font color="red">this season</font>', footer)
 footer.all[39] <- paste("<a href=\"", curfile, "\"> show only current players</a>", sep="")
 footer <- gsub("ability", 
-	'effect (active): career/<font color="red">current</font>', footer)
+	'effect (active): career average / <font color="red">this season</font>', footer)
 footer[39] <- paste("<a href=\"", allfile, "\">show all players</a>", sep="")
 footer[38] <- footer.all[38] <- paste(Sys.time(), "<br>", sep="")
 
