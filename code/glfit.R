@@ -51,7 +51,7 @@ tab <- data.frame(who=names(Bcar),
 			current_effect=Bnow)
 tab <- tab[order(-tab$career_effect,-tab$current_effect,tab$who),]
 rownames(tab) <- 1:nrow(tab)
-print(tab[1:25,])
+## print(tab[1:25,])
 
 write.table(tab, sep="|",
 	file="results/player_effects.txt", row.names=FALSE, quote=FALSE)
