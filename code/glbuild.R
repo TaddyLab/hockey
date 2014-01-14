@@ -217,21 +217,6 @@ player <- data.frame(position=positions,
             stringsAsFactors=FALSE)
 rownames(player) <- colnames(XP)
 
-## add coach info
-source("code/coaches.R")
-hc <- coach[cbind(goal$hometeam,goal$season)]
-ac <- coach[cbind(goal$awayteam,goal$season)]
-
-## who is the missing washington coach?
-cf <- relevel(factor(c(hc,ac),levels=unique(c(hc,ac))),".")
-cw <- matrix(as.numeric(cf)-1,ncol=2)
-## turn binary
-XC <- Matrix(0,nrow=ngoals,ncol=nlevels(cf)-1,
-  dimnames=list(goal$gcode,levels(cf)[-1]))
-XC[cbind(1:ngoals,cw[,1])] <- 1
-XC[cbind(1:ngoals,cw[,2])] <- -1
-colnames(XC) <- paste("COACH",colnames(XC),sep="_")
-
 ## add team info
 teams <- sort(unique(c(goal$hometeam,goal$awayteam)))
 seasons <- sort(unique(goal$season))
@@ -246,7 +231,8 @@ XT[cbind(1:ngoals,tw[,1])] <- 1
 XT[cbind(1:ngoals,tw[,2])] <- -1
 
 ## save
-save(XS,XT,XC,XP,Y,player,goal,teams,seasons,file="data/nhldesign.rda", compress=FALSE)
+save(XS,XT,XP,Y,player,goal,teams,seasons,
+  file="data/nhldesign.rda", compress=FALSE)
 
 
 
