@@ -11,10 +11,11 @@ module load openmpi
 
 ~/R-3.0.1/bin/R CMD BATCH --no-save scrape.R 
 ~/R-3.0.1/bin/R CMD BATCH --no-save buildgoals.R 
-~/R-3.0.1/bin/R CMD BATCH --no-save logistic_fits.R 
-~/R-3.0.1/bin/R CMD BATCH --no-save logistic_textout.R 
-~/R-3.0.1/bin/R CMD BATCH --no-save googlechart.R 
+~/R-3.0.1/bin/R CMD BATCH --no-save glfit.R 
+~/R-3.0.1/bin/R CMD BATCH --no-save ltlfit.R 
+~/R-3.0.1/bin/R CMD BATCH --no-save glchart.R 
 
 module load git
-git commit -a -m "weekly update"
+git add data/nhldesign.rda results/*effects.txt
+git commit -m "weekly update"
 git push
