@@ -46,7 +46,7 @@ teamtab <- matrix(0,
 bt <- B[colnames(XT)]
 bi <- t(matrix(unlist(strsplit(names(bt), "\\.")),nrow=2))
 teamtab[bi] <- bt
-write.table(teamtab,"results/gl_team_effects.txt", quote=FALSE, sep="|")
+write.csv(teamtab,"results/gl_team_effects.csv", quote=FALSE, row.names=FALSE)
 
 ### current season effects
 thisseason <- "20132014"
@@ -77,11 +77,4 @@ tab <- tab[order(-tab$career_effect,-tab$current_effect,tab$who),]
 rownames(tab) <- 1:nrow(tab)
 ## print(tab[1:25,])
 
-write.table(tab, sep="|",
-	file="results/gl_player_effects.txt", row.names=FALSE, quote=FALSE)
-
-
-
-
-
-
+write.csv(tab, file="results/gl_player_effects.csv", row.names=FALSE, quote=FALSE)
