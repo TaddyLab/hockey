@@ -1,16 +1,6 @@
 ## fitting the hockey gl model
 library(gamlr)
 
-## corrected AIC
-AICc <- function(fit){
-	ll <- logLik(fit)
-	d <- attributes(ll)$df
-	n <- attributes(ll)$nobs
-	ic <- -2*ll+ 2*n*(d+1)/(n-d-2)
-	attributes(ic) <- NULL
-	ic
-}
-
 ## grab data
 load("data/nhldesign.rda")
 
@@ -21,7 +11,7 @@ X <- cBind(XS,XT,XP)
 fit <- gamlr(X, Y, 
 	gamma=10, standardize=FALSE, verb=0,
 	family="binomial", free=1:ncol(XS))
-B <- coef(fit, s=which.min(AICc(fit)))[-1,]
+B <- coef(fit)[-1,]
 Bplayer <- B[colnames(XP)]
 cat("nonzero career effects:", sum(Bplayer!=0),"\n")
 
@@ -41,14 +31,13 @@ now <- goal$season==thisseason
 ## fit ignoring this season
 fit_past <- gamlr(X[!now,], Y[!now], 
 	free=1:ncol(XS), gamma=10, standardize=FALSE, family="binomial")
-seg_past <- which.min(AICc(fit_past))
-Bpast <- coef(fit_past, s=seg_past)[colnames(XP),]
+Bpast <- coef(fit_past)[colnames(XP),]
 
 ## fit any change in current season
 fit_now <- gamlr(X[now,], Y[now], 
-	fix=predict(fit_past,X[now,],s=seg_past),
+	fix=predict(fit_past,X[now,]),
 	gamma=10, standardize=FALSE, family="binomial")
-Bdif <- coef(fit_now, s=which.min(AICc(fit_now)))[colnames(XP),]
+Bdif <- coef(fit_now)[colnames(XP),]
 cat("nonzero current differences:", sum(Bdif!=0),"\n")
 
 ## combine
