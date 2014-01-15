@@ -9,11 +9,11 @@
 ## module load R/3.0
 module load openmpi
 
-~/R-3.0.1/bin/R CMD BATCH --no-save scrape.R 
-~/R-3.0.1/bin/R CMD BATCH --no-save buildgoals.R 
-~/R-3.0.1/bin/R CMD BATCH --no-save glfit.R 
-~/R-3.0.1/bin/R CMD BATCH --no-save rlfit.R 
-~/R-3.0.1/bin/R CMD BATCH --no-save glchart.R 
+~/R-3.0.1/bin/R CMD BATCH --no-save code/scrape.R 
+~/R-3.0.1/bin/R CMD BATCH --no-save code/buildgoals.R 
+~/R-3.0.1/bin/R CMD BATCH --no-save code/glfit.R 
+~/R-3.0.1/bin/R CMD BATCH --no-save code/rlfit.R 
+~/R-3.0.1/bin/R CMD BATCH --no-save code/glchart.R 
 
 module load git
 git add data/nhldesign.rda results/*effects.csv

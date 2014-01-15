@@ -26,7 +26,7 @@
 ##### Code to scrape from nhl.com
 ##### Relies on A.C. Thomas's nhlcrapr package
 
-source("args.R")
+EXT <- "external"
 
 ## does not write over previous scrapes
 gamepath <- paste(EXT, "/nhlgames", sep="")
