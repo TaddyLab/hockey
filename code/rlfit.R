@@ -35,7 +35,7 @@ load("data/nhldesign.rda")
 X <- cBind(XS,XT,XP)
 
 ## fit the reglogit model
-S <- 100#00
+S <- 10000
 fitSTP.rl <- reglogit(S, Y, X, save.latents=FALSE, normalize=FALSE)
 
 ## save full MCMC output
@@ -44,7 +44,7 @@ save(fitSTP.rl, file="results/rlfits.RData")
 ## not sure about the rest of this stuff
 
 ## calculate posterior means for the STP model
-burnin <- 10#00
+burnin <- 1000
 betaSTP <- fitSTP.rl$beta[-(1:burnin),-(1:(1+ncol(XT)+ncol(XS)))] 
 btab <- data.frame(who=colnames(XP), last_active=player$active, 
 	mean_effect=apply(betaSTP, 2, mean))
