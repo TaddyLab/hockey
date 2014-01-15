@@ -27,7 +27,7 @@
 ## create a google chart with the specified data, header, footer,
 ## and output file
 
-## URL <- "mtaddy@faculty.chicagobooth.edu:/Faculty/matt.taddy/hockey" 
+#URL <- "mtaddy@faculty.chicagobooth.edu:/Faculty/matt.taddy/hockey" 
 URL <- "rgramacy@faculty.chicagobooth.edu:/Faculty/robert.gramacy/hockey"
 
 googlechart <- function(M, header, footer, outfile)
@@ -84,20 +84,21 @@ tab <- read.csv("results/gl_player_effects.csv",
 	colClasses=c("character","character","numeric","numeric"))
 
 ## write out nonzero carreer or current
-alltab <- tab[(tab$current_effect!=0)|(tab$career_effect!=0),]
+alltab <- tab
 alltab$who <- paste(alltab$who, " (", alltab$last_active, ")", sep="")
 alltab <- subset(alltab,select=-last_active)
 alltab <- alltab[order(-alltab$career_effect),]
 alltab$who <- paste(alltab$who, 1:nrow(alltab), sep=" - ")
-googlechart(alltab, header, footer.all, allpath)
+googlechart(alltab[(alltab$current_effect!=0)|(alltab$career_effect!=0),], 
+	header, footer.all, allpath)
 system(paste("cp -f ", paste(allpath, " ", resultpath, "/mapbetas_all_latest.html", sep="")))
 
 ## write out nonzero current effects
-curtab <- tab[tab$current_effect!=0,]
+curtab <- tab
 curtab <- subset(curtab,select=-last_active)
 curtab <- curtab[order(-curtab$current_effect),]
 curtab$who <- paste(curtab$who, 1:nrow(curtab), sep=" - ")
-googlechart(curtab, header, footer, curpath)
+googlechart(curtab[curtab$current_effect!=0,], header, footer, curpath)
 system(paste("cp -f ", paste(curpath, " ", resultpath, "/mapbetas_active_latest.html", sep="")))
 
 ## write out an index
