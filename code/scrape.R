@@ -26,6 +26,7 @@
 ##### Code to scrape from nhl.com
 ##### Relies on A.C. Thomas's nhlcrapr package
 
+NC <- 16
 EXT <- "external"
 
 ## does not write over previous scrapes
@@ -77,7 +78,7 @@ warnings()
 
 ## build out roster material and save (note we use allgames here)
 roster <- construct.rosters(allgames[allgames$valid,], rdata.folder = gamepath)
-save(roster, file="../data/roster.RData")
+save(roster, file="data/roster.RData")
 
 ## extract valid games
 validgames <- roster$games[roster$games$valid,]
