@@ -94,7 +94,7 @@ googlechart(alltab[(alltab$current_effect!=0)|(alltab$career_effect!=0),],
 system(paste("cp -f ", paste(allpath, " ", resultpath, "/mapbetas_all_latest.html", sep="")))
 
 ## write out nonzero current effects
-curtab <- tab
+curtab <- tab[tab$last_active==thisseason,]
 curtab <- subset(curtab,select=-last_active)
 curtab <- curtab[order(-curtab$current_effect),]
 curtab$who <- paste(curtab$who, 1:nrow(curtab), sep=" - ")
