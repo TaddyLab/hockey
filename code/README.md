@@ -23,4 +23,4 @@ They are executed in the following order:
 The other files are for development purposes only, or are legacy code used for earlier 
 versions of our analysis.
 
-The code is licensed under the <a href="http://www.gnu.org/copyleft/lesser.html"GNU Lesser Public License</a>.
+The code is licensed under the <a href="http://www.gnu.org/copyleft/lesser.html">GNU Lesser Public License</a>.
