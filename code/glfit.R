@@ -55,7 +55,7 @@ teamtab <- matrix(0,
 bt <- B[colnames(XT)]
 bi <- t(matrix(unlist(strsplit(names(bt), "\\.")),nrow=2))
 teamtab[bi] <- bt
-write.csv(teamtab,"results/gl_team_effects.csv", quote=FALSE, row.names=FALSE)
+write.csv(teamtab,"results/gl_team_effects.csv", quote=FALSE)
 
 ## tabulate
 tab <- data.frame(who=names(Bcareer),
