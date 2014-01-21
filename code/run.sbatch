@@ -16,6 +16,6 @@ module load openmpi
 ~/R-3.0.1/bin/R CMD BATCH --no-save code/glchart.R 
 
 module load git
-git add data/nhldesign.rda results/*effects.csv
+git add data/roster.RData data/nhldesign.rda results/*effects.csv
 git commit -m "weekly update"
 git push
