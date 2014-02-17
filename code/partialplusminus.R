@@ -13,6 +13,12 @@ ng <- colSums(abs(XPN))
 p <- 1/(1+exp(-beta))
 ppm <- ng*(2*p-1)
 
-effect <- data.frame(beta=beta,ppm=ppm,pm=pm)
+effect <- data.frame(player=names(beta),
+	beta=round(beta,3),ppm=round(ppm,3),pm=pm)
+effect <- effect[ng>0,] # on ice for goal this season
+effect <- effect[order(-effect$ppm),]
+rownames(effect) <- 1:nrow(effect)
 
-print(effect[order(-effect$ppm)[1:20],])
+print(effect[1:20,])
+
+write.table(effect,file="results/current_season_ppm.csv",sep=",",row.names=FALSE)
