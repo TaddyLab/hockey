@@ -6,7 +6,7 @@ names(beta) <- rownames(tab)
 
 library(Matrix)
 load("data/nhldesign.rda")
-XPN <- XP[goal$season=="20132014",names(beta)]
+XPN <- XP[goal$season=="20142015",names(beta)]
 
 pm <- colSums(XPN)
 ng <- colSums(abs(XPN))
