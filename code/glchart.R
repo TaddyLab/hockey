@@ -52,10 +52,10 @@ googlechart <- function(M, header, footer, outfile)
 	cat(footer, sep = "\n", file=outfile, append=TRUE)
 }
 
-thisseason <- "20132014"
+thisseason <- "20142015"
 
 ## write out all player stats
-resultpath <- "external/results_20132014"
+resultpath <- "external/results_20142015"
 system(sprintf("mkdir -p %s",resultpath))
 
 ## read in header and footer files
