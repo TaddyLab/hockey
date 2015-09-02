@@ -75,10 +75,13 @@ write.csv(perf,
     row.names=FALSE, quote=FALSE)
 
 ## summarize correlations
-money <- matrix(nrow=length(seasons)+1, ncol=3, 
+salarycorr <- matrix(nrow=length(seasons)+1, ncol=3, 
     dimnames=list(c("overall",seasons),names(perf)[3:5]))
-money["overall",] <- cor(perf[,3:5],perf$salary)
+salarycorr["overall",] <- cor(perf[,3:5],perf$salary)
 for(s in seasons){
     ps <- perf[perf$season==s,]
-    money[s,] <- (cor(ps[,3:5],ps$salary))
+    salarycorr[s,] <- (cor(ps[,3:5],ps$salary))
 }
+write.csv(salarycorr, 
+    file="results/salarycorr.csv", 
+    quote=FALSE)
