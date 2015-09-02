@@ -29,7 +29,7 @@ library(gamlr)
 load("data/nhldesign.rda")
 
 ## design 
-thisseason <- "20132014"
+thisseason <- "20142015"
 XN <- XP*(goal$season==thisseason)
 colnames(XN) <- paste("NOW",colnames(XN),sep="_")
 X <- cBind(XS,XT,XP,XN)

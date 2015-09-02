@@ -104,18 +104,18 @@ warnings()
 ## remove downloaded files for unplayed games -- this is 
 ## needed until Andrew updates nhlscrapr for new season
 
-## get the 2013-2014 game records
-fs <- list.files(gamepath, pattern="20132014-[0-9]*-gamerec.txt")
+## get the 2014-2015 game records
+fs <- list.files(gamepath, pattern="20142015-[0-9]*-gamerec.txt")
 games <- strsplit(fs, "-")
 played <- as.numeric(unlist(lapply(games, function(x) x[2])))
-## get 2013-2014 processed.RData files
-fs <- list.files(gamepath, pattern="20132014-[0-9]*-processed.RData")
+## get 2014-2015 processed.RData files
+fs <- list.files(gamepath, pattern="20142015-[0-9]*-processed.RData")
 games <- strsplit(fs, "-")
 all <- as.numeric(unlist(lapply(games, function(x) x[2])))
 ## remove those which do not have a gamerec
 unlink(paste(gamepath, fs[!(all %in% played)], sep="/"))
 ## same for raw .RData files
-fs <- list.files(gamepath, pattern="20132014-[0-9]*.RData")
+fs <- list.files(gamepath, pattern="20142015-[0-9]*.RData")
 games <- strsplit(fs, "[-.]")
 all <- as.numeric(unlist(lapply(games, function(x) x[2])))
 unlink(paste(gamepath, fs[!(all %in% played)], sep="/"))
