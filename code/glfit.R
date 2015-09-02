@@ -37,7 +37,7 @@ X <- cBind(XS,XT,XP,XN)
 ### career player effects
 fit <- gamlr(X, Y, gamma=0, 
 	standardize=FALSE, verb=0,
-	family="binomial", free=1:ncol(XS))
+	family="binomial", free=1:c(ncol(XS)+ncol(XT)))
 B <- coef(fit)[-1,]
 
 Bcareer <- B[colnames(XP)]
@@ -65,7 +65,8 @@ tab <- data.frame(who=names(Bcareer),
 tab <- tab[order(-tab$career_effect,-tab$current_effect,tab$who),]
 rownames(tab) <- 1:nrow(tab)
 
-print(tab[1:25,])
-print(tab[order(-tab$current_effect)[1:25],])
+print(tab[order(-tab$current_effect)[1:10],])
 
 write.csv(tab, file="results/gl_player_effects.csv", row.names=FALSE, quote=FALSE)
+
+

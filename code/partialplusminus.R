@@ -1,5 +1,6 @@
 ### simple `partial plus minus' calculations.
 
+source("code/glfit.R")
 tab <- read.csv("results/gl_player_effects.csv",row.names=1)
 beta <- tab[order(-tab$current_effect),3]
 names(beta) <- rownames(tab)
@@ -19,6 +20,6 @@ effect <- effect[ng>0,] # on ice for goal this season
 effect <- effect[order(-effect$ppm),]
 rownames(effect) <- 1:nrow(effect)
 
-print(effect[1:20,])
+print(effect[1:10,])
 
 write.table(effect,file="results/current_season_ppm.csv",sep=",",row.names=FALSE)
