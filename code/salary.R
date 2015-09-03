@@ -12,20 +12,20 @@ rownames(perf) <- paste(perf$player,perf$season,sep="_")
 seasons <- levels(factor(perf$season))
 ## read salary
 salary <- read.table("data/nhlsalaries.txt", 
-    sep="|", header=TRUE,quote="",as.is=TRUE)
-salary$Name[salary$Name=="ANDREI_KASTSITSYN"] <- "ANDREI_KOSTITSYN"
-salary$Name[salary$Name=="P. J._AXELSSON"] <- "P.J._AXELSSON"
-colnames(salary) <- c("player",seasons,"total")
+    sep="|", header=TRUE,quote="",as.is=TRUE,row.names=1)
+rownames(salary)[rownames(salary)=="ANDREI_KASTSITSYN"] <- "ANDREI_KOSTITSYN"
+rownames(salary)[rownames(salary)=="P. J._AXELSSON"] <- "P.J._AXELSSON"
+colnames(salary) <- c(seasons,"total")
 
 milperyear <- unlist(salary[,seasons])
-names(milperyear) <- paste(salary$player, 
+names(milperyear) <- paste(rownames(salary), 
                         rep(seasons,each=nrow(salary)),
                         sep="_")
 milperyear <- milperyear[match(rownames(perf),names(milperyear))]
 names(milperyear) <- rownames(perf)
 
 ## who doesn't have salary? 
-nosal <- which(is.na(milperyear))# | milperyear==0)
+nosal <- which(is.na(milperyear)| milperyear==0)
 (length(nosal))
 head(perf[nosal,])
 ## remove them from calculations
