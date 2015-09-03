@@ -1,0 +1,72 @@
+%!TEX root = book.tex
+
+\chapter{Hockey Player Ability via Logistic Regression}
+
+\noindent
+{\bf Matt Taddy, Sen Tian, Robert B.~Gramacy}
+
+\bigskip
+Plus-minus is the traditional metric for wholistically evaluating player
+contributions in hockey, but it measures a marginal effect, fails to account
+for sample size, and is otherwise a noisy estimate.  A better approach would
+control for who players are playing with, and against, and thereby produce a
+partial player effect.  One way to do this, using the same resolution of data
+as for plus-minus (a record of which players were on the ice for each goal) is
+by modeling the log odds that a goal was scored for or against their team
+while they (and other players) were on the ice.  The simplest example of such
+a model is a logistic regression with a design matrix composed of player
+indicators, and responses indicating which team scored the goal.  The
+resulting partial player effects can then be backed out of the regression
+coefficients estimated from the goals data. 
+
+The problem with this setup is that it is ``too big'' for ordinary logistic
+regression software, and the design matrices are too highly imbalanced to
+obtain meaningful (low variance) estimates of player effects.  Over the span
+of several seasons there may be thousands of players involved in tens of
+thousands of goals, but the number of unique player configurations is small by
+comparison. That's because players play with and against only a small fraction
+of other players.  In most of the cases we've tried ordinary inference
+algorithms, e.g., Fisher scoring, fail to converge.  Classical remedies, like
+foward/backward stepwise selection via information criteria, involve too much
+computation to be practical.
+
+The situation is much improved, however, when set in the modern context of
+pelalized logistic regression.  The sofware packages accompanying this new
+methodolog---which have recently undergone several overhauls to exploit
+parallel computing environemnts, sparse matrices, and other features of modern
+data structures---have demonstrated an impressive ability to gracefully handle
+large and highly imbalanced data sets.  The result is that it is now relatively
+easy to entertain the calculation of partial player effects in hockey through
+a relatively straightforward logistic regression formulation.  In this chapter
+we will cover the basic setup, using goals data spanning more than a decade,
+and discuss the interpretation of the effects on the same scale of the
+original plus-minus.  
+
+As a testament to the flexibility of the framework we will then embellish the
+model to include predictors/data beyond goals.  We encorporate salary
+information, team and coach effects, special teams and playoff indicators,
+season effects, and interactions between all of the above.  We also explore a
+similar analysis based on shots rather than goals, however we find far less
+signal in this data despite the much larger sample size.  This is a somewhat
+suprising results considering recent trends in hockey analytics.  We conclude
+with thoughts on potential improvement beyond linear logistic modeling,
+including modern machine learning classifiers such as those based on trees
+(random forests, Bayesian additive regression trees, etc.) and kernel methods
+(support vector machines, Gaussian processes, etc.)
+
+\section{Introduction}
+
+\section{The base model and implementation}
+
+Discuss \cite{gramacy:jensen:taddy:2013}, the basic framework and implementation.
+
+\section{A subsequently more mature model}
+
+\section{Embellishments}
+
+\section{An example}
+
+\section{Conclusions}
+
+\bibliographystyle{plain}
+\bibliography{hockey}
