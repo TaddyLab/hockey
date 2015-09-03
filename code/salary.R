@@ -34,13 +34,20 @@ milperyear <- milperyear[-nosal]
 
 
 ## summarize correlations
-salarycorr <- matrix(nrow=length(seasons)+1, ncol=6, 
-    dimnames=list(c("overall",seasons),names(perf)[-(1:2)]))
+salarycorr <- matrix(nrow=length(seasons)+2, ncol=ncol(perf)-2, 
+    dimnames=list(c("overall","averaged",seasons),names(perf)[-(1:2)]))
+# overall
 salarycorr["overall",] <- cor(perf[,-(1:2)],milperyear)
+# per-season
 for(s in seasons){
     ps <- perf$season==s
     salarycorr[s,] <- cor(perf[ps,-(1:2)],milperyear[ps])
 }
+# average salary vs avg perf
+players <- sub("\\_\\d+$","",names(milperyear))
+avgsal <- tapply(milperyear,players,mean)
+perfavg <- aggregate(perf[,-(1:2)],by=list(players),FUN=mean)
+salarycorr["averaged",] <- cor(perfavg[,-1],avgsal)
 (salarycorr <- round(salarycorr,3))
 write.csv(salarycorr, 
     file=sprintf("results/salarycorr-%s.csv",suffix), 

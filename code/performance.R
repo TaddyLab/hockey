@@ -57,13 +57,25 @@ if(length(postbeta)>0){
 ### tabulate metrics
 # traditional plus minus
 getpm <- function(now) colSums(XP[now,]*c(-1,1)[Y[now]+1]) 
+# the pm "for percentage" (ie like corsi for percent)
+getfp <- function(now){
+    PM <- XP[now,]*c(-1,1)[Y[now]+1]
+    F <- colSums(PM==1)
+    A <- colSums(PM==-1)
+    fp <- F/(F+A)
+    fp[is.nan(fp)] <- 0
+    fp
+}
 # total number of goals
 getng <- function(now) colSums(abs(XP[now,])) 
-# partial plus minus
-getppm <- function(b, ng){
+# probability
+getprob <- function(b){
     # The individual effect on probability that a
     # given goal is for vs against that player's team
-    p <- 1/(1+exp(-b)) 
+    1/(1+exp(-b)) 
+}
+# partial plus minus
+getppm <- function(p, ng){
     # multiply ng*p - ng*(1-p) to get expected plus-minus
     ng*(2*p-1)
 }
@@ -77,25 +89,33 @@ for(s in seasons){
     # regular season PMs and games
     now <- goal$season==s & goal$session=="Regular"
     pm <- getpm(now)
+    fp <- getfp(now)
     ng <- getng(now)
-    ppm <- getppm(b,ng)
+    prob <- getprob(b)
+    ppm <- getppm(prob,ng)
     # post-season info
     post <- goal$season==s & goal$session=="Playoffs"
     pmpost <- getpm(post)
+    fppost <- getfp(post)
     ngpost <- getng(post)
     bpost <- (b + B[paste(names(b),s,"Playoffs",sep="_")])*(ngpost>0)
     bpost[is.na(bpost)] <- 0
-    ppmpost <- getppm(bpost,ngpost)
+    probpost <- getprob(bpost)
+    ppmpost <- getppm(probpost,ngpost)
     # tabulate
     tab <- data.frame(
         player=who,
         season=s,
         beta=round(b,2),
+        prob=round(probpost,2),
         ppm=round(ppm,2),
         pm=pm,
+        fp=round(fp,2),
         beta.po=round(bpost,2),
+        prob.po=round(probpost,2),
         ppm.po=round(ppmpost,2),
-        pm.po=pmpost
+        pm.po=pmpost,
+        fp.po=round(fppost,2)
         )
     rownames(tab) <- paste(tab$player, s, sep="_")
     # add to total
