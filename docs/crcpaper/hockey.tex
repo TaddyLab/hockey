@@ -56,7 +56,96 @@ including modern machine learning classifiers such as those based on trees
 
 \section{Introduction}
 
-\section{The base model and implementation}
+Hockey is played on ice, but that's not what sets it apart from other
+polo-based sports like soccer or even field hockey.  At least not from an
+analytics perspective.  The unique thing about hockey is the rapid
+substitution traspiring continuously during play, as well as at stoppages in
+play.  In a data set we compiled, which we discuss in more detail shortly, the
+median amout of time a particular on-ice player configuration (determined by
+unique players on the ice for both both teams) is a mere eight seconds.
+Although many ``shifts'' are much longer than that, a trickle of piecemeal
+substutions on both sides, transpiring as play develops, makes for quite a
+noisy system when attributing credit or blame to players when signifigant
+events happen, like goals.
+
+The primary measure of individual {\em skater} (i.e., non-goalie) performance
+is {\em plus-minus}, which is defined as the number of goals scored by a
+skater's team, minus the number scored by the opposing team, while that skater
+is on the ice.  Only goals at even-strength, during the regular season, and
+during regulation time (i.e., not overtime) are included in the analysis.
+Goals from penalty-shots are also not included.   Due to its simplicity and
+minimal data requirements, plus-minus has been a preferred metric for the last
+fifty-odd years.  However a key weakness is that a player's plus-minus is
+impacted by many factors, only one of which is key quantity of interest: a
+summary of player ability.  The ability of a player's teammates, or the
+quality of opponents, are not controlled for.  The amount of playing time is
+also not factored in, meaning plus-minus stats are much noisier for some
+players than others.  Finally, goalies, teams, coaches, salaries, situations,
+special teams, etc.---which all clearly contribute to the nature of play, and
+thus to goals---are neither accounted for when determining player ability by
+plus-minus, and nor are they used to explain variation in the goals scored
+against a particular player or team.  
+
+The crux of the problem is that, in statistical terms, plus-minus is a {\em
+marginal effect}: it is an aggregate measure that averages over the
+contributions of other factors, such as teammates and opponents.  A better
+measure of performance would be the {\em partial effect} of each player,
+having controlled for those factors.  Calculating partial effects necessarily
+adds complexity to calculations, and if care is not taken complexity usually
+has a deletrious imacty on clarity of interpretation.  Morevoer, there are
+many ways of adding complexity, which take into account a larger set of
+game-relevant factors such as hits, faceoffs, posession, shots.  Examples
+include adjusted plus-minus \cite{schlocwel10}, and indices such as Corsi and
+DeltaSOT, as reviewed by \cite{vol10}.  While some of these measures are
+gaining in popularity, analysts do not generally agree on the relative
+importance of the added information.  Moreover, none of them really offer a
+particual effect.  An exception is the method of \cite{ThoVenJen12}, which
+proposes a proportional hazards process model for game events.  The model
+allows partial player effects to be inferred from high resolution game data. A
+downside however is that the apparatus is a bit of a black box to non-expert,
+and relies heavily on model assumptions that may be difficult to validate
+in practice.
+
+In goal in this chapter is to keep things simple: to exploit classical
+statistical models and low-resolution data (e.g., summarizing the on-ice
+``state'' for goals) towards esimating a partial player effect.  This is not a
+new concept in sports analytics.  For example \cite{awa09} suggests a simple
+adjustment to hockey plus-minus that controls for team strength by subtracting
+team-average plus-minus.  That's the right spirit, but we believe it can be
+better formalized, and therefore more easliy generalized.  \cite{ros04} and
+\cite{ilabar08} suggested a linear regression model for conditional player
+performance in basketball.  The underlying normality assumption in
+conventional linear models makes sense in basketball, where scoring is
+frequent and variability in player configurations is small.  A similar
+technique has been tried for hockey \cite{mac10}, however the normality
+assumption is questionable in this context as the number of scoring events is
+much smaller by comparison.
+
+This chapter centers on a simple regression-based framework suggested by
+\cite{gramacy:jensen:taddy:2013}.  However, rather than a linear model
+with normal errors, theirs is based on {\em logistic} regression.  The
+logistic model is tailored to binary response variables, which makes sense in
+the hockey context because the information in a goal is binary (it is either a
+goal ``for'' or a goal ``against''), and because there there are very few goal
+events observed for any particular player configuration.  In logistic
+regression, the average log odds, of a goal being scored ``for'' a particular
+team  is modeled as a linear function of predictor variables which may be
+comprized of an indicator of player configuration and other quantities, which
+is otherwise idential to the familiar ordinary (least quares) regression
+setup.  We provide a detailed description in Section \ref{sec:base}, but refer
+the reader to \cite{sheather:2009} or similar texts covering {\em Generalized Linear
+Models (GLMs)}, of which logistic regression is a special case.
+
+As we will illustrate, the setup is rather straightforward.  It is easy to
+extend, and highly interpretable.  Estimated coefficients describe
+contributions to the log odds of goals, and we show that these can be
+converted back onto the scale of goals, resulting in a adjusted plus-minus
+statistic, but this time one which is a true partial effect.  There is a snag,
+however, since the data is big and the design is imbalanced.
+
+
+\section{The base model, data, and implementation}
+\label{sec:base}
 
 Discuss \cite{gramacy:jensen:taddy:2013}, the basic framework and implementation.
 
