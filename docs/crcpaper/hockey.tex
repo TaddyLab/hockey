@@ -141,7 +141,44 @@ extend, and highly interpretable.  Estimated coefficients describe
 contributions to the log odds of goals, and we show that these can be
 converted back onto the scale of goals, resulting in a adjusted plus-minus
 statistic, but this time one which is a true partial effect.  There is a snag,
-however, since the data is big and the design is imbalanced.
+however, since the data is big---thousands of players involved in tens of
+thousands of goals---and the predictor matrix is imbalanced, meaning that we
+don't have the luxury of an designed experiment where a substantial portion of
+all player configurations are represented.  Rather, due to the use of player
+lines, and consistent line matchups with opponenets, where groups of two or
+three players are consistently on ice together at the same time, the data
+contain main clusters of individuals who are seldom observed apart. 
+
+In almost all regressions one is succeptible to the temptations of rich
+modeling when the data set is large, and our hockey setup is no different. One
+must be careful not to {\em over-fit}, wherein parameters are optimized to
+statistical noise rather than fit to the relationship of interest.  And one
+must be aware of {\em multicollinearity}, where groups of covariates are
+correlated with each other making it difficult to identify individual effects,
+as happens when players are grouped into lines.  A crutial contribution of
+\cite{gramacy:jensen:taddy:2013} is to suggest the use of modern penalized and
+Bayesian logistic regression models, which biases the estimates of player
+efects towards zero.  The recent statistical learning literature (e.g.,
+\citet{hastie:tibsh:fried:2001}) refers to such techniques as {\em
+regularization}.  At first blush, it may seem as if interjecting bias is a bad
+thing, but in this case the nature of the bias conforms to what most analysts
+already believe: many players have a neutral, or ``zero'', effect, whereas
+some are stars and others are liabilities.  
+
+The remainder of the chapter is organized as follows.  In Section
+\ref{sec:base} we discuss the regularized regression model in detail, the data
+and the implementation.  This discussion follows closely follows
+\cite{gramacy:jensen:taddy:2013}.  Several embellishments are offered in
+\ref{sec:embell}, where we use the same underlying framework to allow
+for more than player ability to explain variations in (the log odds) of goals.
+An detailed suite of examples is provide in Section \ref{sec:example}. The
+code for all empirical work in this paper is provided in public a GitHub
+respository (\verb!https://github.com/TaddyLab/hockey!) and utilizes open
+source libraryies for {\sf R} \cite{cranR}.  We conclude in Section
+\ref{sec:conclude} with thoughts on further extension, in particular by
+breaking out of the linear framework to use classification models
+popular in the Machine Learning literature.
+
 
 
 \section{The base model, data, and implementation}
@@ -149,13 +186,15 @@ however, since the data is big and the design is imbalanced.
 
 Discuss \cite{gramacy:jensen:taddy:2013}, the basic framework and implementation.
 
-\section{A subsequently more mature model}
 
 \section{Embellishments}
+\label{sec:embell}
 
 \section{An example}
+\label{sec:example}
 
 \section{Conclusions}
+\label{sec:conclude}
 
 \bibliographystyle{plain}
 \bibliography{hockey}
