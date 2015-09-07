@@ -1,11 +1,17 @@
 # Copyright (C) 2015, Matt Taddy and Robert B Gramacy and Sen Tian
 # comparison between salary and performance
 
-if(!exists("SHOTS")) SHOTS <- FALSE ## flag for including missed shots
+# set the directory 
+
+# flags for CORSI/FENWICK/GOAL
+CORSI = FALSE
+FENWICK = TRUE
+if(CORSI & FENWICK){stop("Multiple flags")}
 
 ## grab performance estimates
-if(SHOTS){ suffix <- "shots" 
-} else{ suffix <- "goals" }
+if(CORSI){ suffix <- "corsi" 
+} else if(FENWICK){ suffix <- "fenwick" 
+} else{ suffix <- "goals"}
 perf <- read.csv(sprintf("results/performance-%s.csv",suffix))
 rownames(perf) <- paste(perf$player,perf$season,sep="_")
 

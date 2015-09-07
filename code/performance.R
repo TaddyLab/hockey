@@ -3,15 +3,22 @@
 # The hockey data are built via design.R from games obtained via blog/scrape.R
 # Salaries are taken from 'nhlsalaries_bhz_nc/txt' in the sentian/hockey fork
 
-if(!exists("SHOTS")) SHOTS <- FALSE ## flag for including missed shots
+# set the directory
+
+# flags for CORSI/FENWICK/GOAL
+CORSI = FALSE
+FENWICK = TRUE
+if(CORSI & FENWICK){stop("Multiple flags")}
 
 ## fitting the hockey gl model
 library(gamlr)
 
 ## grab game data
-if(SHOTS){ suffix <- "shots" 
-} else{ suffix <- "goals" }
+if(CORSI){ suffix <- "corsi" 
+} else if(FENWICK){ suffix <- "fenwick" 
+} else{ suffix <- "goals"}
 load(sprintf("data/nhldesign-%s.rda",suffix))
+
 
 seasons <- levels(factor(goal$season))
 who <- colnames(XP)
