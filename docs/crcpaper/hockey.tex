@@ -182,9 +182,73 @@ popular in the Machine Learning literature.
 \section{The base model, data, and implementation}
 \label{sec:base}
 
-Discuss \cite{gramacy:jensen:taddy:2013}, the basic framework and
-implementation.  Simplify a little bit and leave teams indicators to the
-Embellishments section.  Discuss full scope of data via nhlscrapr.
+Let $q_i$ denote the probability that a particular goal ``$i$'' is scored by
+the home team.  Here, we use {\em home} and {\em away} as organizational devices,
+creating a consitent binary bifurcation for goals that can be applied across games,
+seaons, etc.  Then, consider the following linear predictor
+for the logit-transformed probability $q_i$:
+\begin{equation}
+\log \left(\frac{q_i}{1-q_i} \right) = \beta_{h_{i_1}} + \cdots + \beta_{h_{i_6}} - 
+\beta_{a_{i_1}} - \cdots - \beta_{a_{i_6}}.
+\label{eq:model}
+\end{equation}
+In Eq.~(\ref{eq:model}) the subscrpts on the coefficients $\beta$ are
+key: $h_{i_1}, \dots, h_{i_6}$ are the six players on the ice for the home
+team (i.e., the scoring team), and likewise $a_{i_1}, \dots, a_{i_6}$ indicate
+the players for the away time.  Note that in this setup the goalies {\em are}
+included in the caculations, unlike with {\em plus-minus}, and that this
+description favors an even-strength setup.  When the away team scores instead,
+we are modeling $1-q_i$ instead, which is the same as hitting both sides of
+the equation with a ``$-$''.  In that case the home team player coefficients
+are negated, and the away team ones are postive.  From here we can see that,
+due to the symmetry in the logit transformation, the results are unchanged
+when framing away team probabities as $q_i$ rather than $1-q_i$, so we loose
+no generality by ``privilidging'' home team goals in this way.
+
+Eq.~(\ref{eq:model}) looks like as it apparently involves just twelve
+coefficieints, however it is really a short-hand for a much more elaborate
+linear predictor. Its form is $\log q_i/(1-q_i) = x_i^\top \beta$ for a
+coefficient {\em vector} $\beta$, whose length is equal to $n_p$, the number
+of players involved in goals during the study period.  The vector $x_i$, which
+is of commensurate length, contains the ``$+1$'' and ``$-1$'' indicators
+depending on which team scored the goal, and where $\sum_j |x_{ij}| = 12$.  A
+matrix $X$ comprised of $n_g$ rows $x_i^\top$, one for each of $n_g$ goals,
+would consitute the $n_g \times n_p$ {\em design} in statistical jargon.
+Pairing with an $n_g$ length response vector $y$, comprised of indicators
+``$+1$'' for home and away respectively (so that $q_i = \mathrm{p}(Y_i = 1)$,
+would complete the description of the data.
+
+Framed in this way, inference ought to be straightforward.  In {\sf R}
+one can easily do the following:
+\begin{verbatim}
+R> fit <- glm(y~X, family="binomial")
+\end{verbatim}
+But unfortunately, that just doesn't work with any reasonable amount of goals
+data.  The computation is sluggish and results in numerical errors. In their
+inital analysis, \cite{gramacy:jensen:taddy:2013} considered even-strength
+regulation-time goals data data from four regular seaons, 2007--2008 during
+with there were $n_p = 1467$ players involved in $n_g = 18,154$ goals.  The
+data was obtained from \verb!www.nhl.com! via the {\sf R} package {\tt
+nhlscrapr} \cite{nhlscrapr}. One problem is that the design matrix $X$ is
+extremely sparse. The overal dimensions are $18,154 \times 1467$, which is
+not over very big by modern logistic regression standards, however every row
+has 1455 zeros, for more than 99\% sparsity, and the distribution of non-zero
+entries is highly imbalanced: only about 27-thousand of the great than
+one-million possible player papers are actually observed in the design.  
+
+A first approach to finding a remedy might be to entertain stepwise
+regression, e.g., via {\tt step} in {\sf R} using information criteria
+like AIC and BIC.  But that also doesn't work on this data: the calculations
+take days, and turn up very few non-zero predictors (i.e., players whose
+presense have any effect on goals).  The trouble here is exactly the opposite
+of the one mentioned above.  Players simply can't be judged on their own, since
+they always play with and against eleven others, so the one-at-a-time judgements
+made by {\tt step} fail to discover many relevant players despite making
+a combinatirially huge number of such comparisons.
+
+The solution is to take a modern regularized, or shrinkage, approach
+to regression.
+
 
 
 \section{Embellishments}
