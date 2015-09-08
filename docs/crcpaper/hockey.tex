@@ -246,8 +246,234 @@ they always play with and against eleven others, so the one-at-a-time judgements
 made by {\tt step} fail to discover many relevant players despite making
 a combinatirially huge number of such comparisons.
 
-The solution is to take a modern regularized, or shrinkage, approach
-to regression.
+The solution is to take a modern regularized, or shrinkage, approach to
+regression.  Although there are many ways to view or motivate regularization
+in statistical inference, we feel the most natural is through the lens of
+Bayesian posterior inference.  The regularization in that context comes
+from the choice of prior distubtion, and in our context where larger 
+$\beta$-values indicate large positive or negative contributions to 
+player ability, it makes sence to choose a prior that encourages
+coefficients to center around zero.  Our {\em a priori} belief is that
+most players are members of the rank-and-file: their contribution to
+goals is {\em neutral} (e.g., zero on the log-odds scale), and that only
+a handful of stars (and liabilities) have a strong contribution to
+the chances of scoring (or letting in) goals.  Beyond that, any reasonable
+choice of prior distribution lends stability to the fitted model by
+shrinking coefficient values towards the prior mean, e.g., zero.  From 
+the perspective of point estimation on $\beta_j$ centered at zero, say,
+is equivalent to adding a penalty term for $\beta_k \ne 0$ in an
+an objective function that is being optimized to give us point-estimates
+for each $\beta_j$.  
+
+
+{\em Bobby pasted the rest in and will massage later.}
+
+Different choices of priors correspond to different penalty functions on
+$\beta_j \ne 0$.One common strategy uses a normal
+prior distribution (centered at zero) on each $\beta_j$ which
+corresponds to a L2 penalty ($\lambda_j \beta_j^2$) in the objective
+function.  Thus, the MAP estimates from a Bayesian regression model
+with a normal prior distribution are equivalent to the estimates from
+ridge regression \cite{HoeKen70}.  A normal prior distribution (L2
+penalization) is used under an assumption that every covariate has a
+limited effect on the response, i.e. elements of $\beta$ are
+non-zero but small.
+
+Another popular strategy uses a Laplace prior distribution on each
+$\beta_j$ which corresponds to a L1 penalty ($\lambda_j |\beta_j|$) in
+the objective function.  Thus, the MAP estimates from a Bayesian
+regression model with a Laplace prior distribution are equivalent to
+the estimates from {\it lasso} regression \cite{Tib96}.  A Laplace
+prior distribution yields a penalized point estimate of exactly
+$\beta_j=0$ in the absence of strong evidence, and non-zero $\beta_j$
+for only a subset of significant variables.  In this way, using an L1
+penalty naturally permits {\it variable selection} where only a subset
+of covariates are selected as having substantive predictive effects on
+the outcome variable.
+  
+We favor an L1 penalty/Laplace prior for player effects $\beta$
+because it permits {\it variable selection}: the identification of
+players that stand out as having truly substantive effect.
+% Focussing on a subset of significant players adds stability and
+% interpretability to our results.  
+We also employ a L2 penalty/normal prior for coefficients on
+``nuisance'' variables, such as the team effects $\alpha$.  L1
+and L2 penalties are fairly standard choices for sparse and dense
+models respectively: L2 has a long history in Tikhonov regularization
+and ridge regression, while L1 has a shorter history but wide usage in
+Lasso estimation.  The focus on influential players yielded by
+coefficient sparsity is key to our analysis and exposition, while
+dense estimation is a more conservative choice for the controlling
+variables since it does not assume their effect can be represented in
+a lower dimensional subspace (results are practically unchanged if one
+uses L1 regularization for the team effects).
+
+\subsection{Estimation Details and Software}\label{sec:methods}
+
+Although L1 penalty methods and their Bayesian interpretation have
+been known for some time, it is only recently that joint
+penalty--coefficient posterior computation and simulation methods have
+become available for datasets of the size encountered here.  
+
+Probably the most well-known publicly available library for L1 penalty
+inference in logistic regression is the {\tt glmnet} package
+\cite{fried:hast:tibsh:2009} for {\sf R}.  Conditional on a single
+shared value of $\lambda$, this implementation estimates a sparse set
+of coefficients.  A convenient wrapper routine called {\tt cv.glmnet}
+allows one to chose $\lambda$ by cross-validation (CV).
+Unfortunately, CV works poorly in our setting of large, sparse, and
+imbalanced $X_P$, where each model fit is relatively expensive and
+there is often little overlap between nonzero covariates in the
+training and validation sets.  Moreover, when maximizing (rather than
+sampling from) the posterior, a single shared $\lambda$ penalty 
+leads to over-shrinkage of significant $\beta_j$ as  penalty
+choice is dominated by a large number of spurious predictors.  But use
+of CV to choose unique $\lambda_j$ for each covariate would imply an
+impossibly large search.
+
+Instead, we propose two approaches, both accompanied by publicly
+available software in packages for {\sf R}:  joint MAP inference with
+{\tt textir}, and posterior simulation with {\tt reglogit}.
+
+\subsubsection{Fast variable selection and MAP inference with {\tt textir}}
+
+\cite{taddy:2012} proposes a {\it gamma-lasso} framework for MAP
+estimation in logistic regression, wherein coefficients and their
+independent L1 penalties are inferred under a conjugate gamma
+hyperprior.  An efficient coordinate descent algorithm is derived,
+including conditions for global convergence, and the resulting
+estimation is shown in \cite{taddy:2012} as superior, in both
+predictive performance and computation time, to the more common
+strategy of CV lasso estimation under a single shared $\lambda$ (as in
+{\tt glmnet}).  Results in this paper were all obtained using the
+publicly available {\tt textir} package for {\sf R} \cite {textir},
+which uses the {\tt slam} \cite{slam} package's simple-triplet
+matrices to take advantage of design sparsity.
+
+Prior specification in the gamma-lasso attaches independent gamma
+$\mathrm{G}(\lambda_j; s,r)$ hyperpriors on each L1 penalty, with
+$\mathrm{E}[\lambda_j] = s/r$ and $\mathrm{var}[\lambda] = s/r^2$,
+such that, for $j=1\ldots p$,
+\begin{equation}\label{eq:glmodel}
+  \pi(\beta_j, \lambda_j) = \mathrm{Laplace}(\beta_j;
+  \lambda_j)\mathrm{G}(\lambda_j; s,r) =
+  \frac{r^s}{2\Gamma(s)}\lambda_{j}^s e^{-\lambda_{j} \left(|\beta_j|+r\right)},~~s,r,\lambda_j>0.
+\end{equation}
+Laplace priors are often motivated through estimation {\it
+  utility}---the prior spike at zero corresponds to a preference for
+eliminating regressors from the model in absence of significant
+evidence. Our hyperprior is motivated by complementary
+considerations: for strong signals and large $|\beta_j|$, expected
+$\lambda_j$ shrinks in the joint distribution to reduce estimation
+bias.
+
+This leads to the joint negative log posterior {\it minimization}
+objective
+\begin{equation}\label{eq:pp}
+ l(\alpha,\beta)= 
+  \sum_{i=1}^{n_g} \log \left ( 1 + \exp\left[- y_i (x_{Ti}' \alpha
+      + x_{Pi}' \beta) \right ] \right ) +
+ \frac{1}{2\sigma^2}\sum_{t=1}^{30}
+\alpha_t^2 + \sum_{j=1}^{n_p}s\log(1+ |\beta_j|/r),
+\end{equation}
+where $s$, $r$ $>0$.  We have set $\sigma = 1$ and $r=1/2$ throughout
+Section \ref{sec:pointe}. In choosing $s=\mathbb{E}[\lambda_j]/2$, we focus on the
+conditional prior standard deviation, ${\rm SD}(\beta_j) = \sqrt{2}/\lambda_j$,
+for the coefficients.  Hence our value of $s=7.5$, for
+$\mathbb{E}[\lambda_j] = 15$, implies expected ${\rm SD}(\beta_j) \approx
+0.095$.  To put this in context, $\exp[3\times 0.095] \approx 1.33$,
+implying that a single player increasing his team's for-vs-against
+odds by $1/3$ is 3 deviations away from the prior mean.
+
+As an illustration of the implementation, the following snippets show
+commands to run our main team--player model (see \verb!?mnlm! for details).  With 
+\verb!X = cbind(XP,XT)! as defined in Section \ref{sec:data}, the list
+of 30 ridge and $n_p$ gamma-lasso penalties are specified 
+\begin{verbatim}
+pen <- c(rep(data.frame(c(0,1)),30),rep(data.frame(c(7.5,.5)),ncol(XP)))
+\end{verbatim}
+and the model is then fit
+\begin{verbatim}
+fit <- mnlm(counts=Y, covars=X, penalty=pen, normalize=FALSE)
+\end{verbatim}
+where \verb!X! is not normalized since this would up-weight players with little ice-time.
+
+
+\subsubsection{Full posterior inference via {\tt reglogit}}
+
+Extending a well-known result by \cite{holmes:held:2006},
+\cite{gra:pols:2012} showed that three sets of latent variables could
+be employed to obtain sample from the full posterior distribution
+using a standard Gibbs strategy \cite{gem:gem:1984}.  The full
+conditionals required for the Gibbs sampler are given below for the L1
+and $\lambda_j = \lambda$ case (note that $\beta$ includes
+$\alpha$ here for notational convenience).
+\begin{align*}
+  \beta | z, \tau^2, \omega, \lambda &\sim
+  \mathcal{N}_p(\tilde{\beta}, V)
+  & \tilde{\beta} & = V (y.X)^\top \Omega^{-1} z, \; y.X \equiv \mathrm{diag}(y)X \\
+  \lambda |\beta &\sim \mathrm{G}\left( a + p, b + \sum_{j=1}^p |
+    \beta_j |\right) & V^{-1} &= \lambda^{2} \Sigma^{-1} D_{\tau}^{-1}
+  + (y.X)^\top
+  \Omega^{-1} (y.X) \\
+  \tau_j^{-2} &\sim \mbox{Inv-Gauss} (|\lambda/\beta_j|, \lambda^2),
+  & j&=1,\dots, p \equiv \mathrm{ncol}(X) \\
+  z_i | \beta, \omega_i, y_i, &\sim \mathcal{N}^+ \!\left( y_i
+    x_i^\top
+    \beta , \omega_i \right), & i&=1,\dots,n \equiv \mathrm{length}(y). \\
+  \omega_i | y_i, \lambda &\sim \mbox{See below} &
+  i&=1,\dots,n
+\end{align*}
+
+Note that $\mathcal{N}^+$ indicates the normal distribution truncated
+to the positive real line, $D_\tau = \mathrm{diag}(\tau_1^2, \dots,
+\tau_p^2)$ and $\Omega = \mathrm{diag}(\omega_1, \dots, \omega_n)$.
+% The labels $y$ have been re-coded as $y_i \in \{-1,1\}$ rather than
+% $\{\mbox{H}, \mbox{A}\}$ for a more compact presentation.
+\cite{holmes:held:2006} give a rejection sampling algorithm for
+$\omega_i|z_i$, however \cite{gra:pols:2012} argue that it is
+actually more efficient to draw $\omega_i | y_i, \lambda$ (i.e.,
+marginalizing over $z_i$) as follows.  A proposal $\omega_i' =
+\sum_{k=1}^K 2 \psi_k^{-1} \epsilon_k$, and $ \epsilon_k \sim
+\mathrm{Exp} (1)$ may be accepted with probability $\min\{1,A_i\}$
+where $A_i = \Phi\{(- y_i x_i^\top \beta)/\sqrt{\omega_i'}\}/\Phi\{(-
+y_i x_i^\top \beta)/\sqrt{\omega_i}\}$. Larger $K$ improves the
+approximation, although $K=100$ usually suffices.  Everything extends
+to the L2 case upon fixing $\tau_j^2 = 1$.  Extending to separate
+$\lambda_j$ is future work.
+
+We use the implementation of this Gibbs sampler provided in the {\tt
+  reglogit} package \cite{reglogit} for {\sf R}.  For the $\lambda$
+prior we use the package defaults of $a=2$ and $b=0.1$ which are
+shared amongst several other fully Bayesian samplers for the ordinary
+linear regression context (e.g., {\tt blasso} in the {\tt monomvn}
+package \cite{monomvn}).  
+Usage is similar to that described for {\tt mnlm}.  To obtain {\tt T}
+samples from the posterior, simply call:
+\begin{verbatim}
+bfit <- reglogit(T=T, y=Y, X=X, normalize=FALSE)
+\end{verbatim}
+Estimating the full posterior distribution for $\beta$ allows
+posterior means to be calculated, as well as component-wise variances
+and correlations between $\beta_j$'s.  However, unlike MAP estimates
+$\hat{\beta}$, none of the samples or the overall mean is sparse.
+\cite{gra:pols:2012} show how their algorithm can be extended to
+calculate the MAP via simulation, but this only provides sparse
+estimators in the limit.
+
+Another option is to use the posterior mean for $\lambda$ obtained by
+Gibbs sampling on the entire covariate set, and use it as a guide in
+MAP estimation.  Indeed, this is what is done in Section
+\ref{sec:pointe}, where mean of our shared $\lambda$ from Gibbs
+sampling was considered when setting setting priors for
+$\mathbb{E}[\lambda_j]$.
+
+
+
+{\em Need to summarize results from the original paper.  Say that full Bayes
+and point estimation have their advantages.}
+
+\subsubsection{Mapping from player coefficents to the plus-minus scale.}
 
 
 
