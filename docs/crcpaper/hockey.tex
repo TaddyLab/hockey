@@ -286,7 +286,7 @@ selected as having substantive predictive effects on the outcome variable.
 We favor an L1 penalty/Laplace prior for player effects $\beta$ for precisely
 this feature: it helps identify players that stand out as having truly
 substantive effect.  However we argue later than L2 penalties have advantages
-in other contexts, fort example on coefficients that are control quantities
+in other contexts, for example on coefficients that are control quantities
 like special teams and playoff effects [Section \ref{sec:embell}]. Although L1
 penalty methods and their Bayesian interpretation as Laplace priors have been
 known for some time, it is only recently that joint penalty--coefficient
@@ -359,7 +359,14 @@ where \verb!X! is not normalized since this would up-weight players with little 
 {\em Matt, I'll let you decide how you want to frame our initial results, if at all.}
 
 \subsubsection{Mapping from player coefficients to the plus-minus scale.}
+\label{sec:ppm.mapping}
+Note that the player effect $\beta_i$ corresponds to a per-goal scale, which is the log odds that a given goal was scored by their own team. The player effect can be effective in targeting the rising stars who performed well during the games they were on ice though not many. However, it is incomparable with the traditional plus-minus due to the difference of scales. We consider a partial plus-minus statistic (PPM) by incorporating the number of games that a player played in addition to the per-goal effect. Denote $G_i$ as the number of goals that a player was on the ice for. Then given a player effect $\beta_i$, we calculate the probability that, given a goal was scored, it was scored by his own team as $P_i=1/(1+exp(-\beta_i))$. The PPM is the expected contribution to the goal differential due to that player, which is 
+\begin{equation}
+\text{PPM}_i = G_iP_i-G_i(1-P_i)=G_i(2P_i-1).
+\label{eq:ppm}
+\end{equation}
 
+We can see the correspondence of the player effect and the PPM. The PPM only scales the player effect with the sign retains. This means that if a player has a positive effect, $\beta_i>0$, its corresponding PPM is also positive. 
 
 
 \section{Embellishments}
@@ -367,6 +374,207 @@ where \verb!X! is not normalized since this would up-weight players with little 
 
 \section{An example}
 \label{sec:example}
+This section provides an example using data from National Hockey League, to illustrate the methodologies given in the above sections. We start by an analysis on the overall performance of players measured in goals over $11$ seasons, with an extension of the base model eq. \eqref{sec:base} by incorporating the teams and special teams effects. Furthermore, we add season effects, playoff indicators and their interactions with the players and teams. This enables us to investigate the performance of players in each season and the playoffs. We use the partial plus-minus metric to evaluate player's performance and compare that with the traditional plus-minus statistic.
+
+We then explore an analysis based on shots instead of goals. Comparing with goals, shots are considered to be more representative in measuring the player's puck possession, and hence can hopefully provide better estimates of the player's performance. Corsi and Fenwick are two shot-based measurements that appear frequently in modern hockey analysis. Fenwick includes the shots on goal and missed shots, while Corsi measures the same thing as Fenwick but includes blocked shots. Both indicators expand our data by an order of magnitude. We compare the player's performance measured via Corsi and Fenwick with the performance in goals.
+
+Finally, we investigate how the player's salary correlates with his performance measured via goals, Corsi and Fenwick.
+
+\subsection{Data}
+The data, downloaded from \url{http://www.nhl.com}, comprise of play-by-play NHL game data for regular and playoff games during $11$ seasons of 2002-2003 through 2013-2014\footnote{Season 2004-2005 was a lockout that resulted in a cancellation}. The data capture all the shifts in every single game, such as change, goal, shot, blocked shot, miss shot, penalty and etc. There were $n_p=2439$ players involved in $n_g=69449$ goals, $n_p=2566$ players involved in $n_{cos}=1,329,679$ Corsi and $n_p=2564$ players involved in $n_{fen}=1,034,154$ Fenwick.
+
+It is not unusual to have penalties or non-six-on-six situations in hockey. There are more than $35\%$ of the $n_g=69449$ goals fit in the power-play situations, which inspires us to incorporate the special teams in our base model eq.\eqref{eq:model}. We consider $6$ non-six-on-six settings (6v5, 6v4, 6v3, 5v4, 5v3, 4v3) and pulling the goalie together to form $7$ different special teams situations. Meanwhile, to reduce the effect of teammates on the player's performance, we add team indicators to the base model as well.
+
+The seasonal data are aggregated and arranged into a response vector $\vec{Y}(n_g \times 1)$ and a design matrix $\vec{X}$. The design matrix comprises of three parts, $X_P(n_g\times n_p)$, $X_T(n_g\times 30)$ and $X_S(n_g\times 7)$, which correspond to indicators of players, teams and special teams respectively. For a goal $i$, the response can either take value $y_i=1$ for goal scored by the home team or $y_i={-1}$ for it scored by the away team. The corresponding row of $X_P$, $X_T$ represents the players and teams on the ice for that goal, with value $1$ for home player/team, ${-1}$ for the away player/team and $0$ otherwise. As to the special-team indicator $X_S$, $X_{Sij}=1$ indicates the home team is experiencing the $j$th special-team status while $X_{Sij}=-1$ indicates the away team is playing with the $j$th status. The data structure with two example goals is shown in figure \ref{fig:data}.
+
+\begin{figure}[hbt]
+	\small
+	\centering
+	\begin{tikzpicture}
+	\matrix [column sep=7mm, row sep=2mm] {
+		\node [draw=none, fill=none] {$Y$: scoring team}; &
+		\node [draw=none, fill=none] {$X_P$: players}; &
+		\node [draw=none, fill=none] {$X_T$: teams}; &
+		\node [draw=none, fill=none] {$X_S$: special teams}; &\\
+		\node [draw=none, fill=none] {$y_i\in\{{-1},1\}$}; &
+		\node [draw=none, fill=none] {$x_{Pij}\in\{{-1},0,1\}$}; &
+		\node [draw=none, fill=none] {$x_{Tij}\in\{{-1},0,1\}$}; & 
+		\node [draw=none, fill=none] {$x_{Sij}\in\{{-1},0,1\}$}; & \\
+		\node (y1) [draw, shape=rounded rectangle] {$\hspace{7pt}1$}; &
+		\node (xp1) [draw, shape=rounded rectangle, label={[label distance=0.1mm]90:\small $1 \hspace{145pt} n_p$}] {$0\, 1\, {-1}\, 1\, 0\, {-1}\, 0\, {-1}\, 1\, {-1}\, {-1}\,  0\, 0 \cdots 0\, 1\, 0\, 1\, 1$}; &
+		\node (xt1) [draw, shape=rounded rectangle, label={[label distance=0.1mm]90:\small $1 \hspace{35pt} 30$}] {$0 \cdots {-1} \cdots 1 $}; &
+		\node (xs1) [draw, shape=rounded rectangle, label={[label distance=0.1mm]90:\small $1 \hspace{21pt} 7$}] {$1 \, 0\cdots 0$}; &\\
+		\node [draw=none, fill=none] {$\vdots$}; &
+		\node [draw=none, fill=none] {$\vdots$}; &
+		\node [draw=none, fill=none] {$\vdots$}; &
+		\node [draw=none, fill=none] {$\vdots$}; &\\
+		\node [draw, shape=rounded rectangle] {$-1$}; &
+		\node [draw, shape=rounded rectangle] {$1\, {-1}\, 1\, {-1}\, 0\, 1\, 0\, 1\, {-1}\, 1\, 1\, 0 \cdots 0\, {-1}\, 0\, {-1}\, {-1}$}; &
+		\node [draw, shape=rounded rectangle] {$0 \cdots 1 \cdots {-1} $}; &
+		\node [draw, shape=rounded rectangle] {$0 \, 0 \cdots 0$}; &\\
+	};
+	\end{tikzpicture}
+	\caption{Diagram of the design matrix and two example goals (rows). The two goals are shown in the same season under the same configuration of teams except that the first goal was scored by the home team while the second goal was by the away team. The configurations of players are only differed by the first player since the home team was on a 6v5 power play ($X_{S11}=1$) for the first goal. }\label{fig:data}
+\end{figure}
+
+\subsection{Model}
+We can reformulate the base model eq.\eqref{eq:model} from the data structure noted above. Still consider the linear predictor for the logit-transformed probability $q_i=\mathbb{P}(y_i=1|\vec{x}_i)$: 
+\begin{equation}
+\mathbb{E}\left\{\log \left(\frac{q_i}{1-q_i} \right)\right\} 
+= \vec{x_P}^\prime_i \vec{\beta_P} + \vec{x_T}^\prime_i \vec{\beta_T} + \vec{x_S}^\prime_i\vec{\beta_S} ,
+\label{eq:model.ext}
+\end{equation}
+where $\vec{x_P}_i = [x_{Pi1} \cdots x_{Pin_p}]^\prime$,  $\vec{x_T}_i = [x_{Ti1} \cdots x_{Ti30}]^\prime$ and $\vec{x_S}_i = [x_{Si1} \cdots x_{Si7}]^\prime$ are the $i$th row the design matrices $X_P$, $X_T$ and $X_S$ respectively. 
+
+\subsection{Prior/Regularization} % may need to be changed to Bayesian version (priors)
+We impose prior distributions on the regression parameters to avoid overfit and add stability to the model by shrinking the parameters towards zero. As noted in section \ref{sec:base}, this corresponds to adding penalty terms on $\beta_i \neq 0$ in the model eq.\eqref{eq:model.ext}. More specifically, we favor a Laplace prior distribution/L1 penalty on $\vec{\beta_P}$ while setting other parameters free, which allows us to select players that truly stand out from the team. Under the Laplacian prior, the {\em maximum a posteriori} (MAP) estimate of the parameters $\vec{\beta}$ is given by:
+\begin{equation}
+\begin{aligned}
+&\min_\vec{\beta} \sum_{i=1}^{n_g} -log [p(y^{(i)}|\vec{x}^{(i)};\vec{\beta_P},\vec{\beta_T},\vec{\beta_S})]+\lambda   \|\vec{\beta_P}\|_1,\\
+= &\min_\vec{\beta}  \sum_{i=1}^{n_g} [-y_ilog(q_i)-(1-y_i)log(1-q_i)] + \lambda   \|\vec{\beta_P}\|_1,
+\label{eq:modelwithL2}
+\end{aligned}
+\end{equation}
+where $q_i$ is given in equation \eqref{eq:model.ext}. 
+
+The regularization parameter, $\lambda$, is a control on the fitting parameters. Larger value of $\lambda$ leads to more sparse estimates of $\vec{\beta_P}$. Information criteria (such as AIC, BIC) and cross validation are the common tools to select the optimal one over a sequence of $\lambda$'s. In our case, we consider a grid of $100$ $\lambda$ values from $\lambda_{min}$ to $\lambda{max}$, where $\lambda_{min}$ is specified to effectively provide the least squares estimate and $\lambda_{max}$ is chosen so that all estimated coefficients $\hat{\vec{\beta_P}}$ are zero. We choose the the optimal $\lambda$ using the corrected Akaike Information Criterion (AICc), which is expected to give the best out-of-sample prediction. The corrected AIC is defined as
+\begin{equation*}
+AICc = -2\sum_{i=1}^{n_g} log [p(y^{(i)}|\vec{x}^{(i)};\vec{\beta_P},\vec{\beta_T},\vec{\beta_S})] + \frac{2kn}{n-k-1},
+\end{equation*}
+where $k$ is the number of non-zero elements in $\vec{\beta_P}$. The {\tt gamlr} package \cite{gamlr} provides us the tool to easily implement the above procedure. Obtaining the regression coefficients $\vec{\beta}$, is straightforward using the following {\tt R} code:
+\begin{verbatim}
+fit <- gamlr(x=cBind(XS,XT,XP), y=Y, gamma=0, standardize=FALSE, verb=1, 
+             family="binomial", free=1:c(ncol(XS)+ncol(XT))))
+beta <- coef(fit)[-1,]
+\end{verbatim}
+ 
+\subsection{Point estimates of player contribution via goals}
+\subsubsection{Team effects}
+We first ignore the special-team effect and consider two models for conditional player effect estimation: a player-only model and a team-player model. Both models have about 900 players with zero effects, resulting from the MAP estimation under a sparsity-inducing L1 penalty. Note that ability estimates for players who frequently share the ice will generally be negatively correlated: if players are always on the ice together when a goal is scored, an increase in the estimated effect of one player must be accompanied by a decrease in the fact of the other player. And the L1 regularized model will manifest it by forcing one players effect being estimated at zero.
+
+Figure \ref{fig:pt-p.tb30} shows the main effects obtained for the team-player model under MAP estimation (dots), and compares to those from the player-only model (connecting lines). The $x$-axis orders the players by their estimates in the team-player model, expressing a marginal ordering on player ability. Only the top 30 and bottom 30 players in either model are shown. 
+
+Observe that incorporating the team effects causes many player effects to be more significant, especially for the top players (blue lines tracking to the dots). Ondrej Palat, the Czech winger, is the only one among the top players that has a contribution slighting dropping after accounting for his team Tampa Bay Lightning (although he still stands out). 
+
+Perhaps a more surprising result is that Sidney Crosby, recognized by many to be the best player in NHL, ranks 28th in our team-player model. However, the Canadian forward, Tyler Toffoli, has the highest ranking in both of our models. This young talented player was a member of the King's 2014 Stanley Cup championship team and just received a two-year contract from the Kings. 
+
+On the negative side, John McCarthy and Jamie Allison stand out as poor performers in both models.
+
+Note that incorporating the team effects does not show the signal of changing the signs of player effects. This means a player being positive in the player-only model will not be negative after accounting for his team. In this sense, the team-player model and the player-only model are pretty consistent. 
+
+\begin{figure}[htb!]
+	\centering
+	\includegraphics[width=\textwidth]{figures/ptvsp_tb30.pdf}
+	\caption{Comparing the main effects for players in the player-only model (lines), with the team-augmented model (dots). The lines point to estimated coefficients from the player-only model. The coefficients are ordered by the dots. We are only showing players whose main effects are top 30 or bottom 30 in either model. Players discussed in the text have their names labeled in red.}\label{fig:pt-p.tb30}
+\end{figure}
+
+\subsubsection{Special-team effects}
+Now we add the special-team effects to form the full model \eqref{eq:modelwithL2}, and compare it with the team-player model. Figure \ref{fig:pts-pt.tb30} shows the main effects obtained for both models. One fact is that employing the special-team effects makes many more player effects to be zeroed out (lines tracking to zero), with many players' stand-out performance being absorbed by the power-plays. In another words, a short-handed goal will be a big 'plus' to the players on the ice of the short-handed team, and a big 'minus' to the opponent players. 
+
+A more surprising result is that, incorporating the special-team effects causes many changes in the signs of player effects. This phenomenon is rare when considering the team effects besides player-only. An example is Martin Lapointe, whose contribution drops significantly from positive to negative after accounting for the power plays. The wingers, Stephane Veilleux and Eric Nystrom have similar behavior. 
+
+On the top of the list, Tyler Toffoli still shines although Peter Forsberg stands out as the very best. Meanwhile, Sidney Crosby makes to top 10 players. On the negative side, John McCarthy stays as the worst player in the League.
+
+\begin{figure}[htb!]
+	\centering
+	\includegraphics[width=\textwidth]{figures/ptsvspt_tb30.pdf}
+	\caption{Comparing the main effects for players in the team-player model (lines), with the team-special team-player model (dots). The lines point to estimated coefficients from the team-player model. The $x$-axis orders the players by their estimates in the team-special team-player model. We are only showing players whose main effects are top 30 or bottom 30 in either model.}\label{fig:pts-pt.tb30}
+\end{figure}
+
+
+\subsubsection{Partial plus-minus}
+As mentioned in section \ref{sec:ppm.mapping}, the partial plus-minus (PPM) is comparable to the traditional plus-minus (PM). Here we consider another metric, for percentage (FP), in the table. Goals are counted as 'For' or 'Against', where 'For' is a goal that is scored when the player is on the ice on behalf of his team and 'Against' is a goal by his opponents. 'FP' is then given as a percentage of $\text{For}/(\text{For}+\text{Against})$. Note that the plus-minus statistic is just $\text{For}-\text{Against}$. 
+
+Table \ref{tab:goal.ppm.rank} shows the top and bottom five players in PPM. Most of the results are consistent with expectations, though some interesting trends can be pointed out. First, forwards dominate the top of the list while the bottom players tend more likely to be defenders. This is not unexpected since ... (an explanation here). Second, PPM an PM are consistent in the signs except for Patrick Lalime, who has a positive PM but a large negative PPM. Finally, players on either side of the list involved in many goals, due to the way that we construct PPM. Note PPM \eqref{eq:ppm} as an expectation of the contribution to the goal differential due to the player, contains the number of goals that the player involved. Therefore, PPM is a measure that we can use to spot the best/worst sophisticated players whose performance tend to be consistent over the more ice time.  
+
+
+{
+	\renewcommand{\arraystretch}{1.2}
+	\begin{table}[htbp]
+		\centering
+		\begin{tabular}{r c c r r r r r }
+			\hline
+			Rk & Player & Pos & G & Beta & \textbf{PPM} & PM & FP \\ \hline
+			1 & MARIAN HOSSA 			& R & $1752$ & $0.40$ & $348.43$ & $448$ & $0.63$ \\
+			2 & SIDNEY CROSBY  		   & C &  $1568$ & $0.44$ & $340.09$ & $544$ & $0.67$ \\
+			3 & PAVEL DATSYUK  		   & C &  $1725$ & $0.39$ & $332.62$ & $\mathbf{599}$ & $0.67$ \\
+			4 & JOE THORNTON 			& C & $1740$ & $0.38$ & $328.30$ & $510$ & $0.65$ \\
+			5 & ALEX OVECHKIN  			& L &  $1705$ & $0.35$ &$295.34$ & $533$ & $0.66$ \\ \hline
+	  2435 &  JACK JOHNSON   		& D  & $990$ & $-0.19$ & $ -93.84$ & $-54$ & $ 0.47$\\
+	  2436 &  NICLAS WALLIN   		& D  & $764$ & $-0.25$ & $ -94.95$ & $-170$ & $ 0.39$\\
+	  2437 &  PATRICK LALIME  		& G & $1240$ & $-0.17$ & $ -106.68$ & $ 22$ & $ 0.51$\\
+	  2438 & NICLAS HAVELID  		& D & $1041$ & $-0.21$ & $ -111.20$ & $-131$ & $ 0.44 $\\
+	  2439 &  JAY BOUWMEESTER  		& D & $1870$ & $-0.15$ & $ -139.59$ & $-142$ & $ 0.46$\\ \hline
+		\end{tabular}
+		\caption{Top 5 and bottom 5 players in partial plus-minus (PPM), obtained from the team-special team-player model. 'Pos' is the position of the playe (center, left wing, right wing, defenseman, goaltender). 'G' is the number of goals that the player has involved. 'Beta' is the player effect from the regression model. 'PPM' and 'PM' are the partial-plus minus and traditional plus-minus statistics respectively. 'FP' is the for percentage.  }\label{tab:goal.ppm.rank}
+	\end{table}
+}
+
+
+\subsubsection{Season-playoff effect}
+Young players like Tyler Toffoli who just played one season or two, can hardly be discovered by the overall PPM. This inspires us to further consider seasonal player effects in the team-special team-player model, by incorporating the interaction of seasons (indicator) with players and teams. Meanwhile, Tyler was believed by many to be more efficient in playoffs than regular sessions, after he scored 7 goals and 7 assists in 26 games during the 2014 playoffs. Hence, to examine whether a player behaves consistently during the regular sessions and playoffs, we add the interaction of playoffs (indicator) with the players and teams. Denote $\vec{\alpha_{PS}}$ as the coefficients of the player-season interaction and $\vec{\alpha_{PP}}$ as the coefficients of the player-playoff interaction. By imposing L1 penalties on all the coefficients related to players, $\vec{\beta_P}$, $\vec{\alpha_{PS}}$ and $\vec{\alpha_{PP}}$, we can obtain the {\em maximum a posteriori} estimates.
+
+Table \ref{tab:goal.ppm.ranking.inter} shows the top and bottom five players in PPM of the regular sessions across all 11 seasons. All the players in the list are quite familiar as they appeared frequently in our previous discussion. Observe that Peter Forsberg played really well in season 20022003, indicated by the $20\%$ more PPM than the second place. Meanwhile, Sidney Crosby, appears four times in the top 10 list, is probably the most consistent player. To be notice that, his performance in 2009 playoffs actually dominates the list. Another fact is that here's no signal of players performing differently in regular sessions and playoff. 
+
+Tyler Toffoli is not remarkable from the list. As we discussed in above sections, this is because a player's PPM depends on the number of goals he involved. Tyler climbs to be the second best if we rank using player effects $\vec{\beta}$ for all skaters in season 20132014.
+
+
+{
+	\renewcommand{\arraystretch}{1.2}
+\begin{table}[htbp]
+	\centering
+	\small
+	\begin{tabular}{rccrrrrrr}
+		\hline
+		Rk    & Player & Season & Beta  & \textbf{PPM}  & PM & Beta.Po & PPM.Po & PM.Po \\
+		\hline
+		1     & PETER FORSBERG & 20022003 & 0.74  & 55.52 & 85 & 0.74  & 4.6 & 5\\
+		2     & SIDNEY CROSBY & 20092010 & 0.41  & 43.47 & 60 & 0.41  & 7.45 & 19\\
+		3     & DOMINIK HASEK & 20052006 & 0.35  & 42.45 & 80 & 0     & 0 & 0 \\
+		4     & SIDNEY CROSBY & 20082009 & 0.41  & 42.26 & 48 & 0.41  & \textbf{10.87} & 26 \\
+		5     & SIDNEY CROSBY & 20052006 & 0.41  & 41.86 & 52 & 0     & 0  & 0\\
+		\dots & & & &\dots & & \\
+		401 & TYLER TOFFOLI & 20132014 & 0.55 & 12.79 & 28 & 0.55 & 7.2 & 3\\
+		\dots & & & &\dots & & \\
+		1769 & TYLER TOFFOLI & 20122013 & 0.55 & 2.93 & 5 & 0.55 & 1.87 & 7\\
+		\dots & & & &\dots & & \\
+		10200 & PATRICK LALIME & 20022003 & -0.27 & -37.81& 47 & -0.27 & -8.76 & 12\\
+		10201 & PATRICK LALIME & 20032004 & -0.27 & -37.81& 37 & -0.27 & -3.05 & -3\\
+		10202 & NICLAS HAVELID & 20062007 & -0.67 & -62.64 & -22 & -0.67 & -3.55 & -7 \\
+		10203 & NICLAS HAVELID & 20052006 & -0.7  & -65.94 & -41 & 0     & 0 & 0\\
+		10204 & JAY BOUWMEESTER & 20052006 & -0.69 & -69.62 & -32 & 0     & 0 &0\\
+		\hline
+	\end{tabular}%
+	\caption{Top 5 and bottom 5 players in partial plus-minus (PPM) of the regular sessions, obtained from the team-special team-player model with the season and playoff effects incorporated. We are showing the player effects and PPM for both the regular sessions and playoffs.}\label{tab:goal.ppm.ranking.inter}
+\end{table}
+}
+
+
+\subsection{Measurements in shots: Corsi \& Fenwick}
+\label{sec:corsifenwick}
+\begin{figure*}[t!]
+	\centering
+	\begin{subfigure}[t]{0.5\textwidth}
+		\centering
+		\includegraphics[height=1.5in]{figures/corsivsgoals.pdf}
+		\caption{Beta(Corsi) vs Beta(Goal)}
+	\end{subfigure}%
+	~ 
+	\begin{subfigure}[t]{0.5\textwidth}
+		\centering
+		\includegraphics[height=1.5in]{figures/fenwickvsgoals.pdf}
+		\caption{Beta(Fenwick) vs Beta(Goal)}
+	\end{subfigure}
+	\caption{Player effect via Corsi/Fenwick vs Goal.}
+\end{figure*}
+
+
+
+\subsection{Value of players}
+\label{sec:salary}
+
+
+
 
 \section{Conclusions}
 \label{sec:conclude}

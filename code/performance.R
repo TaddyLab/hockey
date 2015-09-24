@@ -3,11 +3,11 @@
 # The hockey data are built via design.R from games obtained via blog/scrape.R
 # Salaries are taken from 'nhlsalaries_bhz_nc/txt' in the sentian/hockey fork
 
-# set the directory
+setwd("/Users/Sen/Documents/hockey_new")
 
 # flags for CORSI/FENWICK/GOAL
 CORSI = FALSE
-FENWICK = TRUE
+FENWICK = FALSE
 if(CORSI & FENWICK){stop("Multiple flags")}
 
 ## fitting the hockey gl model
@@ -113,8 +113,9 @@ for(s in seasons){
     tab <- data.frame(
         player=who,
         season=s,
+        ng=ng,
         beta=round(b,2),
-        prob=round(probpost,2),
+        prob=round(prob,2),
         ppm=round(ppm,2),
         pm=pm,
         fp=round(fp,2),
@@ -134,3 +135,5 @@ rownames(perf) <- NULL
 write.csv(perf, 
     file=sprintf("results/performance-%s.csv",suffix), 
     row.names=FALSE, quote=FALSE)
+
+

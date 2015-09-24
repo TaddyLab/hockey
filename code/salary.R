@@ -1,8 +1,7 @@
 # Copyright (C) 2015, Matt Taddy and Robert B Gramacy and Sen Tian
 # comparison between salary and performance
 
-# set the directory 
-
+setwd("/Users/Sen/Documents/hockey_new")
 # flags for CORSI/FENWICK/GOAL
 CORSI = FALSE
 FENWICK = TRUE
