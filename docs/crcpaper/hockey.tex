@@ -1,23 +1,143 @@
 %!TEX root = book.tex
 
-\chapter{Hockey Player Ability via Logistic Regression}
+\chapter{Hockey Player Ability via Regression}
 
 \noindent
-{\bf Matt Taddy, Sen Tian, Robert B.~Gramacy}
+{\bf Robert B.~Gramacy, Matt Taddy, Sen Tian}
 
 \bigskip
-Plus-minus is the traditional metric for holistically evaluating player
-contributions in hockey, but it measures a marginal effect, fails to account
-for sample size, and is otherwise a noisy estimate.  A better approach would
-control for who players are playing with, and against, and thereby produce a
-partial player effect.  One way to do this, using the same resolution of data
-as for plus-minus (a record of which players were on the ice for each goal) is
-by modeling the log odds that a goal was scored for or against their team
-while they (and other players) were on the ice.  The simplest example of such
-a model is a logistic regression with a design matrix composed of player
-indicators, and responses indicating which team scored the goal.  The
-resulting partial player effects can then be backed out of the regression
-coefficients estimated from the goals data. 
+A hockey player's plus-minus measures the difference between goals scored by
+and against that player's team while the player was on the ice.  This measures
+only a marginal effect, failing to account for the
+influence of the others he is playing with and against.   A better approach
+would be to jointly model the effects of all players, and any other
+confounding information, in order to infer a partial effect
+for this individual: his influence on the box score regardless of who else is
+on the ice.
+
+This chapter describes and illustrates a  simple algorithm for recovering such partial effects.  There are
+two main ingredients.  First, we provide a logistic regression model that can
+predict which team has scored a given goal as a function of who was on the
+ice, what teams were playing, and details of the game situation (e.g.
+full-strength or power-play).  Since the resulting model is so high
+dimensional that standard maximum likelihood estimation techniques fail,  our
+second ingredient is a scheme for regularized estimation.  This adds a
+penalty to the objective that favors parsimonious models and stabilizes estimation.  Such techniques 
+have proven useful in fields from genetics to finance over the past two decades, and have demonstrated an impressive ability to gracefully handle
+large and highly imbalanced data sets.  The latest software packages accompanying this new
+methodology---which exploit
+parallel computing environments, sparse matrices, and other features of modern
+data structures---are widely available and make it straightforward for interested analysts to explore their own models of player contribution.
+
+This framework allows us to quickly obtain high-quality estimates for the full system of
+competing player contributions. After introducing the problem in Section \ref{sec:intro}, we detail our regression model in Section \ref{sec:regression} and the regularization scheme in Section \ref{sec:regularization}.  The remainder of the chapter analyzes more than a decade of data from the NHL.  We fit and interpret our main model, based on prediction of goal scoring, in Section \ref{sec:goals}.  This is compared to shot-based analysis, and metrics analogous to Corsi or Fenwick scores, in Section \ref{sec:shots}.  Finally, Section \ref{sec:salary} considers the relationship between our estimated  performance scores and the player salaries.
+
+
+\section{Introduction}
+\label{sec:intro}
+
+Plus-minus (PM) is a traditional metric for evaluating player contributions in
+hockey. It is calculated as the difference, for a given player, between the
+number of goals scored against the player's team and those scored by the
+player's team while that player was on the ice.  For example, during the
+2012-2013 season Stanley Cup Finals, between Boston and Chicago, Duncan Keith
+of the Chicago Blackhawks was on the ice for 8 goals by Chicago and 4 by
+Boston, giving him a +4 PM for the series.
+
+The PM score represents what statisticians call a \textit{marginal effect:}
+the average change in some response (goals for-vs-against) with change in some
+covariate (a player being on the ice) \textit{without accounting for whatever
+else changes at the same time}. It is an aggregate measure that averages over
+the contributions of other factors, such as teammates and opponents.   For
+example, suppose that the three authors of this chapter are added to the
+Blackhawks roster and that Joel Quenville (the coach of the Blackhawks) makes
+sure that Duncan Keith is with us on the ice whenever we are playing.  Since
+none of us are anything close to as good at hockey as Keith is, and surely our
+poor play would allow the other team to score, this will cause Duncan Keith's
+PM to drop.  At the same time, our PMs will be much higher than they would be
+if we didn't get to play next to Duncan Keith.
+
+% c(-1,1)[Y[64538:64569]+1]*XP[64538:64569,"DUNCAN_KEITH"]
+
+Instead of marginal effects, statisticians are more often interested in
+\textit{partial effects}: change in the expected response that can be
+accounted for by change in your variable of interest \textit{after removing
+the change due to other influential variables.} In the example above, a
+partial effect for Duncan Keith would be unchanged if he plays with the
+authors of this article or with the current members of the Blackhawks.  In
+each case, the partial effect will attempt to measure how Duncan Keith can
+influence the box-score regardless of who he skates with. Because such partial
+effects help us predict how Keith would perform on a different team or with a different
+combination of line-mates, this information is more useful than knowing a
+marginal effect.  
+
+One way that statisticians can isolate partial effects is by running
+\textit{experiments}.  Suppose that now, instead of playing for the
+Blackhawks, we are coaching them.  In order to figure out the value of Keith,
+we could randomly select different players to join him whenever he is on the
+ice and send completely random sets of players onto the ice whenever he is not
+playing.  Then, due to the setup of this randomized experiment, Keith's
+resulting PM score will represent a partial effect -- his influence regardless
+of who he plays with.  Of course, no real hockey coach would ever manage their
+team in this way.  Instead, we hockey analysts must make sense of
+\textit{observational data} that is collected as the games are naturally
+played, with consistent line mates and offensive-defensive pairings and where
+Duncan Keith tends to play both with and against the best players available.
+
+Partial effects are measured from observational data through
+\textit{regression}: you model the response (e.g., goals) as a function of
+many  influential variables (\textit{covariates}; e.g., all of the players on
+the ice).  In Section With rich enough data and proper use of statistical techniques, we
+can simultaneously estimate the full set of competing partial effects
+corresponding to all of our influential variables.  This is straightforward
+when there are only a small number of covariates.  However, the standard
+regression algorithms will fail when the number of covariates is large. This
+`high dimensional regression' setting occurs in hockey analysis, where we
+would like to regress `goals' onto the set of variables corresponding to
+whether each NHL player is on the ice (a set of 2500 players in our dataset)
+while also including effects of team, season, playoffs, and special teams
+scenarios (e.g. power plays).  Moreover, the covariate design is highly
+\textit{imbalanced}: over the span of several seasons there may be  tens of thousands of goals, but players play with
+and against only a small fraction of other players and the number of unique
+player configurations is relatively small.  Standard regression algorithms,
+such as maximum likelihood inference via Fisher scoring, will either massively
+\textit{over-fit} (e.g. assign large effects to players who rarely play) or
+simply fail to converge.
+
+However, there has been a massive improvement over the past two decades in the
+techniques available for high dimensional regression analysis.  These
+advancements are driven by the demands of researchers in genetics and finance,
+for example, for whom resolving partial effects amongst  large sets of
+variables is the key to their science.  The most successful approaches
+introduce some amount of \textit{regularization} to the estimation problem --
+an additional penalty term that rewards simplicity.  In our context,
+regularization shrinks towards a model where individual players don't make a
+huge difference while still allowing for large estimated player effects when
+the data warrant it.
+
+
+
+\subsection{Background}
+\label{sec:background}
+
+\section{Regression Model}
+\label{sec:regression}
+
+Given $n$ goals throughout the National Hockey League (NHL) over some
+specified time period,  say $y_i$ is $+1$ for a goal by the \textit{home} team
+and $y_i = -1$ for a goal by the \textit{away} team.
+
+\section{Regularized Estimation}
+\label{sec:regularization}
+
+\section{Analysis: goal-based effects}
+\label{sec:goals}
+
+\section{Analysis: comparison to shot-based metrics}
+\label{sec:shots}
+
+\section{Analysis: the relationship between salary and performance}
+\label{sec:salary}
 
 The problem with this setup is that it is ``too big'' for ordinary logistic
 regression software, and the design matrices are too highly imbalanced to
@@ -305,28 +425,6 @@ for {\sf R}, {\tt reglogit} \cite{reglogit} for the former and {\tt gamlr}
 \cite{gamlr} for the latter, make the practitioner's life much easier. The
 choice of which to deploy depends on the needs of the analysis. 
 
-The {\tt reglogit} package implements a Gibbs sampling strategy
-\cite{gem:gem:1984} described in full by \cite{gra:pols:2012}.  It combines
-two scale-mixture of normals data-augmentation schemes, one for the logit
-\cite{holmes:held:2006} and one for the Laplace prior \cite{park:casella:2008}.
-Obtaining $T$ samples from the full posterior, is straightforward using the
-following {\sf R} code
-\begin{verbatim}
-bfit <- reglogit(T=T, y=Y, X=X, normalize=FALSE)
-\end{verbatim}
-The full posterior sample for $\beta$ residing in {\tt bfit} allows posterior
-means to be calculated, as well as component-wise variances and correlations
-between $\beta_j$'s.  \cite{gramacy:jensen:taddy:2013} show how these can be
-used to, say, calculate the probability that one player is better than
-another, rank them and provide posterior credible intervals for those
-rankings\footnote{see., e.g, 
-\url{https://github.com/TaddyLab/hockey/blob/master/results/blog/logistic_pranks_betas.csv}
-} or be used to construct teams of players under budget constraints and
-subsequently describe the probability that those teams will score more goals
-than their opponents.  The software takes advantage of sparse matrix libraries
-({\tt slam} \cite{slam}), and is multi-threaded via {\tt OpenMP} meaning it 
-can multiple processors simultaneously, which is a common
-configuration for modern desktop architectures.
 
 
 However, {\tt reglogit} is still relatively slow when $n_p$ and $n_g$ are
