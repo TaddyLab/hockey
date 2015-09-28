@@ -43,14 +43,14 @@ sum(B_pt.p==0)
 sum(B_p.p==0)
 
 # dot and line plot for comparing models
-plot.modelcomp <- function(ind, coef_dot, coef_line, title, filename, mentioned=NULL){
+plot.modelcomp <- function(ind, coef_dot, coef_line, title, filename, label.y="PPM", mentioned=NULL){
   pdf(file=filename, height=4*2, width=9*2)
-  op <- par(mar=c(6,4,1,1))
+  op <- par(mar=c(8,4,1,1))
   coef_dot = coef_dot[ind]
   coef_line = coef_line[ind]
   ind = order(coef_dot)
   plot(1:length(ind),coef_dot[ind],'p',pch=20,cex=1,
-       main = title, cex.main=1, xaxt="n", xlab="",ylab='beta',col='black',
+       main = title, cex.main=1.5, xaxt="n", xlab="",ylab=label.y,col='black',
        panel.first=abline(v=1:length(ind),lty=1,col="grey"),
        ylim=c(min(c(coef_dot,coef_line)),max(c(coef_dot,coef_line))))
   axis(1, at=1:length(ind), labels=FALSE)
@@ -58,7 +58,7 @@ plot.modelcomp <- function(ind, coef_dot, coef_line, title, filename, mentioned=
   names(textcol) = names(coef_dot[ind])
   textcol[intersect(mentioned,names(textcol))] = "red"
   text(x=1:length(ind), y=par()$usr[3]-0.02*(par()$usr[4]-par()$usr[3]),
-       labels=names(textcol),srt=45, adj=1, xpd=TRUE, cex=0.7, col=textcol)
+       labels=names(textcol),srt=45, adj=1, xpd=TRUE, cex=0.8, col=textcol)
   for(i in 1:length(ind)){
     if(coef_dot[ind][i]>coef_line[ind][i]){
       segments(i,coef_dot[ind][i],i,coef_line[ind][i],col="blue",lwd=2)
@@ -72,49 +72,44 @@ plot.modelcomp <- function(ind, coef_dot, coef_line, title, filename, mentioned=
   dev.off()
 }
 
+# ppm
+ng <- colSums(abs(XP)) 
+prob <- 1/(1+exp(-B_pts.p)) 
+ppm_pts.p <- ng*(2*prob-1)
+prob <- 1/(1+exp(-B_pt.p)) 
+ppm_pt.p <- ng*(2*prob-1)
+prob <- 1/(1+exp(-B_p.p)) 
+ppm_p.p <- ng*(2*prob-1)
+
 ## 1.begin ##################################################################
 ##### team-player model vs player-only model
-##### top 30 and bottom 30 players in either model
-ind.top.pt = order(B_pt.p)[c(1:30,(2439-29):2439)]
-ind.top.p =  order(B_p.p)[c(1:30,(2439-29):2439)]
+##### top 20 and bottom 20 players in either model
+ind.top.pt = order(ppm_pt.p)[c(1:20,(2439-19):2439)]
+ind.top.p =  order(ppm_p.p)[c(1:20,(2439-19):2439)]
 # make the plot
-plot.modelcomp(unique(c(ind.top.pt,ind.top.p)), coef_dot = B_pt.p, coef_line = B_p.p, 
+plot.modelcomp(unique(c(ind.top.pt,ind.top.p)), coef_dot = ppm_pt.p, coef_line = ppm_p.p, 
                title="Team-player model (dots) vs player-only model (connecting lines)",
-               filename = "write-up/figures/ptvsp_tb30.pdf",
-               mentioned=c("TYLER_TOFFOLI","ONDREJ_PALAT","JOHN_MCCARTHY","SIDNEY_CROSBY","PETER_FORSBERG","JAMIE_ALLISON","MARTY_HAVLAT",
-                           "STEPHANE_VEILLEUX","ERIC_NYSTROM","MARTIN_LAPOINTE"))
+               filename = "write-up/figures/ptvsp_tb20.pdf", label.y="PPM",
+               mentioned=c("SIDNEY_CROSBY","MARIAN_HOSSA","PAVEL_DATSYUK","JOE_THORNTON","ALEX_OVECHKIN","HENRIK_SEDIN",
+                           "JACK_JOHNSON","NICLAS_WALLIN","PATRICK_LALIME","NICLAS_HAVELID","JAY_BOUWMEESTER", "BRIAN_BOUCHER",
+                           "HENRIK_LUNDQVIST","CHRIS_PHILLIPS","BRENDAN_WITT","JOSE_THEODORE","PETER_FORSBERG"))
 ## 1.end ####################################################################
 
 ## 2.begin ##################################################################
 ##### team-special team-player model vs team-player model
-##### coefs with different signs
-ind.pt.pts.diffsign = which(sign(B_pt.p)*sign(B_pts.p)<0)
+##### top 20 and bottom 20 players in either model
+ind.top.pts = order(ppm_pts.p)[c(1:20,(2439-19):2439)]
+ind.top.pt = order(ppm_pt.p)[c(1:20,(2439-19):2439)]
 # make the plot
-plot.modelcomp(ind.pt.pts.diffsign, coef_dot = B_pts.p, coef_line = B_pt.p, 
+plot.modelcomp(unique(c(ind.top.pts,ind.top.pt)), coef_dot = ppm_pts.p, coef_line = ppm_pt.p, 
                title="Team-special team-player model (dots) vs team-player model (connecting lines)",
-               filename = "write-up/figures/ptsvspt_diffsign.pdf",
-               mentioned=c("TYLER_TOFFOLI","ONDREJ_PALAT","JOHN_MCCARTHY","SIDNEY_CROSBY","PETER_FORSBERG","JAMIE_ALLISON"))
-pos <- c()
-for(i in 1:105){
-  pos = c(pos,player[which(rownames(player)==names(B_p[ind])[i]),1])
-  print(sprintf("%s %s", names(B_p[ind][i]), pos[i]))
-}
-sum(pos=='G')
+               filename = "write-up/figures/ptsvspt_tb20.pdf", label.y="PPM",
+               mentioned=c("SIDNEY_CROSBY","MARIAN_HOSSA","PAVEL_DATSYUK","JOE_THORNTON","ALEX_OVECHKIN","HENRIK_SEDIN",
+                           "JACK_JOHNSON","NICLAS_WALLIN","PATRICK_LALIME","NICLAS_HAVELID","JAY_BOUWMEESTER", "BRIAN_BOUCHER",
+                           "HENRIK_LUNDQVIST","CHRIS_PHILLIPS","BRENDAN_WITT","JOSE_THEODORE","PETER_FORSBERG"))
 ## 2.end ####################################################################
 
 ## 3.begin ##################################################################
-##### team-special team-player model vs team-player model
-##### top 30 and bottom 30 players in either model
-ind.top.pts = order(B_pts.p)[c(1:30,(2439-29):2439)]
-# make the plot
-plot.modelcomp(unique(c(ind.top.pts,ind.top.pt)), coef_dot = B_pts.p, coef_line = B_pt.p, 
-               title="Team-special team-player model (dots) vs team-player model (connecting lines)",
-               filename = "write-up/figures/ptsvspt_tb30.pdf",
-               mentioned=c("TYLER_TOFFOLI","ONDREJ_PALAT","JOHN_MCCARTHY","SIDNEY_CROSBY","PETER_FORSBERG","JAMIE_ALLISON","MARTY_HAVLAT",
-                           "STEPHANE_VEILLEUX","ERIC_NYSTROM","MARTIN_LAPOINTE"))
-## 3.end ####################################################################
-
-## 4.begin ##################################################################
 ##### team-special team-player model
 ##### table of the top 5 and bottom 5 players in ppm
 ##### table of team ppm 
@@ -166,9 +161,9 @@ tab.team <- data.frame(
 rownames(tab.team) <- NULL
 tab.team <- tab.team[order(-tab.team$ppm),] # rank
 tab.team
-## 4.end ####################################################################
+## 3.end ####################################################################
 
-## 5.begin ##################################################################
+## 4.begin ##################################################################
 ##### team-special team-player model
 # plot ppm vs pm
 ind4 = (ppm>0 & pm<0 | ppm<0 & pm>0)
@@ -179,6 +174,6 @@ plot(pm[ind4],ppm[ind4],pch=pos,xlab="PM",ylab="PPM",col=color)
 abline(0,0,col='grey',lwd=2)
 abline(v=0,col='grey',lwd=2)
 dev.off()
-## 5.end ####################################################################
+## 4.end ####################################################################
 
 

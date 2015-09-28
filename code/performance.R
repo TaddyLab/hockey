@@ -61,6 +61,13 @@ if(length(postbeta)>0){
         file=sprintf("results/playoff-betadiff-%s.csv",suffix),
         sep=",", col.names=FALSE, quote=FALSE)
 }
+
+### per-season player effects without sessions
+fit <- gamlr(cBind(XS,XT[,-grep(".Playoffs", colnames(XT))],XP,XPS[,-grep("_Playoffs", colnames(XPS))]), Y, gamma=0, 
+             standardize=FALSE, verb=1,
+             family="binomial", free=1:c(ncol(XS)+ncol(XT[,-grep(".Playoffs", colnames(XT))])))
+B_overall <- coef(fit)[-1,] # corrected AICc selection
+
 ### tabulate metrics
 # traditional plus minus
 getpm <- function(now) colSums(XP[now,]*c(-1,1)[Y[now]+1]) 
@@ -109,11 +116,19 @@ for(s in seasons){
     bpost[is.na(bpost)] <- 0
     probpost <- getprob(bpost)
     ppmpost <- getppm(probpost,ngpost)
+    # average of playoff-regular 
+    boverall <- B_overall[who] + B_overall[paste(who,s,sep="_")]
+    boverall[is.na(boverall)] <- 0
+    now <- goal$season==s
+    pmoverall <- getpm(now)
+    fpoverall <- getfp(now)
+    ngoverall <- getng(now)
+    proboverall <- getprob(boverall)
+    ppmoverall <- getppm(proboverall,ngoverall)
     # tabulate
     tab <- data.frame(
         player=who,
         season=s,
-        ng=ng,
         beta=round(b,2),
         prob=round(prob,2),
         ppm=round(ppm,2),
@@ -123,7 +138,12 @@ for(s in seasons){
         prob.po=round(probpost,2),
         ppm.po=round(ppmpost,2),
         pm.po=pmpost,
-        fp.po=round(fppost,2)
+        fp.po=round(fppost,2),
+        beta.avg=round(boverall,2),
+        prob.avg=round(proboverall,2),
+        ppm.avg=round(ppmoverall,2),
+        pm.avg=pmoverall,
+        fp.avg=round(fpoverall,2)
         )
     rownames(tab) <- paste(tab$player, s, sep="_")
     # add to total
@@ -137,3 +157,53 @@ write.csv(perf,
     row.names=FALSE, quote=FALSE)
 
 
+################ Sen added
+#### overall performance of each player
+#### player-special team-team model
+# clean the workspace 
+rm(list=ls())
+
+B_pts.p <- list()
+ppm_pts.p <- list()
+suffix <- c("goals","corsi","fenwick")
+for(i in 1:3){
+  load(sprintf("data/nhldesign-%s.rda",suffix[i]))
+  XT.season = XT
+  teams <- sort(unique(c(goal$hometeam,goal$awayteam)))
+  XT = Matrix(0,ncol=length(teams),nrow=nrow(XT.season),dimnames=list(goal$gcode,teams))
+  tc <- c(goal$hometeam,goal$awayteam)
+  tf <- factor(tc,levels=teams)
+  tw <- matrix(as.numeric(tf),ncol=2)
+  XT[cbind(1:nrow(XT.season),tw[,1])] <- 1
+  XT[cbind(1:nrow(XT.season),tw[,2])] <- -1
+  XT = cbind(XT,"ATL/WPG"=XT[,"ATL"]+XT[,"WPG"])
+  XT = XT[,-c(2,30)]
+  # model fit: team+player+special team
+  fit_pts <- gamlr(cBind(XS,XT,XP), Y, gamma=0, 
+                   standardize=FALSE, verb=1,
+                   family="binomial", free=1:c(ncol(XS)+ncol(XT)))
+  B_pts <- coef(fit_pts)[-1,] # corrected AICc selection
+  # coef of the players
+  B_pts.p[[i]] = B_pts[(ncol(XS)+ncol(XT)+1):length(B_pts)]
+  # ppm
+  ng <- colSums(abs(XP)) 
+  prob <- 1/(1+exp(-B_pts.p[[i]])) 
+  ppm_pts.p[[i]] <- ng*(2*prob-1)
+}
+names(B_pts.p) = suffix
+names(ppm_pts.p) = suffix
+# common players
+common = intersect(intersect(names(B_pts.p[[1]]),names(B_pts.p[[2]])),names(B_pts.p[[3]]))
+for(i in 1:3){
+  B_pts.p[[i]] = B_pts.p[[i]][common]
+  ppm_pts.p[[i]] = ppm_pts.p[[i]][common]
+}
+pos = player[rownames(player) %in% common,]$position
+perf_overall <- data.frame(player=common,position=pos,beta.goals=B_pts.p[["goals"]],beta.corsi=B_pts.p[["corsi"]],
+                          beta.fenwick=B_pts.p[["fenwick"]],ppm.goals=ppm_pts.p[["goals"]],
+                          ppm.corsi=ppm_pts.p[["corsi"]],ppm.fenwick=ppm_pts.p[["fenwick"]])
+# write to file
+rownames(perf_overall) <- NULL
+write.csv(perf_overall, 
+          file="results/performance-overall.csv", 
+          row.names=FALSE, quote=FALSE)
