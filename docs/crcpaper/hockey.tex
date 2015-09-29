@@ -5,36 +5,69 @@
 \noindent
 {\bf Robert B.~Gramacy, Matt Taddy, Sen Tian}
 
-\bigskip
-A hockey player's plus-minus measures the difference between goals scored by
-and against that player's team while the player was on the ice.  This measures
-only a marginal effect, failing to account for the
-influence of the others he is playing with and against.   A better approach
-would be to jointly model the effects of all players, and any other
-confounding information, in order to infer a partial effect
-for this individual: his influence on the box score regardless of who else is
-on the ice.
+\bigskip A hockey player's plus-minus measures the difference between goals
+scored by and against that player's team while the player was on the ice.
+This measures only a marginal effect, failing to account for the influence of
+the others he is playing with and against.   A better approach would be to
+jointly model the effects of all players, and any other confounding
+information, in order to infer a partial effect for this individual: his
+influence on the box score regardless of who else is on the ice.
 
-This chapter describes and illustrates a  simple algorithm for recovering such partial effects.  There are
-two main ingredients.  First, we provide a logistic regression model that can
-predict which team has scored a given goal as a function of who was on the
-ice, what teams were playing, and details of the game situation (e.g.
-full-strength or power-play).  Since the resulting model is so high
-dimensional that standard maximum likelihood estimation techniques fail,  our
-second ingredient is a scheme for regularized estimation.  This adds a
-penalty to the objective that favors parsimonious models and stabilizes estimation.  Such techniques 
-have proven useful in fields from genetics to finance over the past two decades, and have demonstrated an impressive ability to gracefully handle
-large and highly imbalanced data sets.  The latest software packages accompanying this new
-methodology---which exploit
-parallel computing environments, sparse matrices, and other features of modern
-data structures---are widely available and make it straightforward for interested analysts to explore their own models of player contribution.
+This chapter describes and illustrates a  simple algorithm for recovering such
+partial effects.  There are two main ingredients.  First, we provide a
+logistic regression model that can predict which team has scored a given goal
+as a function of who was on the ice, what teams were playing, and details of
+the game situation (e.g. full-strength or power-play).  Since the resulting
+model is so high dimensional that standard maximum likelihood estimation
+techniques fail,  our second ingredient is a scheme for regularized
+estimation.  This adds a penalty to the objective that favors parsimonious
+models and stabilizes estimation.  Such techniques  have proven useful in
+fields from genetics to finance over the past two decades, and have
+demonstrated an impressive ability to gracefully handle large and highly
+imbalanced data sets.  The latest software packages accompanying this new
+methodology---which exploit parallel computing environments, sparse matrices,
+and other features of modern data structures---are widely available and make
+it straightforward for interested analysts to explore their own models of
+player contribution.
 
-This framework allows us to quickly obtain high-quality estimates for the full system of
-competing player contributions. After introducing the problem in Section \ref{sec:intro}, we detail our regression model in Section \ref{sec:regression} and the regularization scheme in Section \ref{sec:regularization}.  The remainder of the chapter analyzes more than a decade of data from the NHL.  We fit and interpret our main model, based on prediction of goal scoring, in Section \ref{sec:goals}.  This is compared to shot-based analysis, and metrics analogous to Corsi or Fenwick scores, in Section \ref{sec:shots}.  Finally, Section \ref{sec:salary} considers the relationship between our estimated  performance scores and the player salaries.
+This framework allows us to quickly obtain high-quality estimates for the full
+system of competing player contributions. After introducing the  measurement
+problem in Section \ref{sec:intro}, we detail our regression model in Section
+\ref{sec:regression} and the regularization scheme in Section
+\ref{sec:regularization}.  The remainder of the chapter analyzes more than a
+decade of data from the NHL.  We fit and interpret our main model, based on
+prediction of goal scoring, in Section \ref{sec:goals}.  This is compared to
+shot-based analysis, and metrics analogous to Corsi or Fenwick scores, in
+Section \ref{sec:shots}.  Finally, Section \ref{sec:salary} considers the
+relationship between our estimated  performance scores and  player salaries.
+Overall, we are able to estimate a partial plus-minus metric that occurs on
+the same scale as plus-minus but controls for other players and confounding
+variables.  This metric is shown to be more highly correlated with salary than
+the standard (marginal) plus minus.  Moreover, we find that the goals-based
+metric is more correlated with salary than those based upon shots and blocked
+shots.   We conclude in Section \ref{sec:conclusion} with thoughts on further
+extension, in particular by breaking out of the linear framework to use
+classification models popular in the Machine Learning literature.
+
+The code for all empirical work in this chapter is provided in public a GitHub
+repository (\verb!https://github.com/TaddyLab/hockey!) and utilizes open
+source libraries for {\sf R} \cite{cranR}, particularly the {\sf gamlr} \cite{gamlr} package. 
 
 
-\section{Introduction}
+\section{Introduction: marginal and partial effects}
 \label{sec:intro}
+
+Hockey is played on ice, but that's not all that sets it apart from seemingly
+related  sports like soccer, basketball, or even field hockey.  At least not
+from an analytics perspective.  The unique thing about hockey is the rapid
+substitution transpiring continuously during play, as well as at stoppages in
+play.  In the data sets we have compiled, which we discuss in more detail
+shortly, the median amount of time a particular on-ice player configuration
+(determined by unique players on the ice for both both teams) is a mere eight
+seconds. Although many ``shifts'' are much longer than that, a trickle of
+piecemeal substitutions on both sides, transpiring as play develops, makes it
+difficult to attribute credit or blame to players for significant events, such
+as goals or shots.
 
 Plus-minus (PM) is a traditional metric for evaluating player contributions in
 hockey. It is calculated as the difference, for a given player, between the
@@ -43,6 +76,7 @@ player's team while that player was on the ice.  For example, during the
 2012-2013 season Stanley Cup Finals, between Boston and Chicago, Duncan Keith
 of the Chicago Blackhawks was on the ice for 8 goals by Chicago and 4 by
 Boston, giving him a +4 PM for the series.
+% c(-1,1)[Y[64538:64569]+1]*XP[64538:64569,"DUNCAN_KEITH"]
 
 The PM score represents what statisticians call a \textit{marginal effect:}
 the average change in some response (goals for-vs-against) with change in some
@@ -57,7 +91,18 @@ poor play would allow the other team to score, this will cause Duncan Keith's
 PM to drop.  At the same time, our PMs will be much higher than they would be
 if we didn't get to play next to Duncan Keith.
 
-% c(-1,1)[Y[64538:64569]+1]*XP[64538:64569,"DUNCAN_KEITH"]
+Due to its simplicity and
+minimal data requirements, plus-minus has been a preferred metric for the last
+fifty-odd years.  But since it measures a marginal effect, the plus-minus is
+impacted by many factors beyond the player ability which is actually of
+interest.  The ability of a player's teammates, or the quality of opponents,
+are not controlled for.  The amount of playing time is also not factored in,
+meaning plus-minus stats are much noisier for some players than others.
+Finally, goalies, teams, coaches, salaries, situations, special teams, etc.---
+which all clearly contribute to the nature of play, and thus to goals---are
+neither accounted for when determining player ability by plus-minus, and nor
+are they used to explain variation in the goals scored against a particular
+player or team.
 
 Instead of marginal effects, statisticians are more often interested in
 \textit{partial effects}: change in the expected response that can be
@@ -67,9 +112,9 @@ partial effect for Duncan Keith would be unchanged if he plays with the
 authors of this article or with the current members of the Blackhawks.  In
 each case, the partial effect will attempt to measure how Duncan Keith can
 influence the box-score regardless of who he skates with. Because such partial
-effects help us predict how Keith would perform on a different team or with a different
-combination of line-mates, this information is more useful than knowing a
-marginal effect.  
+effects help us predict how Keith would perform on a different team or with a
+different combination of line-mates, this information is more useful than
+knowing a marginal effect.
 
 One way that statisticians can isolate partial effects is by running
 \textit{experiments}.  Suppose that now, instead of playing for the
@@ -87,41 +132,122 @@ Duncan Keith tends to play both with and against the best players available.
 Partial effects are measured from observational data through
 \textit{regression}: you model the response (e.g., goals) as a function of
 many  influential variables (\textit{covariates}; e.g., all of the players on
-the ice).  In Section With rich enough data and proper use of statistical techniques, we
-can simultaneously estimate the full set of competing partial effects
-corresponding to all of our influential variables.  This is straightforward
-when there are only a small number of covariates.  However, the standard
-regression algorithms will fail when the number of covariates is large. This
-`high dimensional regression' setting occurs in hockey analysis, where we
-would like to regress `goals' onto the set of variables corresponding to
-whether each NHL player is on the ice (a set of 2500 players in our dataset)
-while also including effects of team, season, playoffs, and special teams
-scenarios (e.g. power plays).  Moreover, the covariate design is highly
-\textit{imbalanced}: over the span of several seasons there may be  tens of thousands of goals, but players play with
-and against only a small fraction of other players and the number of unique
-player configurations is relatively small.  Standard regression algorithms,
-such as maximum likelihood inference via Fisher scoring, will either massively
-\textit{over-fit} (e.g. assign large effects to players who rarely play) or
-simply fail to converge.
+the ice).  With rich enough data, we can simultaneously estimate the full set
+of competing partial effects corresponding to all of our influential
+variables.  This is straightforward when there are only a small number of
+covariates.  However, the standard regression algorithms will fail when the
+number of covariates is large. This `high dimensional regression' setting
+occurs in hockey analysis, where we would like to regress `goals' onto the set
+of variables corresponding to whether each NHL player is on the ice (a set of
+2500 players in our dataset) while also including effects of team, season,
+playoffs, and special teams scenarios (e.g. power plays).  Moreover, the
+covariate design is highly \textit{imbalanced}: over the span of several
+seasons there may be  tens of thousands of goals, but players play with and
+against only a small fraction of other players and the number of unique player
+configurations is relatively small.  Standard regression algorithms, such as
+maximum likelihood inference via Fisher scoring, will either massively \textit
+{over-fit} (e.g. assign large effects to players who rarely play) or simply
+fail to converge.
 
 However, there has been a massive improvement over the past two decades in the
 techniques available for high dimensional regression analysis.  These
 advancements are driven by the demands of researchers in genetics and finance,
 for example, for whom resolving partial effects amongst  large sets of
 variables is the key to their science.  The most successful approaches
-introduce some amount of \textit{regularization} to the estimation problem --
-an additional penalty term that rewards simplicity.  In our context,
-regularization shrinks towards a model where individual players don't make a
-huge difference while still allowing for large estimated player effects when
-the data warrant it.
+introduce some amount of \textit{regularization}  to the estimation problem --
+an additional penalty term that rewards simplicity (e.g.,
+\cite{hastie:tibsh:fried:2001}).  In our context, regularization shrinks
+towards a model where individual players don't make a huge difference while
+still allowing for large estimated player effects when the data warrant it.
+This conforms to what most analysts already believe: many players have a
+neutral, or ``zero'', effect (relative to the NHL average), whereas some are
+stars and others are liabilities.     The amount of regularization is chosen
+to make the model perform as well as possible in out-of-sample prediction and,
+again, contemporary statistical learning tools are designed to do exactly this
+-- reliably predict the future. To take advantage of these tools, we  need
+only to phrase partial player effect estimation  as a regression problem.
 
 
-
-\subsection{Background}
-\label{sec:background}
-
+ 
 \section{Regression Model}
 \label{sec:regression}
+
+A better measure of performance would be the partial effect of each player,
+having controlled for those factors.  Estimating partial effects necessarily
+demands added complexity in calculations, and if care is not taken complexity
+can have a deleterious impact on clarity of interpretation.  There are many
+ways of adding complexity, for example by taking into account a larger set of
+game-relevant factors such as hits, faceoffs, possession, shots.   While some
+of these measures are gaining in popularity, analysts do not generally agree
+on the relative importance of the added information.  Most importantly, none
+of these metrics offer a partial effect: .  An exception is the method of
+\cite{ThoVenJen12}, which proposes a proportional hazards process model for
+game events, allowing partial player effects to be backed out from high
+resolution game data. A downside however is that the apparatus is a bit of a
+black box to non-expert, and relies heavily on model assumptions that may be
+difficult to validate in practice.
+
+The goal in this chapter is to keep things simple: to exploit classical
+statistical models and low-resolution data (e.g., summarizing the on-ice
+``state'' for goals) towards estimating a partial player effect.  This is not a
+new concept in sports analytics.  For example \cite{awa09} suggests a simple
+adjustment to hockey plus-minus that controls for team strength by subtracting
+team-average plus-minus.  That's the right spirit, but we believe it can be
+better formalized, and therefore more easily generalized.  \cite{ros04} and
+\cite{ilabar08} suggested a linear regression model for conditional player
+performance in basketball.  The underlying normality assumption in
+conventional linear models makes sense in basketball, where scoring is
+frequent and variability in player configurations is small.  A similar
+technique has been tried for hockey \cite{mac10}, however the normality
+assumption is questionable in this context as the number of scoring events is
+much smaller by comparison.
+
+This chapter centers on the simple regression-based framework suggested by
+\cite{gramacy:jensen:taddy:2013}.  However, rather than a linear model
+with normal errors, theirs is based on {\em logistic} regression.  The
+logistic model is tailored to binary response variables, which makes sense in
+the hockey context because the information in a goal is binary (it is either a
+goal ``for'' or a goal ``against''), and because there there are very few goal
+events observed for any particular player configuration.  In logistic
+regression, the average log odds of a goal being scored ``for'' a particular
+team  is modeled as a linear function of predictor variables which may be
+comprised of an indicator of player configuration and other quantities, which
+is otherwise identical to the familiar ordinary (least squares) regression
+setup.  We provide a detailed description in Section \ref{sec:base}, but refer
+the reader to \cite{sheather:2009} or similar texts covering {\em Generalized Linear
+Models (GLMs)}, of which logistic regression is a special case.
+
+As we will illustrate, the setup is rather straightforward.  It is easy to
+extend, and highly interpretable.  Estimated coefficients describe
+contributions to the log odds of goals, and we show that these can be
+converted back onto the scale of goals, resulting in a adjusted plus-minus
+statistic, but this time one which is a true partial effect.  There is a snag,
+however, since the data is big---thousands of players involved in tens of
+thousands of goals---and the predictor matrix is imbalanced, meaning that we
+don't have the luxury of an designed experiment where a substantial portion of
+all player configurations are represented.  Rather, due to the use of player
+lines, and consistent line match-ups with opponents, where groups of two or
+three players are consistently on ice together at the same time, the data
+contain many clusters of individuals who are seldom observed apart. 
+
+In almost all regressions one is susceptible to the temptations of rich
+modeling when the data set is large, and our hockey setup is no different. One
+must be careful not to {\em over-fit}, wherein parameters are optimized to
+statistical noise rather than fit to the relationship of interest.  And one
+must be aware of {\em multicollinearity}, where groups of covariates are
+correlated with each other making it difficult to identify individual effects,
+as happens when players are grouped into lines.  A crucial contribution of
+\cite{gramacy:jensen:taddy:2013} is to suggest the use of modern penalized and
+Bayesian logistic regression models, which biases the estimates of player
+efects towards zero. 
+
+The remainder of the chapter is organized as follows.  In Section
+\ref{sec:base} we discuss the regularized regression model in detail, the data
+and the implementation.  This discussion closely follows
+\cite{gramacy:jensen:taddy:2013}.  Several embellishments are offered in
+\ref{sec:embell}, where we use the same underlying framework to allow
+features beyond player ability to explain variability in (the log odds of)
+goals. A detailed suite of examples is provided in Section \ref{sec:example}.
 
 Given $n$ goals throughout the National Hockey League (NHL) over some
 specified time period,  say $y_i$ is $+1$ for a goal by the \textit{home} team
@@ -135,6 +261,10 @@ and $y_i = -1$ for a goal by the \textit{away} team.
 
 \section{Analysis: comparison to shot-based metrics}
 \label{sec:shots}
+
+Examples in
+the literature include adjusted plus-minus \cite{schlocwel10}, and indices
+such as Fenwick, Corsi, or DeltaSOT, as reviewed by \cite{vol10}. 
 
 \section{Analysis: the relationship between salary and performance}
 \label{sec:salary}
@@ -174,130 +304,6 @@ including modern machine learning classifiers such as those based on trees
 (random forests, Bayesian additive regression trees, etc.) and kernel methods
 (support vector machines, Gaussian processes, etc.)
 
-\section{Introduction}
-
-Hockey is played on ice, but that's not what sets it apart from other
-polo-based sports like soccer or even field hockey.  At least not from an
-analytics perspective.  The unique thing about hockey is the rapid
-substitution transpiring continuously during play, as well as at stoppages in
-play.  In a data set(s) we compiled, which we discuss in more detail shortly, the
-median amount of time a particular on-ice player configuration (determined by
-unique players on the ice for both both teams) is a mere eight seconds.
-Although many ``shifts'' are much longer than that, a trickle of piecemeal
-substitutions on both sides, transpiring as play develops, makes for quite a
-noisy system when attributing credit or blame to players when significant
-events happen, like goals.
-
-The primary measure of individual {\em skater} (i.e., non-goalie) performance
-is {\em plus-minus}, which is defined as the number of goals scored by a
-skater's team, minus the number scored by the opposing team, while that skater
-is on the ice.  Only goals at even-strength, during the regular season, and
-during regulation time (i.e., not overtime) are included in the analysis.
-Goals from penalty-shots are also not included.   Due to its simplicity and
-minimal data requirements, plus-minus has been a preferred metric for the last
-fifty-odd years.  However a key weakness is that a player's plus-minus is
-impacted by many factors, only one of which is key quantity of interest: a
-summary of player ability.  The ability of a player's teammates, or the
-quality of opponents, are not controlled for.  The amount of playing time is
-also not factored in, meaning plus-minus stats are much noisier for some
-players than others.  Finally, goalies, teams, coaches, salaries, situations,
-special teams, etc.---which all clearly contribute to the nature of play, and
-thus to goals---are neither accounted for when determining player ability by
-plus-minus, and nor are they used to explain variation in the goals scored
-against a particular player or team.  
-
-The crux of the problem is that, in statistical terms, plus-minus is a {\em
-marginal effect}: it is an aggregate measure that averages over the
-contributions of other factors, such as teammates and opponents.  A better
-measure of performance would be the {\em partial effect} of each player,
-having controlled for those factors.  Estimating partial effects necessarily
-demands added complexity in calculations, and if care is not taken complexity
-can have a deleterious impact on clarity of interpretation.  There are many
-ways of adding complexity, for example by taking into account a larger set of
-game-relevant factors such as hits, faceoffs, possession, shots.  Examples in
-the literature include adjusted plus-minus \cite{schlocwel10}, and indices
-such as Corsi and DeltaSOT, as reviewed by \cite{vol10}.  While some of these
-measures are gaining in popularity, analysts do not generally agree on the
-relative importance of the added information.  Moreover, none of them really
-offer a partial effect.  An exception is the method of \cite{ThoVenJen12},
-which proposes a proportional hazards process model for game events, allowing
-partial player effects to be backed out from high resolution game data. A
-downside however is that the apparatus is a bit of a black box to non-expert,
-and relies heavily on model assumptions that may be difficult to validate in
-practice.
-
-The goal in this chapter is to keep things simple: to exploit classical
-statistical models and low-resolution data (e.g., summarizing the on-ice
-``state'' for goals) towards estimating a partial player effect.  This is not a
-new concept in sports analytics.  For example \cite{awa09} suggests a simple
-adjustment to hockey plus-minus that controls for team strength by subtracting
-team-average plus-minus.  That's the right spirit, but we believe it can be
-better formalized, and therefore more easily generalized.  \cite{ros04} and
-\cite{ilabar08} suggested a linear regression model for conditional player
-performance in basketball.  The underlying normality assumption in
-conventional linear models makes sense in basketball, where scoring is
-frequent and variability in player configurations is small.  A similar
-technique has been tried for hockey \cite{mac10}, however the normality
-assumption is questionable in this context as the number of scoring events is
-much smaller by comparison.
-
-This chapter centers on a simple regression-based framework suggested by
-\cite{gramacy:jensen:taddy:2013}.  However, rather than a linear model
-with normal errors, theirs is based on {\em logistic} regression.  The
-logistic model is tailored to binary response variables, which makes sense in
-the hockey context because the information in a goal is binary (it is either a
-goal ``for'' or a goal ``against''), and because there there are very few goal
-events observed for any particular player configuration.  In logistic
-regression, the average log odds of a goal being scored ``for'' a particular
-team  is modeled as a linear function of predictor variables which may be
-comprised of an indicator of player configuration and other quantities, which
-is otherwise identical to the familiar ordinary (least squares) regression
-setup.  We provide a detailed description in Section \ref{sec:base}, but refer
-the reader to \cite{sheather:2009} or similar texts covering {\em Generalized Linear
-Models (GLMs)}, of which logistic regression is a special case.
-
-As we will illustrate, the setup is rather straightforward.  It is easy to
-extend, and highly interpretable.  Estimated coefficients describe
-contributions to the log odds of goals, and we show that these can be
-converted back onto the scale of goals, resulting in a adjusted plus-minus
-statistic, but this time one which is a true partial effect.  There is a snag,
-however, since the data is big---thousands of players involved in tens of
-thousands of goals---and the predictor matrix is imbalanced, meaning that we
-don't have the luxury of an designed experiment where a substantial portion of
-all player configurations are represented.  Rather, due to the use of player
-lines, and consistent line match-ups with opponents, where groups of two or
-three players are consistently on ice together at the same time, the data
-contain many clusters of individuals who are seldom observed apart. 
-
-In almost all regressions one is susceptible to the temptations of rich
-modeling when the data set is large, and our hockey setup is no different. One
-must be careful not to {\em over-fit}, wherein parameters are optimized to
-statistical noise rather than fit to the relationship of interest.  And one
-must be aware of {\em multicollinearity}, where groups of covariates are
-correlated with each other making it difficult to identify individual effects,
-as happens when players are grouped into lines.  A crucial contribution of
-\cite{gramacy:jensen:taddy:2013} is to suggest the use of modern penalized and
-Bayesian logistic regression models, which biases the estimates of player
-efects towards zero.  The recent statistical learning literature (e.g.,
-\cite{hastie:tibsh:fried:2001}) refers to such techniques as {\em
-regularization}.  At first blush, it may seem as if interjecting bias is a bad
-thing, but in this case the nature of the bias conforms to what most analysts
-already believe: many players have a neutral, or ``zero'', effect, whereas
-some are stars and others are liabilities.  
-
-The remainder of the chapter is organized as follows.  In Section
-\ref{sec:base} we discuss the regularized regression model in detail, the data
-and the implementation.  This discussion closely follows
-\cite{gramacy:jensen:taddy:2013}.  Several embellishments are offered in
-\ref{sec:embell}, where we use the same underlying framework to allow
-features beyond player ability to explain variability in (the log odds of)
-goals. A detailed suite of examples is provided in Section \ref{sec:example}.
-The code for all empirical work in this chapter is provided in public a GitHub
-repository (\verb!https://github.com/TaddyLab/hockey!) and utilizes open
-source libraries for {\sf R} \cite{cranR}.  We conclude in Section
-\ref{sec:conclude} with thoughts on further extension, in particular by
-breaking out of the linear framework to use classification models
-popular in the Machine Learning literature.
 
 \section{The base model, data, and implementation}
 \label{sec:base}
@@ -715,8 +721,6 @@ We have seen that Henrik Sedin's worse performance in 2007 playoffs than in the 
 \end{figure}
 
 
-\section{Conclusions}
-\label{sec:conclude}
-
+\section{Conclusion}\label{sec:conclusion}
 \bibliographystyle{plain}
 \bibliography{hockey}
