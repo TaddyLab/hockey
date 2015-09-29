@@ -91,18 +91,17 @@ poor play would allow the other team to score, this will cause Duncan Keith's
 PM to drop.  At the same time, our PMs will be much higher than they would be
 if we didn't get to play next to Duncan Keith.
 
-Due to its simplicity and
-minimal data requirements, plus-minus has been a preferred metric for the last
-fifty-odd years.  But since it measures a marginal effect, the plus-minus is
-impacted by many factors beyond the player ability which is actually of
-interest.  The ability of a player's teammates, or the quality of opponents,
-are not controlled for.  The amount of playing time is also not factored in,
-meaning plus-minus stats are much noisier for some players than others.
-Finally, goalies, teams, coaches, salaries, situations, special teams, etc.---
-which all clearly contribute to the nature of play, and thus to goals---are
-neither accounted for when determining player ability by plus-minus, and nor
-are they used to explain variation in the goals scored against a particular
-player or team.
+Due to its simplicity and minimal data requirements, plus-minus has been a
+preferred metric for the last fifty-odd years.  But since it measures a
+marginal effect, the plus-minus is impacted by many factors beyond the player
+ability, which is the actual quantity of interest.  The ability of a player's
+teammates, or the quality of opponents, are not controlled for.  The amount of
+playing time is also not factored in, meaning plus-minus stats are much
+noisier for some players than others. Finally, goalies, teams, coaches,
+salaries, situations, special teams, etc.---which all clearly contribute to
+the nature of play, and thus to goals---are neither accounted for when
+determining player ability by plus-minus, and nor are they used to explain
+variation in the goals scored against a particular player or team.
 
 Instead of marginal effects, statisticians are more often interested in
 \textit{partial effects}: change in the expected response that can be
@@ -152,13 +151,13 @@ algorithms, such as maximum likelihood inference via Fisher scoring, will
 either massively \textit {over-fit} (e.g. assign large effects to players who
 rarely play) or simply fail to converge.
 
-However, there has been a massive improvement over the past two decades in the
-techniques available for high dimensional regression analysis.  These
+However, there has been a tremendous improvement over the past two decades in
+the techniques available for high dimensional regression analysis.  These
 advancements are driven by the demands of researchers in genetics and finance,
 for example, for whom resolving partial effects amongst  large sets of
 variables is the key to their science.  The most successful approaches
-introduce some amount of \textit{regularization}  to the estimation problem --
-an additional penalty term that rewards simplicity (e.g.,
+introduce some amount of \textit{regularization}  to the estimation
+problem---an additional penalty term that rewards simplicity (e.g.,
 \cite{hastie:tibsh:fried:2001}).  In our context, regularization shrinks
 towards a model where individual players don't make a huge difference while
 still allowing for large estimated player effects when the data warrant it.
@@ -166,8 +165,8 @@ This conforms to what most analysts already believe: many players have a
 neutral, or ``zero'', effect (relative to the NHL average), whereas some are
 stars and others are liabilities.     The amount of regularization is chosen
 to make the model perform as well as possible in out-of-sample prediction and,
-again, contemporary statistical learning tools are designed to do exactly this
--- reliably predict the future. To take advantage of these tools, we  need
+again, contemporary statistical learning tools are designed to do exactly
+this---reliably predict the future. To take advantage of these tools, we  need
 only to phrase partial player effect estimation  as a regression problem.
 
 
@@ -180,7 +179,10 @@ individual presence on the ice to observable outcomes of interest.  We
 describe the model here for a goals-based analysis, but extend it to shots and
 other metrics in the analysis sections.
 
-Previous attempts at partial player effect estimation range from standard linear regression (usually on aggregate data) -- the adjusted plus-minus scores of \cite{awa09}, \cite{schlocwel10},  and \cite{mac10} -- to the complex hazard model of 
+Previous attempts at partial player effect estimation range from standard
+linear regression (usually on aggregate data)---the adjusted plus-minus
+scores of \cite{awa09}, \cite{schlocwel10},  and \cite{mac10}---to the complex
+hazard model of
 \cite{ThoVenJen12}, which proposes a proportional hazards process for
 game events, allowing partial player effects to be backed out from high
 resolution game data. 
@@ -189,7 +191,14 @@ Adjusted plus-minus is built from similar ideas for Basketball analysis (see
 underlying normality assumption for the error structure; this may be a good
 approximation for basketball, where scoring is frequent and variability in
 player configurations is small, but it is  inappropriate for disaggregated
-data with a binary response (e.g. whether individual goal being for-vs-against the home team).  Such misspecification becomes especially problematic when combined with the modern regularization techniques necessary for reliable estimation of high dimensional models.  On the other hand, more complex stochastic process modeling requires many additional assumptions on the data generating process and can be difficult to validate in practice; moreover, models such as that of \cite{ThoVenJen12} take far longer to run than we wish for our analysis.
+data with a binary response (e.g., whether an individual goal is for-vs-against
+the home team).  Such misspecification becomes especially problematic when
+combined with the modern regularization techniques necessary for reliable
+estimation of high dimensional models.  On the other hand, more complex
+stochastic process modeling requires many additional assumptions on the data
+generating process and can be difficult to validate in practice; moreover,
+models such as that of \cite{ThoVenJen12} take far longer to run than we wish
+for our analysis.
 
 The goal of our modeling is to provide a correct treatment of the binary
 `goals' data without introducing significant additional modeling complexity.
@@ -210,14 +219,15 @@ statistic, but this time one which is a true partial effect.
 
 Given $n$ goals throughout the National Hockey League (NHL) over some
 specified time period,  say $y_i$ is $+1$ for a goal by the \textit{home} team
-and $-1$ for a goal by the \textit{away} team.\footnote{{\em home} and {\em away} are merely organizational devices,
-creating a consistent binary bifurcation for goals that can be applied across
-games, seasons, etc. Due to the symmetry in the logit transformation, player effects are unchanged when framing away team probabilities as $q_i$ rather
-than $1-q_i$, so we loose no generality by privileging home team goals in
-this way.}  Say that $q_i = \mathrm{p}(y_i
-= 1) =  \mathrm{p}(\text{home~team~scored~goal}~i)$.  Then the logistic
-regression model of player contribution is, for goal $i$ in season $s$ with
-away team $a$ and home team $h$,  \begin{align}\label{hockeymod}
+and $-1$ for a goal by the \textit{away} team.\footnote{{\em home} and {\em
+away} are merely organizational devices, creating a consistent binary
+bifurcation for goals that can be applied across games, seasons, etc. Due to
+the symmetry in the logit transformation, player effects are unchanged when
+framing away team probabilities as $q_i$ rather than $1-q_i$, so we loose no
+generality by privileging home team goals in this way.}  Say that $q_i =
+\mathrm{p}(y_i = 1) =  \mathrm{p}(\text{home~team~scored~goal}~i)$.  Then the
+logistic regression model of player contribution is, for goal $i$ in season
+$s$ with away team $a$ and home team $h$,  \begin{align}\label{hockeymod}
 \log\left[\frac{q_{i}}{1-q_{i}}\right] = \alpha_0 + \alpha_{sh} - \alpha_{sa} +
 \mathbf{u}_i'\boldsymbol{\phi} + \mathbf{x}_i'\boldsymbol{\beta}_0 +
 \mathbf{x}_i'\boldsymbol{\beta}_s. \end{align}  Vector $\mathbf{u}_i$ holds
@@ -229,7 +239,7 @@ goal $i$, and $x_{ij}=0$ for everyone not on the ice.   Coefficient
 $\beta_{0j} + \beta_{sj}$ is the season-$s$ effect of player $j$ on the log
 odds that, given a goal has been scored, the goal was scored by their team.
 These effects are `partial' in that they control for who else was on the ice,
-special teams scenarios, and team-season fixed effects -- a player's
+special teams scenarios, and team-season fixed effects---a player's
 $\beta_{0j}$ or $\beta_{sj}$ only need be nonzero if that player effects play
 above or below the team average for a given season.  As a test of understanding: what does the intercept
 $\alpha$ represent in (\ref{eq:simplemodel})?\footnote{It is the home ice
@@ -310,7 +320,8 @@ that yields overly simple results and takes a very long time to run.
 Instead, a crucial contribution of
 \cite{gramacy:jensen:taddy:2013} is to suggest the use of modern penalized and
 Bayesian logistic regression models, which biases the estimates of player
-effects towards zero. In the next section we consider one fast and successful version of these methods: $L_1$ regularization.
+effects towards zero. In the next section we consider one fast and successful
+version of these methods: $L_1$ regularization.
 
 \section{Regularized Estimation}
 \label{sec:regularization}
@@ -330,7 +341,7 @@ number of goals and $p$ is the number of players.
 A few common cost functions are shown in Figure \ref{costs}.  Those that have
 a non-differentiable spike at zero (all but ridge) lead to sparse estimators,
 with some coefficients set to exactly zero.   The curvature of the penalty
-away from zero dictates then the weight of shrinkage imposed on the nonzero
+away from zero dictates the weight of shrinkage imposed on the nonzero
 coefficients:  $L_2$ costs increase with coefficient size,  lasso's $L_1$
 penalty has zero curvature and imposes constant shrinkage, and as curvature
 goes towards $-\infty$ one approaches the $L_0$ penalty of subset selection.
@@ -343,12 +354,19 @@ $L_2$ `ridge' costs \cite{hoerl_ridge_1970}, $L_1$ `lasso' \cite{tibshirani_regr
 }
 \end{figure}
 
-In this article we focus on the $L_1$ penalty for its balance between shrinkage of large signals (players tend not to have huge effects) and a preference for sparsity (we can only measure the nonzero effects of a subset of players).  For these and many appealing theoretical reasons (and for computational tractability), the $L_1$ penalty is by far the most commonly used in contemporary regularized regression; see \cite{hastie:tibsh:fried:2001} for a broad-audience overview and \cite{taddy_one-step_2015} for details on the algorithms used in this chapter.
-Under lasso $L_1$ penalization, estimation proceeds through optimization of  
+In this article we focus on the $L_1$ penalty for its balance between
+shrinkage of large signals (players tend not to have huge effects) and a
+preference for sparsity (we can only measure the nonzero effects of a subset
+of players).  For these and many appealing theoretical reasons (and for
+computational tractability), the $L_1$ penalty is by far the most commonly
+used in contemporary regularized regression; see
+\cite{hastie:tibsh:fried:2001} for a broad-audience overview and
+\cite{taddy_one-step_2015} for details on the algorithms used in this chapter.
+Under lasso $L_1$ penalization, estimation proceeds through optimization of
 \begin{equation} \label{pendev}
 l\left(\boldsymbol{\eta}; \mathbf{y}\right) + n\lambda \sum_{j=1}^p\left(|\beta_{0j}| + |\beta_{sj}|\right),
 \end{equation}
-The penalty size, $\lambda$, acts as a {\it squelch}: it   noise to
+The penalty size, $\lambda$, acts as a {\it squelch}: canceling noise to
 focus on the true input signal. Large $\lambda$ lead to very simple  model
 estimates, while as $\lambda \rightarrow 0$ we approach maximum likelihood
 estimation (MLE). Since you don't know optimal $\lambda$, practical
@@ -359,15 +377,41 @@ from high to low penalization along $\lambda^1 > \lambda^2 \ldots >
 that (\ref{pendev}) is minimized at $\boldsymbol{\hat\beta} = \mathbf{0}$, and proceed
 down to some pre-specified $\lambda^T$ (e.g., $\lambda^T= 0.01\lambda^1$).
 
- A common tool for choosing the optimal $\lambda$ -- that for which we report estimated player effects -- is cross validation (CV).  In CV, the path of coefficients is repeatedly fit to data subsamples and used to predict the response on the left-out data. The $\lambda$ leading to minimum error is then selected as optimal.  In this chapter, we instead use an analytic alternative to CV that yields models that perform as well or better out-of-sample.   The corrected Akaike Information Criterion (AICc), proposed in \cite{hurvich_regression_1989}, is defined as
+ A common tool for choosing the optimal $\lambda$---that for which we report
+ estimated player effects---is cross validation (CV).  In CV, the path of
+ coefficients is repeatedly fit to data subsamples and used to predict the
+ response on the left-out data. The $\lambda$ leading to minimum error is then
+ selected as optimal.  In this chapter, we instead use an analytic alternative
+ to CV that yields models that perform as well or better out-of-sample.   The
+ corrected Akaike Information Criterion (AICc), proposed in
+ \cite{hurvich_regression_1989}, is defined as
 \begin{equation*}
 AICc = 2\sum_{i=1}^{n} l(\boldsymbol{\hat\eta}_{\lambda};\mathbf{y}) + \frac{2kn}{n-k-1},
 \end{equation*}
-where $\boldsymbol{\hat\eta}_{\lambda}$ are the estimated log odds under penalty $\lambda$ and $k$ is the number of non-zero estimated coefficients at this penalty. See \cite{taddy_one-step_2015} and \cite{flynn_efficiency_2013} for details on AICc selection in this context; we find AICc preferable to CV because it is computationally effecient (you only need to optimize once) and because there is no random Monte Carlo variation -- it always gives the same answer on the same data.  However, all of our ideas here apply if you wish to use CV selection instead. Regardless, the {\tt gamlr} package \cite{gamlr} can be called via {\tt R} to implement this procedure:
+where $\boldsymbol{\hat\eta}_{\lambda}$ are the estimated log odds under
+penalty $\lambda$ and $k$ is the number of non-zero estimated coefficients at
+this penalty. See \cite{taddy_one-step_2015} and \cite{flynn_efficiency_2013}
+for details on AICc selection in this context; we find AICc preferable to CV
+because it is computationally effecient (you only need to optimize once) and
+because there is no random Monte Carlo variation---it always gives the same
+answer on the same data.  However, all of our ideas here apply if you wish to
+use CV selection instead. Regardless, the {\tt gamlr} package \cite{gamlr} can
+be called via {\sf R} to implement this procedure:
 \begin{verbatim}
 R> fit <- gamlr(X, Y, standardize=FALSE, family="binomial")
 \end{verbatim}
-For CV, just replace \verb!gamlr! with \verb!cv.gamlr!. The \verb!standardize=FALSE! flag tells \verb!gamlr! to \textit{not} weight the coefficient penalties by the standard deviation of the corresponding covariate (i.e., to use penalty $\lambda|\beta_j|$ instead of $\lambda\mathrm{sd}(\mathbf{x}_j)|\beta_j|$); this is appropriate here because such standardization would \textiti{up-weight} the influence of players who rarely play (and have low $\mathrm{sd}(\mathbf{x}_j)$) relative to those who have a lot of ice time (and thus high $\mathrm{sd}(\mathbf{x}_j)$).  The software exploits sparsity in our player effects (\verb!X!) via the \verb!Matrix! library for \verb!R!, and is extremely fast to run: no examples in this article require more than a few seconds of computation. Estimated coefficients at optimal $\lambda$ are available as \verb!coef(fit)!.
+For CV, just replace \verb!gamlr! with \verb!cv.gamlr!. The
+\verb!standardize=FALSE! flag tells \verb!gamlr! to \textit{not} weight the
+coefficient penalties by the standard deviation of the corresponding covariate
+(i.e., to use penalty $\lambda|\beta_j|$ instead of
+$\lambda\mathrm{sd}(\mathbf{x}_j)|\beta_j|$); this is appropriate here because
+such standardization would \textit{up-weight} the influence of players who
+rarely play (and have low $\mathrm{sd}(\mathbf{x}_j)$) relative to those who
+have a lot of ice time (and thus high $\mathrm{sd}(\mathbf{x}_j)$).  The
+software exploits sparsity in our player effects (\verb!X!) via the
+\verb!Matrix! library for {\sf R}, and is extremely fast to run: no examples
+in this article require more than a few seconds of computation. Estimated
+coefficients at optimal $\lambda$ are available as \verb!coef(fit)!.
 
 
 One natural way to understand regularized regression is through the lens of
