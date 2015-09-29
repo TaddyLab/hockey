@@ -389,13 +389,13 @@ estimation for other coefficients.  In this way, we ensure that the player
 effect estimates are not \textit{polluted} by confounding effects in
 $\mathbf{u}$ and $\mathbf{v}$.  
 
-Moreover, consider the covariates acting on $\boldsymbol{\beta}_0$,
-$\boldsymbol{\beta}_s$, and $\boldsymbol{\beta}_p$ in (\ref{hockeymod}): each
-interacts $\mathbf{x}_i$ with additional binary indicators, such that
+Moreover, consider the covariates on $\boldsymbol{\beta}_0$,
+$\boldsymbol{\beta}_s$, and $\boldsymbol{\beta}_p$ in (\ref{hockeymod}): for the latter two,
+ $\mathbf{x}_i$ interacts with additional binary indicators, such that
 $\beta_{0j}$ acts on more nonzero terms than $\beta_{sj}$, which itself acts
-on more nonzero terms than $\beta_{pj}$.  There is therefor less signal
+on more nonzero terms than $\beta_{pj}$.  Thus there is  less signal
 associated with the season and playoff player effect innovations than with the
-player baseline effects, and these will tend to be estimated at zero unless
+player baseline effects, so that these will tend to be estimated at zero unless
 there is significant evidence that a player has become better or worse across
 seasons or in a given post-season.
 
@@ -598,13 +598,13 @@ and is a more realistic reflection of their team value.  For example, Marian
 Hossa moves to the top of the list when ranked by $\beta$: he is immensely
 talented, but tends to log less ice time than many of his peers (in part,
 because the Blackhawks have many top forwards).  On the other hand, players
-ranked at the bottom by PPM are those who have a negative $\beta$ and who get
-a large amount of ice-time.  There are many players who have lower betas than
+ranked at the bottom by PPM are those who have a negative $\beta$ and get
+a large amount of ice-time.  There are many players who have lower $\beta$s than
 Jack Johnson (e.g., John McCarthy at -0.5 and Thomas Pock at -0.4), but they
 do not get to play as much and thus don't show up in our bottom 20.
 
- The individual players
-$\beta$ effects are also very different from those in
+ The individual player
+$\beta$ effects also differ here from those in
 \cite{gramacy:jensen:taddy:2013}; the discrepancy occurs because we're now
 \textit{controlling} for additional non-player confounding factors (e.g.,
 coaching through team-season effects) and we allow the player performance to
@@ -670,6 +670,7 @@ The results for Corsi-based performance analysis are in Table \ref{tab:corsi}.
 We've added the FP and are reporting $q$ -- player event probabilities --
 instead of $\beta$ for direct comparison.
 
+{\color{red} TO DO: need to fill in this table with the relevant Corsi statistics.  Then, briefly describe the results and how the differ from the goals table.  For example, I recall that Ovechkin is top by Corsi while Crosby is top by goals... Canadians will enjoy that stat.  }
 
 \begin{table}[p]
         \centering\small
@@ -684,23 +685,27 @@ instead of $\beta$ for direct comparison.
 \section{Analysis: the relationship between salary and performance}
 \label{sec:salary}
 
-
+{\color{red}  TO DO: 
 \begin{enumerate}
-    \item Figure \ref{fig:ppmsal-corr-season}: PPM in goals is overall more correlated with salaries. All 3 lines show a decrease after lockout season 2004-2005. As to the 2013-2013 lockout, Corsi/Fenwick shows a drop in the correlation while goals shows a drop in the season after. Note Corsi even gives negative correlations for season 2006-2007 and 2005-2006. 
-    \item Figure \ref{fig:ppmsal-scat}: Two measures are pretty consistent with each other. Sidney Crosby, Zach Parise and Ryan Suter are three most expensive players in season 2013-2014. According to our evaluation, both goals and Corsi show that Sidney Crosby is under paid while Ryan Suter is over paid. 
-    \item Figure \ref{fig:salaryhist}
-\end{enumerate}
+    \item I'd like to clean up and augment \ref{fig:ppmsal-corr-season}.  Please make the axis, label, and title text larger.  Also, please remove the vertical lines except for one at 2004-2005 and at 2012-2013 for the lockouts.  Also remove the box around the legend. Finally, we should add the non-partial (i.e., just PM) analogues for each metric as a dashed line.
+    \item I'd also like to see two alternate versions of the updated \ref{fig:ppmsal-corr-season}: 
+    \begin{itemize}
+    \item salary correlation with the player-event probs $q$ in solid and with standard FP dashed.
+    \item salary correlation with max(PPM,0) in solid and with max(PM,0) in dashed (i.e., correlation only with positive effect).
+    \end{itemize}
+    \item Instead of the individual player plot that you had here, can we get tables of which players are most over and under paid? There are a few ways I can think of doing this (any other ideas are welcome)
+    \begin{itemize}
+    \item Dollars divided by PPM: who is highest and who is lowest?
+    \item Dollars minus the least squares line fit of dollars to PPM?
+    \end{itemize}
+    Then can we see the same tables by PM?
+    \item Figure \ref{fig:salaryhist} is a cool idea; can you clean it up with larger axis labels, and make sure that nothing is getting cut-off?  Also remove the title.  Then, please make it so that there are three colors on the histogram: a blue at the top for proportion with positive beta, a white in the middle for zero betas, and a red at the bottom for negative betas.  I think you can do this by plotting everybody in blue, then adding everybody but positive betas in white, and finally adding the histogram for only negative betas in red.  Then update the legend accordingly.
+\end{enumerate}}
 
 \begin{figure}[htb!]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/ppmsal-corr-season.pdf}
     \caption{Correlation between salary and PPM over 11 seasons with the lockout season 2012-2013 marked in red.}\label{fig:ppmsal-corr-season}
-\end{figure}
-
-\begin{figure}[htb!]
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/ppmsal-scat.pdf}
-    \caption{Non-zero PPM via goals versus 2013-2014 salary, augmented with rescaled PPM via Corsi. Ordinary least squares fits are added to aid in visualization.}\label{fig:ppmsal-scat}
 \end{figure}
 
 
@@ -719,19 +724,18 @@ in genetics, finance, text mining, can be used to calculate partial player
 effects in hockey.  We have argued that that such such partial effects are a
 better measure of player ability compared to the classic plus-minus statistic,
 and have the benefit of being interpretable on the same scale as plus-minus.
-Our development has focused on point-estimation via the {\tt gamlr} package,
-which infers parameters under L1 penalization.  Although there are other
-software packages offering similar features, for example {\tt glmnet}
-\cite{zou_regularization_2005}, we believe that {\tt gamlr} is particularly
-well-suited to the data arizing in our hockey analysis, e.g., exploiting the
-sparse structure of design matrices comprised of indicators where only a
-handful (usually twelve) of thousands (of player) are nonzero. We have shown
+ We have shown
 how the framework is flexible, allowing one to control for many aspects of
 situational play (special teams, overtime, playoffs), and personnel/season
 (coaches, salaries, season-years).  A comparison was provided to the popular
 Corsi and Fenwick alternatives to plus-minus, and we argued that a recent
 emphasis in the literature on shots (and blocked shots), does not in general
 compare favorably to the traditional goals focus in this framework.
+
+Our development has focused on point-estimation via the {\tt gamlr} package,
+which infers parameters under L1 penalization.  Another
+software packages offering similar features is {\tt glmnet}
+\cite{zou_regularization_2005}.  The difference between {\tt gamlr} and {\tt glmnet} is in what options they provide on top of the standard $L_1$ penalty.  As detailed in \cite{taddy_one-step_2015}, including an example analysis of this same hockey data, {\tt gamlr} provides a `gamma-lasso' algorithm for \textit{diminishing bias} penalization: the penalty on coefficients automatically diminishes for strong signals.  If you believe that the current analysis has over-shrunk the influence of, say, total stars like Sidney Crosby or Pavel Datsyuk, then {\tt gamlr} and \cite{taddy_one-step_2015} will offer a preferable analysis framework.  On the other hand, if you think that we need to shrink all players \textit{closer} to zero -- perhaps  you believe that the current results over-state the effect of a few stars -- then the elastic net penalization scheme of \cite{zou_regularization_2005} and {\tt glmnet} will be preferable.  In either case, simple $L_1$ penalization provides a useful reference baseline analysis.
 
 Beyond model specification, there are several dimensions along which these
 methods can be extended or generalized.  One is to break out of the
@@ -753,7 +757,7 @@ between $\beta_j$'s.  \cite{gramacy:jensen:taddy:2013} show how these can be
 used to, say, calculate the probability that one player is better than
 another, rank them and provide posterior credible intervals for those
 rankings\footnote{see., e.g, 
-\url{https://github.com/TaddyLab/hockey/blob/master/results/blog/logistic_pranks_betas.csv}
+\url{https://github.com/Tad dyLab/hockey/blob/master/results/blog/logistic_pranks_betas.csv}
 } or be used to construct teams of players under budget constraints and
 subsequently describe the probability that those teams will score more goals
 than their opponents.  Like {\tt gamlr}, the software takes advantage of
@@ -784,11 +788,10 @@ measures time in some sense, the analysis does not directly utilize
 time-on-ice information.  A similar drawback would exist for methods which are
 instead tailored to shots, etc..  A method based on proportional hazards
 \cite{ThoVenJen12}, however, does not suffer this drawback, as it incorporates
-time-on-ice directly.  Nevertheless, the linear-logistic approach has much
-to recommend it, including simple interpretation, easy extension in terms
-of modeling framework and specification of predictors, and fast inference
-so that player ability metrics and rankings are easily updatability when
-new goals data arrive, making near-real-time analysis possible as games
+time-on-ice directly.  
+
+Regardless of these and other possible complex extensions, we argue strongly that our simple linear-logistic approach has much
+to recommend it: simple interpretation, easy extension for additional flexibility and controls, and ultra fast inference.  These qualities make sophisticated real-time analysis of player effects possible as games
 and seasons progress.
 
 \bibliographystyle{plain}
