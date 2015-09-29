@@ -51,7 +51,7 @@ classification models popular in the Machine Learning literature.
 
 The code for all empirical work in this chapter is provided in public a GitHub
 repository (\verb!https://github.com/TaddyLab/hockey!) and utilizes open
-source libraries for {\sf R} \cite{cranR}, particularly the {\sf gamlr} \cite{gamlr} package. 
+source libraries for {\sf R} \cite{cranR}, particularly the {\sf gamlr} \cite{gamlr} package from \cite{taddy_one-step_2015}.
 
 
 \section{Introduction: marginal and partial effects}
@@ -193,7 +193,7 @@ data with a binary response (e.g. whether individual goal being for-vs-against t
 
 The goal of our modeling is to provide a correct treatment of the binary
 `goals' data without introducing significant additional modeling complexity.
-In particular, we advocate the simple \textir{logistic regression} framework
+In particular, we advocate the simple \textit{logistic regression} framework
 suggested by \cite{gramacy:jensen:taddy:2013}.  In logistic regression, the
 average log odds of a goal being scored ``for'' a particular team  is modeled
 as a linear function of predictor variables which may be comprised of an
@@ -210,158 +210,148 @@ statistic, but this time one which is a true partial effect.
 
 Given $n$ goals throughout the National Hockey League (NHL) over some
 specified time period,  say $y_i$ is $+1$ for a goal by the \textit{home} team
-and $y_i = -1$ for a goal by the \textit{away} team.
+and $-1$ for a goal by the \textit{away} team.\footnote{{\em home} and {\em away} are merely organizational devices,
+creating a consistent binary bifurcation for goals that can be applied across
+games, seasons, etc. Due to the symmetry in the logit transformation, player effects are unchanged when framing away team probabilities as $q_i$ rather
+than $1-q_i$, so we loose no generality by privileging home team goals in
+this way.}  Say that $q_i = \mathrm{p}(y_i
+= 1) =  \mathrm{p}(\text{home~team~scored~goal}~i)$.  Then the logistic
+regression model of player contribution is, for goal $i$ in season $s$ with
+away team $a$ and home team $h$,  \begin{align}\label{hockeymod}
+\log\left[\frac{q_{i}}{1-q_{i}}\right] = \alpha_0 + \alpha_{sh} - \alpha_{sa} +
+\mathbf{u}_i'\boldsymbol{\phi} + \mathbf{x}_i'\boldsymbol{\beta}_0 +
+\mathbf{x}_i'\boldsymbol{\beta}_s. \end{align}  Vector $\mathbf{u}_i$ holds
+indicators for various special-teams scenarios (e.g., a home team power play),
+and $\boldsymbol{\alpha}$ provides matchup/season specific intercepts. Vector
+$\mathbf{x}_i$ contains player effects: $x_{ij}=1$ if player $j$ was on the
+home team and on ice for goal $i$, $x_{ij}=-1$ for away player $j$ on ice for
+goal $i$, and $x_{ij}=0$ for everyone not on the ice.   Coefficient
+$\beta_{0j} + \beta_{sj}$ is the season-$s$ effect of player $j$ on the log
+odds that, given a goal has been scored, the goal was scored by their team.
+These effects are `partial' in that they control for who else was on the ice,
+special teams scenarios, and team-season fixed effects -- a player's
+$\beta_{0j}$ or $\beta_{sj}$ only need be nonzero if that player effects play
+above or below the team average for a given season.
+
+For intuition, consider a simple ``player-only'' version of our model that has
+only who-is-on-the-ice as a time-invariant influence on goal scoring.  Then
+there are no team-season-specific intercepts ($\alpha_{sh}=\alpha_{sa}=0$), no
+special teams effects ($\boldsymbol{\phi}=\mathbf{0})$, and no season-specific
+player-effect changes ($\boldsymbol{\beta}_s = \mathbf{0}$)  so that $\beta_j
+= \beta_{0j}$ is the constant effect of player $j$.  The log odds that the
+home team has scored a given goal becomes \begin{equation} \log
+\left[\frac{q_i}{1-q_i} \right]  = \alpha + \beta_{h_{i_1}} + \cdots +
+\beta_{h_{i_6}} -  \beta_{a_{i_1}} - \cdots - \beta_{a_{i_6}},
+\label{eq:simplemodel} \end{equation} where the subscripts on the coefficients
+$\beta$ are as follows: $h_{i_1}, \dots, h_{i_6}$ are the six players on the
+ice for the home team and  $a_{i_1}, \dots, a_{i_6}$ indicate the players for
+the away time.\footnote{In this setup the goalies {\em are} included in the
+calculations, unlike with {\em plus-minus}.}  This is the just a re-writing of
+$\mathbf{x}_i'\boldsymbol{\beta}$ from (\ref{hockeymod}), where the vector
+$x_i$ (of length equal to the number of players) contains the ``$+1$'' and
+``$-1$'' indicators depending on whether that player was on the home or away
+team, and where all other $x_{ij}$ are zero so that $\sum_j |x_{ij}| = 12$ for
+full-strength play. As a test of understanding: what does the intercept
+$\alpha$ represent in (\ref{eq:simplemodel})?\footnote{It is the home ice
+advantage: if you do not know anything about who is playing or on the ice, the
+odds are $e^{\alpha}$ higher that the home team has scored any goal.}
+
+
+The model in \ref{eq:simplemodel} is simple and transparent; if you wish to
+control for new variables or situations you just need to add covariates to the
+logistic regression. In theory, one could fit the model easily in  {\sf R} by
+typing \begin{verbatim} R> fit <- glm(y~X, family="binomial") \end{verbatim}
+But unfortunately, that just doesn't work.   The problem is that hockey data
+is too high dimensional (too many covariates) for ordinary logistic regression
+software, and the design matrices are too highly imbalanced to obtain
+meaningful (low variance) estimates of player effects.   In almost all
+regressions one is susceptible to the temptations of rich modeling when the
+data set is large, and our hockey setup is no different. One must be careful
+not to {\em over-fit}, wherein parameters are optimized to statistical noise
+rather than fit to the relationship of interest.  And one must be aware of
+{\em multicollinearity}, where groups of covariates are correlated with each
+other making it difficult to identify individual effects, as happens when
+players are grouped into lines.  
+
+
+
+A first approach to finding a remedy might be to entertain stepwise
+regression, e.g., via {\tt step} in {\sf R} with a stopping rule based upon an
+information criteria like AIC and BIC.  But that also doesn't work on this
+data: the calculations take days, and turn up very few non-zero predictors
+(i.e., players whose presence have any effect on goals).  The trouble here is
+that players  can't be judged on their own, since they always play with and
+against eleven others.  Therefore the one-at-a-time judgments made by {\tt
+step} fail to discover many relevant players despite making a combinatorially
+huge number of such comparisons.  Moreover, stepwise regression results are
+well known to be highly variable: tiny jitter to the data can lead to massive
+changes in the estimated model. The combined effect is an unstable algorithm
+that yields overly simple results and takes a very long time to run.
+
+Instead, a crucial contribution of
+\cite{gramacy:jensen:taddy:2013} is to suggest the use of modern penalized and
+Bayesian logistic regression models, which biases the estimates of player
+effects towards zero. In the next section we consider one fast and successful version of these methods: $L_1$ regularization.
 
 \section{Regularized Estimation}
 \label{sec:regularization}
 
-There is a snag,
-however, since the data is big---thousands of players involved in tens of
-thousands of goals---and the predictor matrix is imbalanced, meaning that we
-don't have the luxury of an designed experiment where a substantial portion of
-all player configurations are represented.  Rather, 
+Our solution is to take a modern regularized approach to regression.  If
+$\eta_i = \log[ q_i/(1-q_i) ]$ is our linear equation for log odds from
+(\ref{hockeymod}), then the usual maximum likelihood estimation routine (e.g.,
+via {\sf glm} in {\sf R}) minimizes the negative log likelihood objective
+\begin{equation}\label{eq:nllhd} l\left(\boldsymbol{\eta}; \mathbf{y}\right) =
+\sum_i \log\left(1 + \exp[-y_i \eta_i]\right). \end{equation} Instead, a
+\textit{regularized} regression algorithm will minimize a penalized objective,
+say $ l\left(\boldsymbol{\eta}; \mathbf{y}\right) + n\lambda
+\sum_{j=1}^p\left[ c_j\left(|\beta_{0j}|\right) +
+c\left(|\beta_{sj}|\right)\right]$, where $\lambda>0$ controls overall penalty
+magnitude, $c_j(\cdot)$ are coefficient cost functions, while $n$ is the total
+number of goals and $p$ is the number of players.
+A few common cost functions are shown in Figure \ref{costs}.  Those that have
+a non-differentiable spike at zero (all but ridge) lead to sparse estimators,
+with some coefficients set to exactly zero.   The curvature of the penalty
+away from zero dictates then the weight of shrinkage imposed on the nonzero
+coefficients:  $L_2$ costs increase with coefficient size,  lasso's $L_1$
+penalty has zero curvature and imposes constant shrinkage, and as curvature
+goes towards $-\infty$ one approaches the $L_0$ penalty of subset selection.
 
-In almost all regressions one is susceptible to the temptations of rich
-modeling when the data set is large, and our hockey setup is no different. One
-must be careful not to {\em over-fit}, wherein parameters are optimized to
-statistical noise rather than fit to the relationship of interest.  And one
-must be aware of {\em multicollinearity}, where groups of covariates are
-correlated with each other making it difficult to identify individual effects,
-as happens when players are grouped into lines.  A crucial contribution of
-\cite{gramacy:jensen:taddy:2013} is to suggest the use of modern penalized and
-Bayesian logistic regression models, which biases the estimates of player
-effects towards zero. 
+\begin{figure}[t]
+\includegraphics[width=\textwidth]{figures/penalties}
+\caption{\label{costs} 
+From left to right, 
+$L_2$ `ridge' costs \cite{hoerl_ridge_1970}, $L_1$ `lasso' \cite{tibshirani_regression_1996}, the `elastic net' mixture of $L_1$ and $L_2$ \cite{zou_regularization_2005}, and the log penalty \cite{candes_enhancing_2008}.
+}
+\end{figure}
 
-\section{Analysis: goal-based effects}
-\label{sec:goals}
-
-\section{Analysis: comparison to shot-based metrics}
-\label{sec:shots}
-
-Examples in
-the literature include , and indices
-such as Fenwick, Corsi, or DeltaSOT, as reviewed by \cite{vol10}. 
-
-There are many
-ways of adding complexity, for example by taking into account a larger set of
-game-relevant factors such as hits, faceoffs, possession, shots.   While some
-of these measures are gaining in popularity, analysts do not generally agree
-on the relative importance of the added information.  Most importantly, none
-of these metrics offer a partial effect: .
-
-\section{Analysis: the relationship between salary and performance}
-\label{sec:salary}
-
-The problem with this setup is that it is ``too big'' for ordinary logistic
-regression software, and the design matrices are too highly imbalanced to
-obtain meaningful (low variance) estimates of player effects.  Over the span
-of several seasons there may be thousands of players involved in tens of
-thousands of goals, but the number of unique player configurations is small by
-comparison. That's because players play with and against only a small fraction
-of other players.  In most of the cases we've tried ordinary inference
-algorithms, e.g., Fisher scoring, fail to converge.  Classical remedies, like
-foward/backward stepwise selection via information criteria, involve too much
-computation to be practical.
-
-The situation is much improved, however, when set in the modern context of
-penalized logistic regression.  The software packages accompanying this new
-methodology---which have recently undergone several overhauls to exploit
-parallel computing environments, sparse matrices, and other features of modern
-data structures---have demonstrated an impressive ability to gracefully handle
-large and highly imbalanced data sets.  The result is that it is now relatively
-easy to entertain the calculation of partial player effects in hockey through
-a relatively straightforward logistic regression formulation.  In this chapter
-we will cover the basic setup, using goals data spanning more than a decade,
-and discuss the interpretation of the effects on the same scale of the
-original plus-minus.  
-
-As a testament to the flexibility of the framework we will then embellish the
-model to include predictors/data beyond goals.  We incorporate salary
-information, team and coach effects, special teams and playoff indicators,
-season effects, and interactions between all of the above.  We also explore a
-similar analysis based on shots rather than goals, however we find far less
-signal in this data despite the much larger sample size.  This is a somewhat
-suprising results considering recent trends in hockey analytics.  We conclude
-with thoughts on potential improvement beyond linear logistic modeling,
-including modern machine learning classifiers such as those based on trees
-(random forests, Bayesian additive regression trees, etc.) and kernel methods
-(support vector machines, Gaussian processes, etc.)
-
-
-\section{The base model, data, and implementation}
-\label{sec:base}
-
-Let $q_i$ denote the probability that a particular goal ``$i$'' is scored by
-the home team.  Here, we use {\em home} and {\em away} as organizational devices,
-creating a consistent binary bifurcation for goals that can be applied across games,
-seasons, etc.  Then, consider the following linear predictor
-for the logit-transformed probability $q_i$:
-\begin{equation}
-\mathbb{E}\left\{\log \left(\frac{q_i}{1-q_i} \right)\right\} 
-= \beta_{h_{i_1}} + \cdots + \beta_{h_{i_6}} - 
-\beta_{a_{i_1}} - \cdots - \beta_{a_{i_6}}.
-\label{eq:model}
+In this article we focus on the $L_1$ penalty for its balance between shrinkage of large signals (players tend not to have huge effects) and a preference for sparsity (we can only measure the nonzero effects of a subset of players).  For these and many appealing theoretical reasons (and for computational tractability), the $L_1$ penalty is by far the most commonly used in contemporary regularized regression; see \cite{hastie:tibsh:fried:2001} for a broad-audience overview and \cite{taddy_one-step_2015} for details on the algorithms used in this chapter.
+Under lasso $L_1$ penalization, estimation proceeds through optimization of  
+\begin{equation} \label{pendev}
+l\left(\boldsymbol{\eta}; \mathbf{y}\right) + n\lambda \sum_{j=1}^p\left(|\beta_{0j}| + |\beta_{sj}|\right),
 \end{equation}
-In Eq.~(\ref{eq:model}) the subscripts on the coefficients $\beta$ are
-key: $h_{i_1}, \dots, h_{i_6}$ are the six players on the ice for the home
-team (i.e., the scoring team), and likewise $a_{i_1}, \dots, a_{i_6}$ indicate
-the players for the away time.  Note that in this setup the goalies {\em are}
-included in the calculations, unlike with {\em plus-minus}, and that this
-description favors an even-strength setup.  When the away team scores instead,
-we are modeling $1-q_i$ instead, which is the same as hitting both sides of
-the equation with a ``$-$''.  In that case the home team player coefficients
-are negated, and the away team ones are positive.  From here we can see that,
-due to the symmetry in the logit transformation, the results are unchanged
-when framing away team probabilities as $q_i$ rather than $1-q_i$, so we loose
-no generality by ``privilidging'' home team goals in this way.
+The penalty size, $\lambda$, acts as a {\it squelch}: it   noise to
+focus on the true input signal. Large $\lambda$ lead to very simple  model
+estimates, while as $\lambda \rightarrow 0$ we approach maximum likelihood
+estimation (MLE). Since you don't know optimal $\lambda$, practical
+application of penalized estimation requires a {\it regularization path}: a $p
+\times T$ field of $\boldsymbol{\hat\beta}$ estimates obtained while moving
+from high to low penalization along $\lambda^1 > \lambda^2 \ldots >
+\lambda^T$. These paths begin at $\lambda^1$ set to infimum $\lambda$ such
+that (\ref{pendev}) is minimized at $\boldsymbol{\hat\beta} = \mathbf{0}$, and proceed
+down to some pre-specified $\lambda^T$ (e.g., $\lambda^T= 0.01\lambda^1$).
 
-Eq.~(\ref{eq:model}) apparently involves just twelve
-coefficieints, however it is really a short-hand for a much more elaborate
-linear predictor. Its form is $\mathbb{E} \log q_i/(1-q_i) = x_i^\top \beta$ for a
-coefficient {\em vector} $\beta$, whose length is equal to $n_p$, the number
-of players involved in goals during the study period.  The vector $x_i$, which
-is of commensurate length, contains the ``$+1$'' and ``$-1$'' indicators
-depending on which team scored the goal, and where $\sum_j |x_{ij}| = 12$.  A
-matrix $X$ comprised of $n_g$ rows $x_i^\top$, one for each of $n_g$ goals,
-would constitute the $n_g \times n_p$ {\em design} in statistical jargon.
-Pairing with an $n_g$ length response vector $y$, comprised of indicators
-``$+1$'' and ``$-1$''for home and away respectively (so that $q_i =
-\mathrm{p}(Y_i = 1)$,
-would complete the description of the data.
-
-Framed in this way, inference ought to be straightforward.  In {\sf R}
-one can easily do the following:
+ A common tool for choosing the optimal $\lambda$ -- that for which we report estimated player effects -- is cross validation (CV).  In CV, the path of coefficients is repeatedly fit to data subsamples and used to predict the response on the left-out data. The $\lambda$ leading to minimum error is then selected as optimal.  In this chapter, we instead use an analytic alternative to CV that yields models that perform as well or better out-of-sample.   The corrected Akaike Information Criterion (AICc), proposed in \cite{hurvich_regression_1989}, is defined as
+\begin{equation*}
+AICc = 2\sum_{i=1}^{n} l(\boldsymbol{\hat\eta}_{\lambda};\mathbf{y}) + \frac{2kn}{n-k-1},
+\end{equation*}
+where $\boldsymbol{\hat\eta}_{\lambda}$ are the estimated log odds under penalty $\lambda$ and $k$ is the number of non-zero estimated coefficients at this penalty. See \cite{taddy_one-step_2015} and \cite{flynn_efficiency_2013} for details on AICc selection in this context; we find AICc preferable to CV because it is computationally effecient (you only need to optimize once) and because there is no random Monte Carlo variation -- it always gives the same answer on the same data.  However, all of our ideas here apply if you wish to use CV selection instead. Regardless, the {\tt gamlr} package \cite{gamlr} can be called via {\tt R} to implement this procedure:
 \begin{verbatim}
-R> fit <- glm(y~X, family="binomial")
+R> fit <- gamlr(X, Y, standardize=FALSE, family="binomial")
 \end{verbatim}
-But unfortunately, that just doesn't work with any reasonable amount of goals
-data.  The computation is sluggish and results in numerical errors. In their
-inital analysis, \cite{gramacy:jensen:taddy:2013} considered even-strength
-regulation-time goals data from four regular seasons, 2007--2008 during
-with there were $n_p = 1467$ players involved in $n_g = 18,\!154$ goals.  The
-data was obtained from \verb!www.nhl.com! via the {\sf R} package {\tt
-nhlscrapr} \cite{nhlscrapr}. One problem is that the design matrix $X$ is
-extremely sparse. The overall dimensions are $18,\!154 \times 1467$, which is
-not overly big by modern logistic regression standards, however every row
-has 1455 zeros, for more than 99\% sparsity, and the distribution of non-zero
-entries is highly imbalanced: only about 27-thousand of the great than
-one-million possible player papers are actually observed in the design.  
+For CV, just replace \verb!gamlr! with \verb!cv.gamlr!. The software exploits sparsity in our player effects (\verb!X!) via the \verb!Matrix! library for \verb!R!, and is extremely fast to run: no examples in this article require more than a few seconds of computation. Estimated coefficients at optimal $\lambda$ are available as \verb!coef(fit)!.
 
-A first approach to finding a remedy might be to entertain stepwise
-regression, e.g., via {\tt step} in {\sf R} using information criteria like
-AIC and BIC.  But that also doesn't work on this data: the calculations take
-days, and turn up very few non-zero predictors (i.e., players whose presence
-have any effect on goals).  The trouble here is exactly the opposite of the
-one mentioned above.  Players simply can't be judged on their own, since they
-always play with and against eleven others.  Therefore the one-at-a-time
-judgments made by {\tt step} fail to discover many relevant players despite
-making a combinatorially huge number of such comparisons.
 
-%\subsection{Modern regularized logistic regression}
-
-Our solution is to take a modern regularized, or shrinkage, approach to
-regression.  Although there are many ways to view or motivate regularization
-in statistical inference, we feel the most natural is through the lens of
+One natural way to understand regularized regression is through the lens of
 Bayesian posterior inference. Judiciously chosen prior distributions lend
 stability to the fitted model, which is crucial in contexts where the number
 of quantities being estimated is large. In our setting where larger
@@ -391,59 +381,50 @@ $\beta_j=0$ in the absence of strong evidence, and non-zero $\beta_j$ for only
 a subset of significant variables.  In this way, using an L1 penalty naturally
 permits {\it variable selection} where only a subset of covariates are
 selected as having substantive predictive effects on the outcome variable.
-  
-We favor an L1 penalty/Laplace prior for player effects $\beta$ for precisely
-this feature: it helps identify players that stand out as having truly
-substantive effect.  However we argue later than L2 penalties have advantages
-in other contexts, for example on coefficients that are control quantities
-like special teams and playoff effects [Section \ref{sec:embell}]. Although L1
-penalty methods and their Bayesian interpretation as Laplace priors have been
-known for some time, it is only recently that joint penalty--coefficient
-posterior computation and simulation methods have become available for
-datasets of the size encountered here.  For completeness, we summarize here
-that the prior we prefer for player effects, $\beta$, is
-\begin{equation}
-\pi(\beta) = \prod_{j=1}^{n_p} \mathrm{Laplace}(\beta_j; \lambda_j).
-\end{equation}
-
-Choosing a computational method for inference under the Laplace prior depends
-on whether one desires fully Bayesian posterior inference, i.e., a joint
-distribution over all player effects, or point estimates for the relevant
-(i.e., non-zero) players.  Two recent publicly available software packages
-for {\sf R}, {\tt reglogit} \cite{reglogit} for the former and {\tt gamlr}
-\cite{gamlr} for the latter, make the practitioner's life much easier. The
-choice of which to deploy depends on the needs of the analysis. 
+Using AICc for penalty selection provides a sort of empirical Bayesian procedure: we are using prior penalization, but tuning that penalty to be optimal in prediction.
 
 
+\section{Analysis: goal-based effects}
+\label{sec:goals}
 
-However, {\tt reglogit} is still relatively slow when $n_p$ and $n_g$ are
-large, requiring several hours to obtain thousands of samples from the
-posterior.  If point estimates of player ability, and subsequent player
-rankings, are of primary interest then the {\em gamma-lasso} framework for MAP
-inference, described by \cite{taddy:2012} and implemented in {\tt gamlr}, is
-the preferred option. The code uses an efficient coordinate descent algorithm
-and relies on conditions for global convergence described in the accompanying
-paper, which argues that the method compares favorably in terms of predictive
-performance and computation time compared to the more common strategy of
-cross-validation (CV) lasso estimation schemes such as those provided by the
-popular {\tt glmnet} package
-\cite{glmnet}.  Like {\tt reglogit}, the {\tt gamlr} package exploits sparce
-matrices via {\tt slam} and OpenMP parallelization.
 
-{\em Matt, you'll probably want to change this.}  As an illustration of the
-implementation, the following snippets show commands to run our main
-team--player model (see \verb!?mnlm! for details).  
-The $n_p$ gamma-lasso penalties are specified 
-\begin{verbatim}
-pen <- rep(data.frame(c(7.5,.5)),ncol(X))
-\end{verbatim}
-and the model is then fit
-\begin{verbatim}
-fit <- mnlm(counts=Y, covars=X, penalty=pen, normalize=FALSE)
-\end{verbatim}
-where \verb!X! is not normalized since this would up-weight players with little ice-time.
+This section attempts to quantify the
+performance of hockey players.  It extends  analysis in
+\cite{gramacy_estimating_2013}.  The current version includes data about who
+was on the ice for every goal in the National Hockey League (NHL) back to the
+2002-2003 season, including playoffs.  The data
+are in the {\tt gamlr} package; there are
+69449 goals and 2439 players.
 
-{\em Matt, I'll let you decide how you want to frame our initial results, if at all.}
+In their
+initial analysis, \cite{gramacy:jensen:taddy:2013} considered even-strength
+regulation-time goals data from four regular seasons, 2007--2008 during
+with there were $n_p = 1467$ players involved in $n_g = 18,\!154$ goals.  The
+data was obtained from \verb!www.nhl.com! via the {\sf R} package {\tt
+nhlscrapr} \cite{nhlscrapr}. One problem is that the design matrix $X$ is
+extremely sparse. The overall dimensions are $18,\!154 \times 1467$, which is
+not overly big by modern logistic regression standards, however every row
+has 1455 zeros, for more than 99\% sparsity, and the distribution of non-zero
+entries is highly imbalanced: only about 27-thousand of the great than
+one-million possible player papers are actually observed in the design.  
+
+\section{Analysis: comparison to shot-based metrics}
+\label{sec:shots}
+
+Examples in
+the literature include , and indices
+such as Fenwick, Corsi, or DeltaSOT, as reviewed by \cite{vol10}. 
+
+There are many
+ways of adding complexity, for example by taking into account a larger set of
+game-relevant factors such as hits, faceoffs, possession, shots.   While some
+of these measures are gaining in popularity, analysts do not generally agree
+on the relative importance of the added information.  Most importantly, none
+of these metrics offer a partial effect: .
+
+\section{Analysis: the relationship between salary and performance}
+\label{sec:salary}
+
 
 \subsubsection{Mapping from player coefficients to the plus-minus scale.}
 \label{sec:ppm.mapping}
@@ -513,27 +494,9 @@ We can reformulate the base model eq.\eqref{eq:model} from the data structure no
 \end{equation}
 where $\vec{x_P}_i = [x_{Pi1} \cdots x_{Pin_p}]^\prime$,  $\vec{x_T}_i = [x_{Ti1} \cdots x_{Ti30}]^\prime$ and $\vec{x_S}_i = [x_{Si1} \cdots x_{Si7}]^\prime$ are the $i$th row the design matrices $X_P$, $X_T$ and $X_S$ respectively. 
 
-\subsection{Prior/Regularization} % may need to be changed to Bayesian version (priors)
-We impose prior distributions on the regression parameters to avoid overfit and add stability to the model by shrinking the parameters towards zero. As noted in section \ref{sec:base}, this corresponds to adding penalty terms on $\beta_i \neq 0$ in the model eq.\eqref{eq:model.ext}. More specifically, we favor a Laplace prior distribution/L1 penalty on $\vec{\beta_P}$ while setting other parameters free, which allows us to select players that truly stand out from the team. Under the Laplacian prior, the {\em maximum a posteriori} (MAP) estimate of the parameters $\vec{\beta}$ is given by:
-\begin{equation}
-\begin{aligned}
-&\min_\vec{\beta} \sum_{i=1}^{n_g} -log [p(y^{(i)}|\vec{x}^{(i)};\vec{\beta_P},\vec{\beta_T},\vec{\beta_S})]+\lambda   \|\vec{\beta_P}\|_1,\\
-= &\min_\vec{\beta}  \sum_{i=1}^{n_g} [-y_ilog(q_i)-(1-y_i)log(1-q_i)] + \lambda   \|\vec{\beta_P}\|_1,
-\label{eq:modelwithL2}
-\end{aligned}
-\end{equation}
-where $q_i$ is given in equation \eqref{eq:model.ext}. 
+\subsection{Prior/Regularization} 
 
-The regularization parameter, $\lambda$, is a control on the fitting parameters. Larger value of $\lambda$ leads to more sparse estimates of $\vec{\beta_P}$. Information criteria (such as AIC, BIC) and cross validation are the common tools to select the optimal one over a sequence of $\lambda$'s. In our case, we consider a grid of $100$ $\lambda$ values from $\lambda_{min}$ to $\lambda{max}$, where $\lambda_{min}$ is specified to effectively provide the least squares estimate and $\lambda_{max}$ is chosen so that all estimated coefficients $\hat{\vec{\beta_P}}$ are zero. We choose the the optimal $\lambda$ using the corrected Akaike Information Criterion (AICc), which is expected to give the best out-of-sample prediction. The corrected AIC is defined as
-\begin{equation*}
-AICc = -2\sum_{i=1}^{n_g} log [p(y^{(i)}|\vec{x}^{(i)};\vec{\beta_P},\vec{\beta_T},\vec{\beta_S})] + \frac{2kn}{n-k-1},
-\end{equation*}
-where $k$ is the number of non-zero elements in $\vec{\beta_P}$. The {\tt gamlr} package \cite{gamlr} provides us the tool to easily implement the above procedure. Obtaining the regression coefficients $\vec{\beta}$, is straightforward using the following {\tt R} code:
-\begin{verbatim}
-fit <- gamlr(x=cBind(XS,XT,XP), y=Y, gamma=0, standardize=FALSE, verb=1, 
-             family="binomial", free=1:c(ncol(XS)+ncol(XT))))
-beta <- coef(fit)[-1,]
-\end{verbatim}
+% may need to be changed to Bayesian version (priors)
  
 \subsection{Point estimates of player contribution via goals}
 %%% code:  performance_sen_goal.R
@@ -677,7 +640,6 @@ We have seen that Henrik Sedin's worse performance in 2007 playoffs than in the 
 
 \subsection{Value of players}
 %%% code:  salary_sen.R
-\label{sec:salary}
 
 \begin{enumerate}
 	\item Figure \ref{fig:ppmsal-corr-season}: PPM in goals is overall more correlated with salaries. All 3 lines show a decrease after lockout season 2004-2005. As to the 2013-2013 lockout, Corsi/Fenwick shows a drop in the correlation while goals shows a drop in the season after. Note Corsi even gives negative correlations for season 2006-2007 and 2005-2006. 
