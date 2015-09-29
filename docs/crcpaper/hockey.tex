@@ -367,7 +367,7 @@ where $\boldsymbol{\hat\eta}_{\lambda}$ are the estimated log odds under penalty
 \begin{verbatim}
 R> fit <- gamlr(X, Y, standardize=FALSE, family="binomial")
 \end{verbatim}
-For CV, just replace \verb!gamlr! with \verb!cv.gamlr!. The software exploits sparsity in our player effects (\verb!X!) via the \verb!Matrix! library for \verb!R!, and is extremely fast to run: no examples in this article require more than a few seconds of computation. Estimated coefficients at optimal $\lambda$ are available as \verb!coef(fit)!.
+For CV, just replace \verb!gamlr! with \verb!cv.gamlr!. The \verb!standardize=FALSE! flag tells \verb!gamlr! to \textit{not} weight the coefficient penalties by the standard deviation of the corresponding covariate (i.e., to use penalty $\lambda|\beta_j|$ instead of $\lambda\mathrm{sd}(\mathbf{x}_j)|\beta_j|$); this is appropriate here because such standardization would \textiti{up-weight} the influence of players who rarely play (and have low $\mathrm{sd}(\mathbf{x}_j)$) relative to those who have a lot of ice time (and thus high $\mathrm{sd}(\mathbf{x}_j)$).  The software exploits sparsity in our player effects (\verb!X!) via the \verb!Matrix! library for \verb!R!, and is extremely fast to run: no examples in this article require more than a few seconds of computation. Estimated coefficients at optimal $\lambda$ are available as \verb!coef(fit)!.
 
 
 One natural way to understand regularized regression is through the lens of
@@ -462,7 +462,7 @@ Figure \ref{fig:pt-p.tb20} shows the partial plus-minus (PPM) obtained for the t
 
 Observe that incorporating the team effects causes many player effects to be more significant, especially for the top players (blue lines tracking to the dots). Henrik Lundqvist, the Sweden goaltender, shines as the leagues best in both models. Meanwhile, on the negative side, Chris Phillips and Brendan Witt stands out as poor performers in either model. 
 
-Note that incorporating the team effects does not show the signal of changing the signs of player effects. This means a player being positive in the player-only model will not be negative after accounting for his team. In this sense, the team-player model and the player-only model are pretty consistent. However, it is worth noticing that some 'giant' players, such as Sidney Crosby and Pavel Datsyuk, considered by many to be the league's very best, are not in our top 20 list. This inspires us to further improve our model by incorporating the special-team effects. 
+Note that incorporating the team effects does not show the signal of changing the signs of player effects. This means a player being positive in the player-only model will not be negative after accounting for his team. In this sense, the team-player model and the player-only model are pretty consistent. However, it is worth noticing that some `giant' players, such as Sidney Crosby and Pavel Datsyuk, considered by many to be the league's very best, are not in our top 20 list. This inspires us to further improve our model by incorporating the special-team effects. 
 
 \begin{figure}[htb!]
     \centering
