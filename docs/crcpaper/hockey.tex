@@ -473,7 +473,7 @@ is interpretable as Bayesian posterior maximization.
 
 
 This section attempts to quantify the performance of hockey players using data
-from National Hockey League. It extends  analysis in
+from NHL. It extends  analysis in
 \cite{gramacy:jensen:taddy:2013}, which used a smaller dataset, was less
 principled in selection of $\lambda$, and did not control for team-season or
 special teams effects. The data, downloaded from \url{http://www.nhl.com},
@@ -497,12 +497,16 @@ effects represent the estimated change in the log odds that, given a goal was
 scored, the goal was scored by player $j$'s team.
 
 
-The standard PM score accounts not only for a players ability, but also the
-amount that they play.  This is important: it is relatively easy to show high
-performance if you only play a little bit; the stars in the NHL tend to log
-much longer minutes, and their value to the team is that they can maintain a
-high performance across this heavy workload.  In order to translate our
-estimated partial effects to the same scale as PM, we introduce the
+The standard PM  score accounts not only for a players ability, but also the
+amount that they play {\color{red} (Bobby says: only in the very weak sense in
+that it limits the max and min PM)}.  This is important: it is relatively easy
+to show high performance if you only play a little bit; the stars in the NHL
+tend to log much longer minutes, and their value to the team is that they can
+maintain a high performance across this heavy workload.  In order to translate
+our estimated partial effects to the same scale as PM, we introduce the
+{\color{red} (I don't think this is quite right.  That's an issue primary addressed
+by the penalty term; one could argue that the PPM is thus double-penalizing, while
+at the same time not really accounting for time-on-ice.)}
  \begin{itemize}
 \item[]\hskip -.5cm\textbf{Partial plus-minus (PPM)}
 \item Say that $q_{sj} = 1/\exp[\beta_{0j} + \beta_{sj}]$; this is the probability that, given a goal was scored in season $s$, it was scored by player $j$'s team {\it if we know nothing else other than that player $j$ was on the ice}.  
@@ -594,14 +598,16 @@ changes across seasons.
 The ranking in Table (\ref{hockeymod}) differs dramatically from those in
 \cite{gramacy:jensen:taddy:2013}.  One big change here is that we're ordering
 players by PPM rather than by $\beta$: this rewards those with more ice-time,
-and is a more realistic reflection of their team value.  For example, Marian
-Hossa moves to the top of the list when ranked by $\beta$: he is immensely
-talented, but tends to log less ice time than many of his peers (in part,
-because the Blackhawks have many top forwards).  On the other hand, players
-ranked at the bottom by PPM are those who have a negative $\beta$ and get
-a large amount of ice-time.  There are many players who have lower $\beta$s than
-Jack Johnson (e.g., John McCarthy at -0.5 and Thomas Pock at -0.4), but they
-do not get to play as much and thus don't show up in our bottom 20.
+and is a more realistic reflection of their team value {\color{red} (Bobby:
+The more I read about this PPM the more concerned I become; the orderings
+shouldn't be that different)}.  For example, Marian Hossa moves to the top of
+the list when ranked by $\beta$: he is immensely talented, but tends to log
+less ice time than many of his peers (in part, because the Blackhawks have
+many top forwards).  On the other hand, players ranked at the bottom by PPM
+are those who have a negative $\beta$ and get a large amount of ice-time.
+There are many players who have lower $\beta$s than Jack Johnson (e.g., John
+McCarthy at -0.5 and Thomas Pock at -0.4), but they do not get to play as much
+and thus don't show up in our bottom 20.
 
  The individual player
 $\beta$ effects also differ here from those in
@@ -626,7 +632,7 @@ variation at goal to measure the effect and PPM for some goalies).
 
 The analysis above is built around the event of a `goal'; this is the most
 reasonable baseline analysis, as it removes any subjectivity about whether or
-not the statistics are related to team performance -- you score more you win.
+not the statistics are related to team performance---you score more you win.
 However, it has recently become popular in hockey analysis to consider
 alternative metrics that are built from shots and other events; see
 \cite{vol10} for a review. The most popular of such statistics is Corsi, which
@@ -649,7 +655,7 @@ above, we also consider the Corsi of Fenwick PM (C-PM or F-PM): the number
 of events by the player's team \textit{minus} the number by the opposing team
 while that player was on the ice.  
 
-Of course, all of these statistics -- C-FP, C-PM, etc -- measure marginal
+Of course, all of these statistics---C-FP, C-PM, etc.---measure marginal
 effects.  They are thus subject to the same criticisms as the original PM:
 they fail to control for the influence of other players and confounding
 factors, and are thus less useful than a partial effect for predicting and
@@ -720,8 +726,8 @@ instead of $\beta$ for direct comparison.
 
 We have provided a sketch for how modern techniques in regularized logistic
 regression, developed originally to address challenging large-scale problems
-in genetics, finance, text mining, can be used to calculate partial player
-effects in hockey.  We have argued that that such such partial effects are a
+in genetics, finance, and text mining, can be used to calculate partial player
+effects in hockey.  We have argued that such  partial effects are a
 better measure of player ability compared to the classic plus-minus statistic,
 and have the benefit of being interpretable on the same scale as plus-minus.
  We have shown
@@ -733,16 +739,29 @@ emphasis in the literature on shots (and blocked shots), does not in general
 compare favorably to the traditional goals focus in this framework.
 
 Our development has focused on point-estimation via the {\tt gamlr} package,
-which infers parameters under L1 penalization.  Another
-software packages offering similar features is {\tt glmnet}
-\cite{zou_regularization_2005}.  The difference between {\tt gamlr} and {\tt glmnet} is in what options they provide on top of the standard $L_1$ penalty.  As detailed in \cite{taddy_one-step_2015}, including an example analysis of this same hockey data, {\tt gamlr} provides a `gamma-lasso' algorithm for \textit{diminishing bias} penalization: the penalty on coefficients automatically diminishes for strong signals.  If you believe that the current analysis has over-shrunk the influence of, say, total stars like Sidney Crosby or Pavel Datsyuk, then {\tt gamlr} and \cite{taddy_one-step_2015} will offer a preferable analysis framework.  On the other hand, if you think that we need to shrink all players \textit{closer} to zero -- perhaps  you believe that the current results over-state the effect of a few stars -- then the elastic net penalization scheme of \cite{zou_regularization_2005} and {\tt glmnet} will be preferable.  In either case, simple $L_1$ penalization provides a useful reference baseline analysis.
+which infers parameters under $L_1$ penalization.  Another software package
+offering similar features is {\tt glmnet}
+\cite{zou_regularization_2005}.  The difference between {\tt gamlr} and {\tt
+glmnet} is in what options they provide on top of the standard $L_1$ penalty.
+As detailed in \cite{taddy_one-step_2015}, including an example analysis of
+this same hockey data, {\tt gamlr} provides a `gamma-lasso' algorithm for
+\textit{diminishing bias} penalization: the penalty on coefficients
+automatically diminishes for strong signals.  If you believe that the current
+analysis has over-shrunk the influence of, say, total stars like Sidney Crosby
+or Pavel Datsyuk, then {\tt gamlr} and \cite{taddy_one-step_2015} will offer a
+preferable analysis framework.  On the other hand, if you think that all
+players should be shrunk \textit{closer} to zero----perhaps you believe that
+the current results over-state the effect of a few stars----then the elastic
+net penalization scheme of \cite{zou_regularization_2005} and {\tt glmnet}
+will be preferable.  In either case, simple $L_1$ penalization provides a
+useful reference baseline analysis.
 
 Beyond model specification, there are several dimensions along which these
 methods can be extended or generalized.  One is to break out of the
 point-estimation context to apply a fully Bayesian analysis. The framework
 originally suggested \cite{gramacy:jensen:taddy:2013} calculated a fully
-Bayesian partial player effect via the {\tt reglogit} package for {\sf R},
-implementing a Gibbs sampling strategy
+Bayesian partial player effect via the {\tt reglogit} package \cite{reglogit}
+for {\sf R}, implementing a Gibbs sampling strategy
 \cite{gem:gem:1984} described in full by \cite{gra:pols:2012}.  It combines
 two scale-mixture of normals data-augmentation schemes, one for the logit
 \cite{holmes:held:2006} and one for the Laplace prior \cite{park:casella:2008}.
@@ -751,7 +770,7 @@ following {\sf R} code
 \begin{verbatim}
 bfit <- reglogit(T=T, y=Y, X=X, normalize=FALSE)
 \end{verbatim}
-The full posterior sample for $\beta$ residing in {\tt bfit} allows posterior
+The full posterior sample for $\beta$, residing in {\tt bfit}, allows posterior
 means to be calculated, as well as component-wise variances and correlations
 between $\beta_j$'s.  \cite{gramacy:jensen:taddy:2013} show how these can be
 used to, say, calculate the probability that one player is better than
@@ -762,7 +781,7 @@ rankings\footnote{see., e.g,
 subsequently describe the probability that those teams will score more goals
 than their opponents.  Like {\tt gamlr}, the software takes advantage of
 sparse matrix libraries ({\tt slam} \cite{slam}), and is multi-threaded via
-{\tt OpenMP} meaning it can multiple processors simultaneously, which is a
+{\tt OpenMP} meaning it can engage multiple processors simultaneously, which is a
 common configuration for modern desktop architectures. However, {\tt reglogit}
 is still relatively slow when $n_p$ and $n_g$ are large, requiring several
 hours to obtain thousands of samples from the posterior.
@@ -772,27 +791,30 @@ entirely.  Anecdotally, we hear that some folks in the sports analytics
 community (not just in hockey) prefer a framework built around random forests
 \cite{breiman:2001}.  An advantage of trees, on which random forests are based,
 is that they naturally explore (non-linear) interactions between predictors,
-and thus players and other effects in the hockey analysis.  They also naturally
-regularize and provide variable selection features via relevance statistics.  
-A disadvantage is that the ensemble tree approach random forests provides does
-not readily have a fully Bayesian interpretation, although recent work has 
-shown that the ensemble can be seen to be approximating a Bayesian posterior
-quantity \cite{taddy:eta:2015}.  Another option along similar lines is Bayesian
-additive regression trees (BART, \cite{ChipGeorMcCu2010}), with newer visions
-implemented non-linear logistic modeling via the same latent variable
-techniques as in the linear case \cite{gra:pols:2012}.
+and thus between players and other effects in the hockey analysis, say.  They
+also naturally regularize and provide variable selection features via
+relevance statistics. A disadvantage is that the ensemble tree approach random
+forests provides does not readily have a fully Bayesian interpretation,
+although recent work has shown that the ensemble can be seen to be
+approximating a Bayesian posterior quantity \cite{taddy:eta:2015}.  Another
+option along similar lines is Bayesian additive regression trees (BART
+\cite{ChipGeorMcCu2010}), with newer visions implementing non-linear logistic
+modeling via the same latent variable techniques as in the linear case
+\cite{gra:pols:2012}.
 
 In closing, we remark that it is easy to find flaws in our approach to
 estimating partial player effects.  For example, although counting goals
 measures time in some sense, the analysis does not directly utilize
 time-on-ice information.  A similar drawback would exist for methods which are
-instead tailored to shots, etc..  A method based on proportional hazards
+instead tailored to shots, etc.  A method based on proportional hazards
 \cite{ThoVenJen12}, however, does not suffer this drawback, as it incorporates
 time-on-ice directly.  
 
-Regardless of these and other possible complex extensions, we argue strongly that our simple linear-logistic approach has much
-to recommend it: simple interpretation, easy extension for additional flexibility and controls, and ultra fast inference.  These qualities make sophisticated real-time analysis of player effects possible as games
-and seasons progress.
+Regardless of these and other possible complex extensions, we argue strongly
+that our simple linear-logistic approach has much to recommend it: simple
+interpretation, easy extension for additional flexibility and controls, and
+ultra fast inference.  These qualities make sophisticated real-time analysis
+of player effects possible as games and seasons progress.
 
 \bibliographystyle{plain}
 \bibliography{hockey}
