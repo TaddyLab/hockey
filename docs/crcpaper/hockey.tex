@@ -231,7 +231,11 @@ odds that, given a goal has been scored, the goal was scored by their team.
 These effects are `partial' in that they control for who else was on the ice,
 special teams scenarios, and team-season fixed effects -- a player's
 $\beta_{0j}$ or $\beta_{sj}$ only need be nonzero if that player effects play
-above or below the team average for a given season.
+above or below the team average for a given season.  As a test of understanding: what does the intercept
+$\alpha$ represent in (\ref{eq:simplemodel})?\footnote{It is the home ice
+advantage: if you do not know anything about who is playing or on the ice, the
+odds are $e^{\alpha}$ higher that the home team has scored any goal.}
+
 
 For intuition, consider a simple ``player-only'' version of our model that has
 only who-is-on-the-ice as a time-invariant influence on goal scoring.  Then
@@ -251,11 +255,26 @@ $\mathbf{x}_i'\boldsymbol{\beta}$ from (\ref{hockeymod}), where the vector
 $x_i$ (of length equal to the number of players) contains the ``$+1$'' and
 ``$-1$'' indicators depending on whether that player was on the home or away
 team, and where all other $x_{ij}$ are zero so that $\sum_j |x_{ij}| = 12$ for
-full-strength play. As a test of understanding: what does the intercept
-$\alpha$ represent in (\ref{eq:simplemodel})?\footnote{It is the home ice
-advantage: if you do not know anything about who is playing or on the ice, the
-odds are $e^{\alpha}$ higher that the home team has scored any goal.}
+full-strength play. See Figure \ref{fig:data} for illustration. 
 
+\begin{figure}[hbt]
+    \centering
+    \begin{tikzpicture}
+    \matrix [column sep=7mm, row sep=2mm] {
+        \node [draw=none, fill=none] {$Y$: scoring team}; &
+        \node [draw=none, fill=none] {$X_P$: players}; &\\
+        \node [draw=none, fill=none] {$y_i\in\{{-1},1\}$}; &
+        \node [draw=none, fill=none] {$x_{Pij}\in\{{-1},0,1\}$}; &\\
+        \node (y1) [draw, shape=rounded rectangle] {$\hspace{7pt}1$}; &
+        \node (xp1) [draw, shape=rounded rectangle, label={[label distance=0.1mm]90:\small $1 \hspace{145pt} n_p$}] {$0\, 1\, {-1}\, 1\, 0\, {-1}\, 0\, {-1}\, 1\, {-1}\, {-1}\,  0\, 0 \cdots 0\, 1\, 0\, 1\, 1$}; &\\
+        \node [draw=none, fill=none] {$\vdots$}; &
+        \node [draw=none, fill=none] {$\vdots$}; &\\
+        \node [draw, shape=rounded rectangle] {$-1$}; &
+        \node [draw, shape=rounded rectangle] {$1\, {-1}\, 1\, {-1}\, 0\, 1\, 0\, 1\, {-1}\, 1\, 1\, 0 \cdots 0\, {-1}\, 0\, {-1}\, {-1}$};&\\
+    };
+    \end{tikzpicture}
+    \caption{Diagram of a simple design matrix for a `players only model' and two example goals (rows). The two goals are shown in the same season under the same configuration of teams except that the first goal was scored by the home team while the second goal was by the away team. The configurations of players are only differed by the first player since the home team was on a 6v5 power play for the first goal. }\label{fig:data}
+\end{figure}
 
 The model in \ref{eq:simplemodel} is simple and transparent; if you wish to
 control for new variables or situations you just need to add covariates to the
@@ -408,23 +427,19 @@ has 1455 zeros, for more than 99\% sparsity, and the distribution of non-zero
 entries is highly imbalanced: only about 27-thousand of the great than
 one-million possible player papers are actually observed in the design.  
 
-\section{Analysis: comparison to shot-based metrics}
-\label{sec:shots}
 
-Examples in
-the literature include , and indices
-such as Fenwick, Corsi, or DeltaSOT, as reviewed by \cite{vol10}. 
+This section provides an example using data from National Hockey League, to illustrate the methodologies given in the above sections. We start by an analysis on the overall performance of players measured in goals over $11$ seasons, with an extension of the base model eq. \eqref{sec:base} by incorporating the teams and special teams effects. Furthermore, we add season effects, playoff indicators and their interactions with the players and teams. This enables us to investigate the performance of players in each season and the playoffs. We use the partial plus-minus metric to evaluate player's performance and compare that with the traditional plus-minus statistic.
 
-There are many
-ways of adding complexity, for example by taking into account a larger set of
-game-relevant factors such as hits, faceoffs, possession, shots.   While some
-of these measures are gaining in popularity, analysts do not generally agree
-on the relative importance of the added information.  Most importantly, none
-of these metrics offer a partial effect: .
+We then explore an analysis based on shots instead of goals. Comparing with goals, shots are considered to be more representative in measuring the player's puck possession, and hence can hopefully provide better estimates of the player's performance. Corsi and Fenwick are two shot-based measurements that appear frequently in modern hockey analysis. Fenwick includes the shots on goal and missed shots, while Corsi measures the same thing as Fenwick but includes blocked shots. Both indicators expand our data by an order of magnitude. We compare the player's performance measured via Corsi and Fenwick with the performance in goals.
 
-\section{Analysis: the relationship between salary and performance}
-\label{sec:salary}
+Finally, we investigate how the player's salary correlates with his performance measured via goals, Corsi and Fenwick.
 
+The data, downloaded from \url{http://www.nhl.com}, comprise of play-by-play NHL game data for regular and playoff games during $11$ seasons of 2002-2003 through 2013-2014\footnote{Season 2004-2005 was a lockout that resulted in a cancellation}. The data capture all the shifts in every single game, such as change, goal, shot, blocked shot, miss shot, penalty and etc. There were $n_p=2439$ players involved in $n_g=69449$ goals, $n_p=2566$ players involved in $n_{cos}=1,329,679$ Corsi and $n_p=2564$ players involved in $n_{fen}=1,034,154$ Fenwick.
+
+It is not unusual to have penalties or non-six-on-six situations in hockey. There are more than $35\%$ of the $n_g=69449$ goals fit in the power-play situations, which inspires us to incorporate the special teams in our base model eq.\eqref{eq:model}. We consider $6$ non-six-on-six settings (6v5, 6v4, 6v3, 5v4, 5v3, 4v3) and pulling the goalie together to form $7$ different special teams situations. Meanwhile, to reduce the effect of teammates on the player's performance, we add team indicators to the base model as well.
+
+
+The seasonal data are aggregated and arranged into a response vector $\vec{Y}(n_g \times 1)$ and a design matrix $\vec{X}$. The design matrix comprises of three parts, $X_P(n_g\times n_p)$, $X_T(n_g\times 30)$ and $X_S(n_g\times 7)$, which correspond to indicators of players, teams and special teams respectively. For a goal $i$, the response can either take value $y_i=1$ for goal scored by the home team or $y_i={-1}$ for it scored by the away team. The corresponding row of $X_P$, $X_T$ represents the players and teams on the ice for that goal, with value $1$ for home player/team, ${-1}$ for the away player/team and $0$ otherwise. As to the special-team indicator $X_S$, $X_{Sij}=1$ indicates the home team is experiencing the $j$th special-team status while $X_{Sij}=-1$ indicates the away team is playing with the $j$th status. 
 
 \subsubsection{Mapping from player coefficients to the plus-minus scale.}
 \label{sec:ppm.mapping}
@@ -437,66 +452,6 @@ Note that the player effect $\beta_i$ corresponds to a per-goal scale, which is 
 We can see the correspondence of the player effect and the PPM. The PPM only scales the player effect with the sign retains. This means that if a player has a positive effect, $\beta_i>0$, its corresponding PPM is also positive. 
 
 
-\section{Embellishments}
-\label{sec:embell}
-
-\section{An example}
-\label{sec:example}
-This section provides an example using data from National Hockey League, to illustrate the methodologies given in the above sections. We start by an analysis on the overall performance of players measured in goals over $11$ seasons, with an extension of the base model eq. \eqref{sec:base} by incorporating the teams and special teams effects. Furthermore, we add season effects, playoff indicators and their interactions with the players and teams. This enables us to investigate the performance of players in each season and the playoffs. We use the partial plus-minus metric to evaluate player's performance and compare that with the traditional plus-minus statistic.
-
-We then explore an analysis based on shots instead of goals. Comparing with goals, shots are considered to be more representative in measuring the player's puck possession, and hence can hopefully provide better estimates of the player's performance. Corsi and Fenwick are two shot-based measurements that appear frequently in modern hockey analysis. Fenwick includes the shots on goal and missed shots, while Corsi measures the same thing as Fenwick but includes blocked shots. Both indicators expand our data by an order of magnitude. We compare the player's performance measured via Corsi and Fenwick with the performance in goals.
-
-Finally, we investigate how the player's salary correlates with his performance measured via goals, Corsi and Fenwick.
-
-\subsection{Data}
-The data, downloaded from \url{http://www.nhl.com}, comprise of play-by-play NHL game data for regular and playoff games during $11$ seasons of 2002-2003 through 2013-2014\footnote{Season 2004-2005 was a lockout that resulted in a cancellation}. The data capture all the shifts in every single game, such as change, goal, shot, blocked shot, miss shot, penalty and etc. There were $n_p=2439$ players involved in $n_g=69449$ goals, $n_p=2566$ players involved in $n_{cos}=1,329,679$ Corsi and $n_p=2564$ players involved in $n_{fen}=1,034,154$ Fenwick.
-
-It is not unusual to have penalties or non-six-on-six situations in hockey. There are more than $35\%$ of the $n_g=69449$ goals fit in the power-play situations, which inspires us to incorporate the special teams in our base model eq.\eqref{eq:model}. We consider $6$ non-six-on-six settings (6v5, 6v4, 6v3, 5v4, 5v3, 4v3) and pulling the goalie together to form $7$ different special teams situations. Meanwhile, to reduce the effect of teammates on the player's performance, we add team indicators to the base model as well.
-
-The seasonal data are aggregated and arranged into a response vector $\vec{Y}(n_g \times 1)$ and a design matrix $\vec{X}$. The design matrix comprises of three parts, $X_P(n_g\times n_p)$, $X_T(n_g\times 30)$ and $X_S(n_g\times 7)$, which correspond to indicators of players, teams and special teams respectively. For a goal $i$, the response can either take value $y_i=1$ for goal scored by the home team or $y_i={-1}$ for it scored by the away team. The corresponding row of $X_P$, $X_T$ represents the players and teams on the ice for that goal, with value $1$ for home player/team, ${-1}$ for the away player/team and $0$ otherwise. As to the special-team indicator $X_S$, $X_{Sij}=1$ indicates the home team is experiencing the $j$th special-team status while $X_{Sij}=-1$ indicates the away team is playing with the $j$th status. The data structure with two example goals is shown in figure \ref{fig:data}.
-
-\begin{figure}[hbt]
-	\small
-	\centering
-	\begin{tikzpicture}
-	\matrix [column sep=7mm, row sep=2mm] {
-		\node [draw=none, fill=none] {$Y$: scoring team}; &
-		\node [draw=none, fill=none] {$X_P$: players}; &
-		\node [draw=none, fill=none] {$X_T$: teams}; &
-		\node [draw=none, fill=none] {$X_S$: special teams}; &\\
-		\node [draw=none, fill=none] {$y_i\in\{{-1},1\}$}; &
-		\node [draw=none, fill=none] {$x_{Pij}\in\{{-1},0,1\}$}; &
-		\node [draw=none, fill=none] {$x_{Tij}\in\{{-1},0,1\}$}; & 
-		\node [draw=none, fill=none] {$x_{Sij}\in\{{-1},0,1\}$}; & \\
-		\node (y1) [draw, shape=rounded rectangle] {$\hspace{7pt}1$}; &
-		\node (xp1) [draw, shape=rounded rectangle, label={[label distance=0.1mm]90:\small $1 \hspace{145pt} n_p$}] {$0\, 1\, {-1}\, 1\, 0\, {-1}\, 0\, {-1}\, 1\, {-1}\, {-1}\,  0\, 0 \cdots 0\, 1\, 0\, 1\, 1$}; &
-		\node (xt1) [draw, shape=rounded rectangle, label={[label distance=0.1mm]90:\small $1 \hspace{35pt} 30$}] {$0 \cdots {-1} \cdots 1 $}; &
-		\node (xs1) [draw, shape=rounded rectangle, label={[label distance=0.1mm]90:\small $1 \hspace{21pt} 7$}] {$1 \, 0\cdots 0$}; &\\
-		\node [draw=none, fill=none] {$\vdots$}; &
-		\node [draw=none, fill=none] {$\vdots$}; &
-		\node [draw=none, fill=none] {$\vdots$}; &
-		\node [draw=none, fill=none] {$\vdots$}; &\\
-		\node [draw, shape=rounded rectangle] {$-1$}; &
-		\node [draw, shape=rounded rectangle] {$1\, {-1}\, 1\, {-1}\, 0\, 1\, 0\, 1\, {-1}\, 1\, 1\, 0 \cdots 0\, {-1}\, 0\, {-1}\, {-1}$}; &
-		\node [draw, shape=rounded rectangle] {$0 \cdots 1 \cdots {-1} $}; &
-		\node [draw, shape=rounded rectangle] {$0 \, 0 \cdots 0$}; &\\
-	};
-	\end{tikzpicture}
-	\caption{Diagram of the design matrix and two example goals (rows). The two goals are shown in the same season under the same configuration of teams except that the first goal was scored by the home team while the second goal was by the away team. The configurations of players are only differed by the first player since the home team was on a 6v5 power play ($X_{S11}=1$) for the first goal. }\label{fig:data}
-\end{figure}
-
-\subsection{Model}
-We can reformulate the base model eq.\eqref{eq:model} from the data structure noted above. Still consider the linear predictor for the logit-transformed probability $q_i=\mathbb{P}(y_i=1|\vec{x}_i)$: 
-\begin{equation}
-\mathbb{E}\left\{\log \left(\frac{q_i}{1-q_i} \right)\right\} 
-= \vec{x_P}^\prime_i \vec{\beta_P} + \vec{x_T}^\prime_i \vec{\beta_T} + \vec{x_S}^\prime_i\vec{\beta_S} ,
-\label{eq:model.ext}
-\end{equation}
-where $\vec{x_P}_i = [x_{Pi1} \cdots x_{Pin_p}]^\prime$,  $\vec{x_T}_i = [x_{Ti1} \cdots x_{Ti30}]^\prime$ and $\vec{x_S}_i = [x_{Si1} \cdots x_{Si7}]^\prime$ are the $i$th row the design matrices $X_P$, $X_T$ and $X_S$ respectively. 
-
-\subsection{Prior/Regularization} 
-
-% may need to be changed to Bayesian version (priors)
  
 \subsection{Point estimates of player contribution via goals}
 %%% code:  performance_sen_goal.R
@@ -510,9 +465,9 @@ Observe that incorporating the team effects causes many player effects to be mor
 Note that incorporating the team effects does not show the signal of changing the signs of player effects. This means a player being positive in the player-only model will not be negative after accounting for his team. In this sense, the team-player model and the player-only model are pretty consistent. However, it is worth noticing that some 'giant' players, such as Sidney Crosby and Pavel Datsyuk, considered by many to be the league's very best, are not in our top 20 list. This inspires us to further improve our model by incorporating the special-team effects. 
 
 \begin{figure}[htb!]
-	\centering
-	\includegraphics[width=\textwidth]{figures/ptvsp_tb20.pdf}
-	\caption{Comparing the partial plus-minus (PPM) for players in the player-only model (lines), with the team-augmented model (dots). The lines point to estimated coefficients from the player-only model. We are only showing players whose PPM are top 20 or bottom 20 in either model. Players discussed in the text have their names labeled in red.}\label{fig:pt-p.tb20}
+    \centering
+    \includegraphics[width=\textwidth]{figures/ptvsp_tb20.pdf}
+    \caption{Comparing the partial plus-minus (PPM) for players in the player-only model (lines), with the team-augmented model (dots). The lines point to estimated coefficients from the player-only model. We are only showing players whose PPM are top 20 or bottom 20 in either model. Players discussed in the text have their names labeled in red.}\label{fig:pt-p.tb20}
 \end{figure}
 
 \subsubsection{Special-team effects}
@@ -529,33 +484,33 @@ Some interesting trends can be pointed out here. First, forwards dominate the to
 Herik Sedin, ranked 6th according to the table, captains the Vancouver Canucks and became the all-time leading scorer for the Canucks in 2013. The Swedish center scored 10 goals and 71 assists in 82 regular games of season 2006-2007. However, in 2007 playoffs, he was on the ice for twelve games but only scored two goals and two assists. As our player-special team-team model only evaluates the overall performance of players, such phenomenon can not be spotted. 
 
 \begin{figure}[htb!]
-	\centering
-	\includegraphics[width=\textwidth]{figures/ptsvspt_tb20.pdf}
-	\caption{Comparing the partial plus-minus (PPM) for players in the team-player model (lines), with the team-special team-player model (dots). The lines point to estimated coefficients from the team-player model. The $x$-axis orders the players by their estimates in the team-special team-player model. We are only showing players whose PPM are top 20 or bottom 20 in either model.}\label{fig:pts-pt.tb20}
+    \centering
+    \includegraphics[width=\textwidth]{figures/ptsvspt_tb20.pdf}
+    \caption{Comparing the partial plus-minus (PPM) for players in the team-player model (lines), with the team-special team-player model (dots). The lines point to estimated coefficients from the team-player model. The $x$-axis orders the players by their estimates in the team-special team-player model. We are only showing players whose PPM are top 20 or bottom 20 in either model.}\label{fig:pts-pt.tb20}
 \end{figure}
 
 {
-	\renewcommand{\arraystretch}{1.2}
-	\begin{table}[htbp]
-		\centering
-		\begin{tabular}{r c c r r r r r }
-			\hline
-			Rk & Player & Pos & G & Beta & \textbf{PPM} & PM & FP \\ \hline
-			1 & MARIAN HOSSA 			& R & $1752$ & $0.40$ & $348.43$ & $448$ & $0.63$ \\
-			2 & SIDNEY CROSBY  		   & C &  $1568$ & $0.44$ & $340.09$ & $544$ & $0.67$ \\
-			3 & PAVEL DATSYUK  		   & C &  $1725$ & $0.39$ & $332.62$ & $\mathbf{599}$ & $0.67$ \\
-			4 & JOE THORNTON 			& C & $1740$ & $0.38$ & $328.30$ & $510$ & $0.65$ \\
-			5 & ALEX OVECHKIN  			& L &  $1705$ & $0.35$ &$295.34$ & $533$ & $0.66$ \\ 
-			6 & HENRIK SEDIN   & C & $1634$ & $ 0.34$ & $277.80$ & $542$ & $0.67$ \\ \hline
-			2434 & BRIAN BOUCHER   & G & $1059$ & $-0.17$ & $-88.57$  & $-87$ & $0.46$ \\
-			2435 &  JACK JOHNSON   		& D  & $990$ & $-0.19$ & $ -93.84$ & $-54$ & $ 0.47$\\
-			2436 &  NICLAS WALLIN   		& D  & $764$ & $-0.25$ & $ -94.95$ & $-170$ & $ 0.39$\\
-			2437 &  PATRICK LALIME  		& G & $1240$ & $-0.17$ & $ -106.68$ & $ 22$ & $ 0.51$\\
-			2438 & NICLAS HAVELID  		& D & $1041$ & $-0.21$ & $ -111.20$ & $-131$ & $ 0.44 $\\
-			2439 &  JAY BOUWMEESTER  		& D & $1870$ & $-0.15$ & $ -139.59$ & $-142$ & $ 0.46$\\ \hline
-		\end{tabular}
-		\caption{Top 6 and bottom 6 players in partial plus-minus (PPM), obtained from the team-special team-player model. 'Pos' is the position of the player (center, left wing, right wing, defenseman, goaltender). 'G' is the number of goals that the player has involved. 'Beta' is the player effect from the regression model. 'PPM' and 'PM' are the partial-plus minus and traditional plus-minus statistics respectively. 'FP' is the for percentage.  }\label{tab:goal.ppm.rank}
-	\end{table}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{table}[htbp]
+        \centering
+        \begin{tabular}{r c c r r r r r }
+            \hline
+            Rk & Player & Pos & G & Beta & \textbf{PPM} & PM & FP \\ \hline
+            1 & MARIAN HOSSA            & R & $1752$ & $0.40$ & $348.43$ & $448$ & $0.63$ \\
+            2 & SIDNEY CROSBY          & C &  $1568$ & $0.44$ & $340.09$ & $544$ & $0.67$ \\
+            3 & PAVEL DATSYUK          & C &  $1725$ & $0.39$ & $332.62$ & $\mathbf{599}$ & $0.67$ \\
+            4 & JOE THORNTON            & C & $1740$ & $0.38$ & $328.30$ & $510$ & $0.65$ \\
+            5 & ALEX OVECHKIN           & L &  $1705$ & $0.35$ &$295.34$ & $533$ & $0.66$ \\ 
+            6 & HENRIK SEDIN   & C & $1634$ & $ 0.34$ & $277.80$ & $542$ & $0.67$ \\ \hline
+            2434 & BRIAN BOUCHER   & G & $1059$ & $-0.17$ & $-88.57$  & $-87$ & $0.46$ \\
+            2435 &  JACK JOHNSON        & D  & $990$ & $-0.19$ & $ -93.84$ & $-54$ & $ 0.47$\\
+            2436 &  NICLAS WALLIN           & D  & $764$ & $-0.25$ & $ -94.95$ & $-170$ & $ 0.39$\\
+            2437 &  PATRICK LALIME          & G & $1240$ & $-0.17$ & $ -106.68$ & $ 22$ & $ 0.51$\\
+            2438 & NICLAS HAVELID       & D & $1041$ & $-0.21$ & $ -111.20$ & $-131$ & $ 0.44 $\\
+            2439 &  JAY BOUWMEESTER         & D & $1870$ & $-0.15$ & $ -139.59$ & $-142$ & $ 0.46$\\ \hline
+        \end{tabular}
+        \caption{Top 6 and bottom 6 players in partial plus-minus (PPM), obtained from the team-special team-player model. 'Pos' is the position of the player (center, left wing, right wing, defenseman, goaltender). 'G' is the number of goals that the player has involved. 'Beta' is the player effect from the regression model. 'PPM' and 'PM' are the partial-plus minus and traditional plus-minus statistics respectively. 'FP' is the for percentage.  }\label{tab:goal.ppm.rank}
+    \end{table}
 }
 
 \subsubsection{Season-playoff effect}
@@ -577,87 +532,101 @@ where  $\vec{\alpha_{PS}}$ is the coefficient of the player-season interaction, 
 Table \ref{tab:goal.ppm.ranking.inter} shows the top and bottom five players in PPM of the regular sessions across all 11 seasons. All the players in the list are quite familiar as they appeared frequently in our previous discussion. Observe that Peter Forsberg, ranks 14th overall as shown in figure \ref{fig:pts-pt.tb20}, played really well in season 20022003, indicated by the $20\%$ more PPM than the second place. Meanwhile, Sidney Crosby, appears four times in the top 10 list, is probably the most consistent player. To be notice that, his performance in 2009 playoffs actually dominates the playoff performance of all other players. Another fact is that here's no signal of players performing differently in regular sessions and playoff ($\vec{\alpha_{PSP}=\vec{0}}$). 
 
 {
-	\renewcommand{\arraystretch}{1.2}
+    \renewcommand{\arraystretch}{1.2}
 \begin{table}[htbp]
-	\centering
-	\small
-	\begin{tabular}{rccrrrrrr}
-		\hline
-		Rk    & Player & Season & Beta.Re  & \textbf{PPM}.Re  & PM.Re & Beta.Po & PPM.Po & PM.Po \\
-		\hline
-		1     & PETER FORSBERG & 20022003 & 0.74  & 55.52 & 85 & 0.74  & 4.6 & 5\\
-		2     & SIDNEY CROSBY & 20092010 & 0.41  & 43.47 & 60 & 0.41  & 7.45 & 19\\
-		3     & DOMINIK HASEK & 20052006 & 0.35  & 42.45 & 80 & 0     & 0 & 0 \\
-		4     & SIDNEY CROSBY & 20082009 & 0.41  & 42.26 & 48 & 0.41  & \textbf{10.87} & 26 \\
-		5     & SIDNEY CROSBY & 20052006 & 0.41  & 41.86 & 52 & 0     & 0  & 0\\
-		10200 & PATRICK LALIME & 20022003 & -0.27 & -37.81& 47 & -0.27 & -8.76 & 12\\
-		10201 & PATRICK LALIME & 20032004 & -0.27 & -37.81& 37 & -0.27 & -3.05 & -3\\
-		10202 & NICLAS HAVELID & 20062007 & -0.67 & -62.64 & -22 & -0.67 & -3.55 & -7 \\
-		10203 & NICLAS HAVELID & 20052006 & -0.7  & -65.94 & -41 & 0     & 0 & 0\\
-		10204 & JAY BOUWMEESTER & 20052006 & -0.69 & -69.62 & -32 & 0     & 0 &0\\
-		\hline
-	\end{tabular}%
-	\caption{Top 5 and bottom 5 players in partial plus-minus (PPM) of the regular sessions, obtained from the team-special team-player model with the season and playoff effects incorporated. We are showing the player effects and PPM for both the regular sessions and playoffs.}\label{tab:goal.ppm.ranking.inter}
+    \centering
+    \small
+    \begin{tabular}{rccrrrrrr}
+        \hline
+        Rk    & Player & Season & Beta.Re  & \textbf{PPM}.Re  & PM.Re & Beta.Po & PPM.Po & PM.Po \\
+        \hline
+        1     & PETER FORSBERG & 20022003 & 0.74  & 55.52 & 85 & 0.74  & 4.6 & 5\\
+        2     & SIDNEY CROSBY & 20092010 & 0.41  & 43.47 & 60 & 0.41  & 7.45 & 19\\
+        3     & DOMINIK HASEK & 20052006 & 0.35  & 42.45 & 80 & 0     & 0 & 0 \\
+        4     & SIDNEY CROSBY & 20082009 & 0.41  & 42.26 & 48 & 0.41  & \textbf{10.87} & 26 \\
+        5     & SIDNEY CROSBY & 20052006 & 0.41  & 41.86 & 52 & 0     & 0  & 0\\
+        10200 & PATRICK LALIME & 20022003 & -0.27 & -37.81& 47 & -0.27 & -8.76 & 12\\
+        10201 & PATRICK LALIME & 20032004 & -0.27 & -37.81& 37 & -0.27 & -3.05 & -3\\
+        10202 & NICLAS HAVELID & 20062007 & -0.67 & -62.64 & -22 & -0.67 & -3.55 & -7 \\
+        10203 & NICLAS HAVELID & 20052006 & -0.7  & -65.94 & -41 & 0     & 0 & 0\\
+        10204 & JAY BOUWMEESTER & 20052006 & -0.69 & -69.62 & -32 & 0     & 0 &0\\
+        \hline
+    \end{tabular}%
+    \caption{Top 5 and bottom 5 players in partial plus-minus (PPM) of the regular sessions, obtained from the team-special team-player model with the season and playoff effects incorporated. We are showing the player effects and PPM for both the regular sessions and playoffs.}\label{tab:goal.ppm.ranking.inter}
 \end{table}
 }
 
+\section{Analysis: comparison to shot-based metrics}
+\label{sec:shots}
 
-\subsection{Measurements in shots: Corsi \& Fenwick}
-%%% code:  performance_sen_shot.R
-\label{sec:corsifenwick}
+Examples in
+the literature include , and indices
+such as Fenwick, Corsi, or DeltaSOT, as reviewed by \cite{vol10}. 
+
+There are many
+ways of adding complexity, for example by taking into account a larger set of
+game-relevant factors such as hits, faceoffs, possession, shots.   While some
+of these measures are gaining in popularity, analysts do not generally agree
+on the relative importance of the added information.  Most importantly, none
+of these metrics offer a partial effect: .
+
 
 We have seen that Henrik Sedin's worse performance in 2007 playoffs than in the regular session, can not be captured via measures in goals. In this section, we consider two ratings in shots, the Fenwick (shot plus missed shots) and the Corsi (Fenwick plus blocked shots), which are commonly used in hockey analytics due to the large amount of information these ratings cover. 
 
 \begin{enumerate}
-	\item Overall relationship. First consider the team-special team-player model without interactions. Figure \ref{fig:ppm_diffmeasure} shows the PPM under different measures. Corsi and Fenwick shows very similar results (correlation=$0.96$). 
-	\item Consider the season-playoff effects. Now we can see that some players have different regular-playoff performances ($\vec{\alpha_{PSP}\neq \vec{0}}$). For example, Henrik Sedin has a player effect of $-0.11$ for the regular session of season 2006-2007 while he has a playoff-player effect of $-0.35$.
-	\item Figure \ref{fig:ppm-corr-diffmeasure-season} shows the correlations over 11 seasons. 
-	\item Maybe compare the top \& bottom players in goals vs shots?
+    \item Overall relationship. First consider the team-special team-player model without interactions. Figure \ref{fig:ppm_diffmeasure} shows the PPM under different measures. Corsi and Fenwick shows very similar results (correlation=$0.96$). 
+    \item Consider the season-playoff effects. Now we can see that some players have different regular-playoff performances ($\vec{\alpha_{PSP}\neq \vec{0}}$). For example, Henrik Sedin has a player effect of $-0.11$ for the regular session of season 2006-2007 while he has a playoff-player effect of $-0.35$.
+    \item Figure \ref{fig:ppm-corr-diffmeasure-season} shows the correlations over 11 seasons. 
+    \item Maybe compare the top \& bottom players in goals vs shots?
 \end{enumerate}
 
 \begin{figure}[t!]
-	\centering
-	\begin{subfigure}[t]{0.5\textwidth}
-		\centering
-		\includegraphics[height=2.2in]{figures/fenwickvsgoals_overall.pdf}
-		\caption{PPM(Fenwick) vs PPM(goals)}
-	\end{subfigure}%
-	~ 
-	\begin{subfigure}[t]{0.5\textwidth}
-		\centering
-		\includegraphics[height=2.2in]{figures/fenwickvscorsi_overall.pdf}
-		\caption{PPM(Fenwick) vs PPM(Corsi)}
-	\end{subfigure}
-	\caption{Left: Comparing PPM measured via goals, to PPM measured via Fenwick (correlation=$0.54$). Right: Similarity of Corsi and Fenwick (correlation=$0.96$). Only players with non-zero PPM in either measure are shown. Plot symbols give position information, C-center, L-left wing, R-right wing, D-defense, and G-goalie.}
-	\label{fig:ppm_diffmeasure}
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.2in]{figures/fenwickvsgoals_overall.pdf}
+        \caption{PPM(Fenwick) vs PPM(goals)}
+    \end{subfigure}%
+    ~ 
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.2in]{figures/fenwickvscorsi_overall.pdf}
+        \caption{PPM(Fenwick) vs PPM(Corsi)}
+    \end{subfigure}
+    \caption{Left: Comparing PPM measured via goals, to PPM measured via Fenwick (correlation=$0.54$). Right: Similarity of Corsi and Fenwick (correlation=$0.96$). Only players with non-zero PPM in either measure are shown. Plot symbols give position information, C-center, L-left wing, R-right wing, D-defense, and G-goalie.}
+    \label{fig:ppm_diffmeasure}
 \end{figure}
 
 \begin{figure}[htb!]
-	\centering
-	\includegraphics[width=\textwidth]{figures/ppm-corr-diffmeasure-season.pdf}
-	\caption{Black: correlation of PPM measure in Fenwick and in goals over 11 seasons.  Red: correlation of PPM measure in Fenwick and in Corsi over 11 seasons.}\label{fig:ppm-corr-diffmeasure-season}
+    \centering
+    \includegraphics[width=\textwidth]{figures/ppm-corr-diffmeasure-season.pdf}
+    \caption{Black: correlation of PPM measure in Fenwick and in goals over 11 seasons.  Red: correlation of PPM measure in Fenwick and in Corsi over 11 seasons.}\label{fig:ppm-corr-diffmeasure-season}
 \end{figure}
 
 \subsection{Value of players}
 %%% code:  salary_sen.R
 
 \begin{enumerate}
-	\item Figure \ref{fig:ppmsal-corr-season}: PPM in goals is overall more correlated with salaries. All 3 lines show a decrease after lockout season 2004-2005. As to the 2013-2013 lockout, Corsi/Fenwick shows a drop in the correlation while goals shows a drop in the season after. Note Corsi even gives negative correlations for season 2006-2007 and 2005-2006. 
-	\item Figure \ref{fig:ppmsal-scat}: Two measures are pretty consistent with each other. Sidney Crosby, Zach Parise and Ryan Suter are three most expensive players in season 2013-2014. According to our evaluation, both goals and Corsi show that Sidney Crosby is under paid while Ryan Suter is over paid. 
-	\item Figure \ref{fig:salaryhist}
+    \item Figure \ref{fig:ppmsal-corr-season}: PPM in goals is overall more correlated with salaries. All 3 lines show a decrease after lockout season 2004-2005. As to the 2013-2013 lockout, Corsi/Fenwick shows a drop in the correlation while goals shows a drop in the season after. Note Corsi even gives negative correlations for season 2006-2007 and 2005-2006. 
+    \item Figure \ref{fig:ppmsal-scat}: Two measures are pretty consistent with each other. Sidney Crosby, Zach Parise and Ryan Suter are three most expensive players in season 2013-2014. According to our evaluation, both goals and Corsi show that Sidney Crosby is under paid while Ryan Suter is over paid. 
+    \item Figure \ref{fig:salaryhist}
 \end{enumerate}
 
 \begin{figure}[htb!]
-	\centering
-	\includegraphics[width=0.8\textwidth]{figures/ppmsal-corr-season.pdf}
-	\caption{Correlation between salary and PPM over 11 seasons with the lockout season 2012-2013 marked in red.}\label{fig:ppmsal-corr-season}
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/ppmsal-corr-season.pdf}
+    \caption{Correlation between salary and PPM over 11 seasons with the lockout season 2012-2013 marked in red.}\label{fig:ppmsal-corr-season}
 \end{figure}
 
 \begin{figure}[htb!]
-	\centering
-	\includegraphics[width=0.8\textwidth]{figures/ppmsal-scat.pdf}
-	\caption{Non-zero PPM via goals versus 2013-2014 salary, augmented with rescaled PPM via Corsi. Ordinary least squares fits are added to aid in visualization.}\label{fig:ppmsal-scat}
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/ppmsal-scat.pdf}
+    \caption{Non-zero PPM via goals versus 2013-2014 salary, augmented with rescaled PPM via Corsi. Ordinary least squares fits are added to aid in visualization.}\label{fig:ppmsal-scat}
 \end{figure}
+
+\section{Analysis: the relationship between salary and performance}
+\label{sec:salary}
+
 
 \begin{figure}[htb!]
 	\centering
@@ -667,5 +636,8 @@ We have seen that Henrik Sedin's worse performance in 2007 playoffs than in the 
 
 
 \section{Conclusion}\label{sec:conclusion}
+
+
+
 \bibliographystyle{plain}
 \bibliography{hockey}
