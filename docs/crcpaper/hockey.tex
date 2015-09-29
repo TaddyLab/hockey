@@ -471,6 +471,7 @@ is interpretable as Bayesian posterior maximization.
 \label{sec:goals}
 
 
+
 This section attempts to quantify the performance of hockey players using data
 from National Hockey League. It extends  analysis in
 \cite{gramacy:jensen:taddy:2013}, which used a smaller dataset, was less
@@ -712,7 +713,83 @@ instead of $\beta$ for direct comparison.
 
 \section{Conclusion}\label{sec:conclusion}
 
+We have provided a sketch for how modern techniques in regularized logistic
+regression, developed originally to address challenging large-scale problems
+in genetics, finance, text mining, can be used to calculate partial player
+effects in hockey.  We have argued that that such such partial effects are a
+better measure of player ability compared to the classic plus-minus statistic,
+and have the benefit of being interpretable on the same scale as plus-minus.
+Our development has focused on point-estimation via the {\tt gamlr} package,
+which infers parameters under L1 penalization.  Although there are other
+software packages offering similar features, for example {\tt glmnet}
+\cite{zou_regularization_2005}, we believe that {\tt gamlr} is particularly
+well-suited to the data arizing in our hockey analysis, e.g., exploiting the
+sparse structure of design matrices comprised of indicators where only a
+handful (usually twelve) of thousands (of player) are nonzero. We have shown
+how the framework is flexible, allowing one to control for many aspects of
+situational play (special teams, overtime, playoffs), and personnel/season
+(coaches, salaries, season-years).  A comparison was provided to the popular
+Corsi and Fenwick alternatives to plus-minus, and we argued that a recent
+emphasis in the literature on shots (and blocked shots), does not in general
+compare favorably to the traditional goals focus in this framework.
 
+Beyond model specification, there are several dimensions along which these
+methods can be extended or generalized.  One is to break out of the
+point-estimation context to apply a fully Bayesian analysis. The framework
+originally suggested \cite{gramacy:jensen:taddy:2013} calculated a fully
+Bayesian partial player effect via the {\tt reglogit} package for {\sf R},
+implementing a Gibbs sampling strategy
+\cite{gem:gem:1984} described in full by \cite{gra:pols:2012}.  It combines
+two scale-mixture of normals data-augmentation schemes, one for the logit
+\cite{holmes:held:2006} and one for the Laplace prior \cite{park:casella:2008}.
+Obtaining $T$ samples from the full posterior, is straightforward using the
+following {\sf R} code
+\begin{verbatim}
+bfit <- reglogit(T=T, y=Y, X=X, normalize=FALSE)
+\end{verbatim}
+The full posterior sample for $\beta$ residing in {\tt bfit} allows posterior
+means to be calculated, as well as component-wise variances and correlations
+between $\beta_j$'s.  \cite{gramacy:jensen:taddy:2013} show how these can be
+used to, say, calculate the probability that one player is better than
+another, rank them and provide posterior credible intervals for those
+rankings\footnote{see., e.g, 
+\url{https://github.com/TaddyLab/hockey/blob/master/results/blog/logistic_pranks_betas.csv}
+} or be used to construct teams of players under budget constraints and
+subsequently describe the probability that those teams will score more goals
+than their opponents.  Like {\tt gamlr}, the software takes advantage of
+sparse matrix libraries ({\tt slam} \cite{slam}), and is multi-threaded via
+{\tt OpenMP} meaning it can multiple processors simultaneously, which is a
+common configuration for modern desktop architectures. However, {\tt reglogit}
+is still relatively slow when $n_p$ and $n_g$ are large, requiring several
+hours to obtain thousands of samples from the posterior.
+
+Another dimension for extension involves breaking out of the linear framework
+entirely.  Anecdotally, we hear that some folks in the sports analytics
+community (not just in hockey) prefer a framework built around random forests
+\cite{breiman:2001}.  An advantage of trees, on which random forests are based,
+is that they naturally explore (non-linear) interactions between predictors,
+and thus players and other effects in the hockey analysis.  They also naturally
+regularize and provide variable selection features via relevance statistics.  
+A disadvantage is that the ensemble tree approach random forests provides does
+not readily have a fully Bayesian interpretation, although recent work has 
+shown that the ensemble can be seen to be approximating a Bayesian posterior
+quantity \cite{taddy:eta:2015}.  Another option along similar lines is Bayesian
+additive regression trees (BART, \cite{ChipGeorMcCu2010}), with newer visions
+implemented non-linear logistic modeling via the same latent variable
+techniques as in the linear case \cite{gra:pols:2012}.
+
+In closing, we remark that it is easy to find flaws in our approach to
+estimating partial player effects.  For example, although counting goals
+measures time in some sense, the analysis does not directly utilize
+time-on-ice information.  A similar drawback would exist for methods which are
+instead tailored to shots, etc..  A method based on proportional hazards
+\cite{ThoVenJen12}, however, does not suffer this drawback, as it incorporates
+time-on-ice directly.  Nevertheless, the linear-logistic approach has much
+to recommend it, including simple interpretation, easy extension in terms
+of modeling framework and specification of predictors, and fast inference
+so that player ability metrics and rankings are easily updatability when
+new goals data arrive, making near-real-time analysis possible as games
+and seasons progress.
 
 \bibliographystyle{plain}
 \bibliography{hockey}
