@@ -483,6 +483,7 @@ lockout that resulted in a cancellation}. The data capture all the shifts in
 every single game, such as change, goal, shot, blocked shot, miss shot,
 penalty and etc. There were $p=2439$ players involved in $n_g=69449$ goals.
 
+
 The analysis proceeds through estimation of the model from (\ref{hockeymod}),
 \begin{align*}
 \log\left[\frac{q_{i}}{1-q_{i}}\right] = \alpha + \mathbf{u}_i'\boldsymbol{\gamma} +
@@ -495,22 +496,17 @@ combination of a  baseline effect plus a season-specific innovation.  These
 effects represent the estimated change in the log odds that, given a goal was
 scored, the goal was scored by player $j$'s team.
 
-One disadvantage to estimated effects, $\hat{\beta}$ generically, is that
-their interpretation as contribution to the log odds of a goal is tough to get
-your head around, for experts as well as for laymen.  PM is much easier to
-intuit. Moreover, PM accounts not only for a players ability, but also the
-amount that they play in a limited sense: large absolute PM values arise only
-when players are on ice for many goals.  Note that it is possible to show
-positive performance in $\hat{\beta}$ terms if you only play a little bit,
-however the magnitude of $\hat{\beta}$ will likely be small.  The trouble from
-an interpretive standpoint is small values for players with little ice time
-can mask valuable information hidden in similar $\hat{\beta}$ for players that
-log much more ice time, and who are therefore on the ice for many more goals.
-We therefore find it helpful, for interpretive purposes, to translate our
-estimated $\hat{\beta}$ partial effects to the same scale as PM, by putting
-the (separated) number of goals for and against ``back in'', introducing what
-we call the {\em partial plus-minus (PPM).}
 
+The standard PM  score accounts not only for a players ability, but also the
+amount that they play {\color{red} (Bobby says: only in the very weak sense in
+that it limits the max and min PM)}.  This is important: it is relatively easy
+to show high performance if you only play a little bit; the stars in the NHL
+tend to log much longer minutes, and their value to the team is that they can
+maintain a high performance across this heavy workload.  In order to translate
+our estimated partial effects to the same scale as PM, we introduce the
+{\color{red} (I don't think this is quite right.  That's an issue primary addressed
+by the penalty term; one could argue that the PPM is thus double-penalizing, while
+at the same time not really accounting for time-on-ice.)}
  \begin{itemize}
 \item[]\hskip -.5cm\textbf{Partial plus-minus (PPM)}
 \item Say that $q_{sj} = 1/\exp[\beta_{0j} + \beta_{sj}]$; this is the probability that, given a goal was scored in season $s$, it was scored by player $j$'s team {\it if we know nothing else other than that player $j$ was on the ice}.  
@@ -602,15 +598,16 @@ changes across seasons.
 The ranking in Table (\ref{hockeymod}) differs dramatically from those in
 \cite{gramacy:jensen:taddy:2013}.  One big change here is that we're ordering
 players by PPM rather than by $\beta$: this rewards those with more ice-time,
-using numbers of goals (for and against) as a crude surrogate, and is a more
-realistic reflection of their team value.  For example, Marian Hossa moves to
-the top of the list when ranked by $\beta$: he is immensely talented, but
-tends to log less ice time than many of his peers (in part, because the
-Blackhawks have many top forwards).  On the other hand, players ranked at the
-bottom by PPM are those who have a negative $\beta$ and get a large amount of
-ice-time. There are many players who have lower $\beta$s than Jack Johnson
-(e.g., John McCarthy at -0.5 and Thomas Pock at -0.4), but they do not get to
-play as much and thus don't show up in our bottom 20.
+and is a more realistic reflection of their team value {\color{red} (Bobby:
+The more I read about this PPM the more concerned I become; the orderings
+shouldn't be that different)}.  For example, Marian Hossa moves to the top of
+the list when ranked by $\beta$: he is immensely talented, but tends to log
+less ice time than many of his peers (in part, because the Blackhawks have
+many top forwards).  On the other hand, players ranked at the bottom by PPM
+are those who have a negative $\beta$ and get a large amount of ice-time.
+There are many players who have lower $\beta$s than Jack Johnson (e.g., John
+McCarthy at -0.5 and Thomas Pock at -0.4), but they do not get to play as much
+and thus don't show up in our bottom 20.
 
  The individual player
 $\beta$ effects also differ here from those in
@@ -686,8 +683,56 @@ instead of $\beta$ for direct comparison.
         \begin{tabular}{r c c r r r r r r r r }
         \multicolumn{11}{l}{\bf Corse-based performance analysis}\\
             & & & \multicolumn{4}{|c}{Regular Season} & \multicolumn{4}{|c}{Post Season}\\
-            Rank & Player & Season  & \multicolumn{1}{|c}{$q$} & PPM & FP & PM & \multicolumn{1}{|c}{$q$} & PPM & FP & PM  \\ \hline
+            Rank & Player & Season  & \multicolumn{1}{|c}{$q$} & PPM & FP & PM & \multicolumn{1}{|c}{$q$} & PPM & FP & PM  \\ 
+            \hline\rule{0pt}{4ex} 
+            		1     & DANIEL SEDIN & 20102011 & 0.6   & 615.14 & 0.65  & 876   & 0.66  & 328.64 & 0.67  & 339 \\
+            		2     & ERIC STAAL & 20082009 & 0.58  & 605.41 & 0.59  & 619   & 0.58  & 124.13 & 0.58  & 116 \\
+            		3     & MIKHAIL GRABOVSKI & 20102011 & 0.6   & 597.05 & 0.57  & 465   & 0.5   & 0     & 0     & 0 \\
+            		4     & JOE THORNTON & 20112012 & 0.59  & 596.37 & 0.61  & 742   & 0.59  & 36.99 & 0.7   & 85 \\
+            		5     & ALEX OVECHKIN & 20092010 & 0.59  & 575.72 & 0.66  & 1047  & 0.59  & 67.19 & 0.71  & 161 \\
+            		6     & DANIEL SEDIN & 20072008 & 0.6   & 562.11 & 0.63  & 685   & 0.5   & 0     & 0     & 0 \\
+            		7     & DANIEL SEDIN & 20082009 & 0.6   & 547.83 & 0.62  & 680   & 0.6   & 62.4  & 0.63  & 82 \\
+            		8     & RYAN KESLER & 20102011 & 0.58  & 530.05 & 0.59  & 649   & 0.58  & 168.57 & 0.56  & 131 \\
+            		9     & SIDNEY CROSBY & 20092010 & 0.57  & 517.86 & 0.62  & 815   & 0.58  & 98.48 & 0.71  & 260 \\
+            		10    & DANIEL SEDIN & 20112012 & 0.6   & 510.16 & 0.67  & 880   & 0.6   & 18.25 & 0.55  & 9 \\
+            		11    & HENRIK ZETTERBERG & 20112012 & 0.58  & 497.04 & 0.6   & 596   & 0.58  & 32.5  & 0.63  & 52 \\
+            		12    & CLAUDE GIROUX & 20102011 & 0.58  & 487.53 & 0.56  & 347   & 0.58  & 81.81 & 0.65  & 153 \\
+            		13    & ZACH PARISE & 20082009 & 0.58  & 486.45 & 0.64  & 843   & 0.58  & 45.25 & 0.55  & 29 \\
+            		14    & JOE THORNTON & 20102011 & 0.58  & 482.72 & 0.6   & 647   & 0.58  & 127.55 & 0.61  & 179 \\
+            		15    & ALEX STEEN & 20102011 & 0.59  & 475.5 & 0.61  & 561   & 0.5   & 0     & 0     & 0 \\
+            		16    & LUBOMIR VISNOVSKY & 20102011 & 0.56  & 474.91 & 0.56  & 446   & 0.56  & 30.28 & 0.59  & 44 \\
+            		17    & ERIC STAAL & 20102011 & 0.56  & 473.92 & 0.56  & 415   & 0.5   & 0     & 0     & 0 \\
+            		18    & JUSTIN WILLIAMS & 20112012 & 0.59  & 471.53 & 0.63  & 717   & 0.59  & 121.16 & 0.62  & 171 \\
+            		19    & ALEX OVECHKIN & 20072008 & 0.56  & 463.14 & 0.65  & 1094  & 0.56  & 45.93 & 0.65  & 105 \\
+            		20    & PATRIK ELIAS & 20102011 & 0.6   & 461.75 & 0.6   & 461   & 0.5   & 0     & 0     & 0 \\
+            		21    & SIDNEY CROSBY & 20132014 & 0.6   & 459.92 & 0.61  & 480   & 0.6   & 96.48 & 0.66  & 148 \\
+            		22    & DUSTIN BYFUGLIEN & 20102011 & 0.56  & 456.04 & 0.6   & 705   & 0.5   & 0     & 0     & 0 \\
+            		23    & JAROMIR JAGR & 20072008 & 0.58  & 455.78 & 0.65  & 911   & 0.58  & 50.49 & 0.67  & 116 \\
+            		24    & ALEX OVECHKIN & 20082009 & 0.56  & 455.46 & 0.64  & 1065  & 0.56  & 78.43 & 0.64  & 182 \\
+            		25    & JASON BLAKE & 20082009 & 0.58  & 454.7 & 0.55  & 278   & 0.5   & 0     & 0     & 0 \\ 
+            		\hline\rule{0pt}{4ex} 
+            		10606 & MIKE COMMODORE & 20082009 & 0.43  & -447.91 & 0.42  & -537  & 0.43  & -24.06 & 0.34  & -56 \\ 
+            		10607 & SCOTT HANNAN & 20112012 & 0.42  & -451.04 & 0.4   & -591  & 0.5   & 0     & 0     & 0 \\
+            		10608 & CHRIS PHILLIPS & 20072008 & 0.43  & -454.09 & 0.4   & -644  & 0.43  & -25.42 & 0.43  & -24 \\
+            		10609 & JAY BOUWMEESTER & 20052006 & 0.44  & -457.01 & 0.46  & -305  & 0.5   & 0     & 0     & 0 \\
+            		10610 & KARLIS SKRASTINS & 20082009 & 0.43  & -457.54 & 0.38  & -754  & 0.5   & 0     & 0     & 0 \\
+            		10611 & KARLIS SKRASTINS & 20092010 & 0.42  & -464.49 & 0.39  & -655  & 0.5   & 0     & 0     & 0 \\
+            		10612 & MATTIAS OHLUND & 20082009 & 0.42  & -465.36 & 0.47  & -212  & 0.42  & -63.51 & 0.41  & -72 \\
+            		10613 & MATTIAS OHLUND & 20062007 & 0.43  & -470.03 & 0.48  & -147  & 0.43  & -72.3 & 0.49  & -9 \\
+            		10614 & SCOTT HANNAN & 20082009 & 0.43  & -478.83 & 0.38  & -788  & 0.5   & 0     & 0     & 0 \\
+            		10615 & DOUGLAS MURRAY & 20092010 & 0.42  & -486.16 & 0.47  & -184  & 0.42  & -98.6 & 0.51  & 7 \\
+            		10616 & SCOTT HANNAN & 20072008 & 0.42  & -507.7 & 0.42  & -504  & 0.42  & -48.68 & 0.4   & -59 \\
+            		10617 & FILIP KUBA & 20112012 & 0.42  & -509.74 & 0.49  & -77   & 0.42  & -48.78 & 0.55  & 33 \\
+            		10618 & NICLAS HAVELID & 20072008 & 0.41  & -516.86 & 0.35  & -883  & 0.5   & 0     & 0     & 0 \\
+            		10619 & JOHNNY ODUYA & 20082009 & 0.42  & -522.4 & 0.51  & 51    & 0.42  & -47.2 & 0.52  & 14 \\
+            		10620 & DOUGLAS MURRAY & 20102011 & 0.4   & -540.83 & 0.48  & -117  & 0.4   & -138.62 & 0.44  & -82 \\
+            		10621 & DION PHANEUF & 20062007 & 0.42  & -552.69 & 0.49  & -42   & 0.42  & -44.77 & 0.44  & -35 \\
+            		10622 & NICLAS HAVELID & 20082009 & 0.4   & -562.65 & 0.4   & -604  & 0.4   & -44.1 & 0.55  & 23 \\
+            		10623 & SERGEI GONCHAR & 20062007 & 0.42  & -586.55 & 0.52  & 174   & 0.42  & -34.47 & 0.49  & -6 \\
+            		10624 & PAUL MARTIN & 20082009 & 0.39  & -695.83 & 0.55  & 283   & 0.39  & -81.46 & 0.55  & 37 \\
+            		10625 & BRYCE SALVADOR & 20082009 & 0.32  & -912.17 & 0.42  & -407  & 0.32  & -39.84 & 0.51  & 3 \\
 \end{tabular}
+\vskip .5cm
 \caption{\label{tab:corsi} Top 25 and bottom 20 players by Corsi-based PPM.}
 \end{table}
 
@@ -714,51 +759,101 @@ instead of $\beta$ for direct comparison.
 \begin{figure}[htb!]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/ppmpmsal-corr-season.pdf}
-    \caption{Seasonal correlations between salary and PPM via different bases are shown by solid lines. And corresponding correlations between salary and PM are shown by dashed lines. Note season 2005-2006 (right after lockout) and 2012-2013 (lockout) are marked in red. }\label{fig:ppmpmsal-corr-season}
+    \caption{\textbf{[Season]} correlations between salary and PPM via different bases are shown by solid lines. And corresponding correlations between salary and PM are shown by dashed lines. Note season 2005-2006 (right after lockout) and 2012-2013 (lockout) are marked in red. }\label{fig:ppmpmsal-corr-season}
 \end{figure}
 
 \begin{figure}[htb!]
 	\centering
 	\includegraphics[width=0.8\textwidth]{figures/probfpsal-corr-season.pdf}
-	\caption{Seasonal correlations between salary and prob via different bases are shown by solid lines. And corresponding correlations between salary and FP are shown by dashed lines. Note season 2005-2006 (right after lockout) and 2012-2013 (lockout) are marked in red. }\label{fig:probfpsal-corr-season}
+	\caption{\textbf{[Season]} correlations between salary and prob via different bases are shown by solid lines. And corresponding correlations between salary and FP are shown by dashed lines. Note season 2005-2006 (right after lockout) and 2012-2013 (lockout) are marked in red. }\label{fig:probfpsal-corr-season}
 \end{figure}
 
 \begin{figure}[htb!]
 	\centering
 	\includegraphics[width=0.8\textwidth]{figures/pos-ppmpmsal-corr-season.pdf}
-	\caption{Similar as figure \ref{fig:ppmpmsal-corr-season}, but only with positive effects (players with $PPM>0$ or $PM>0$). }\label{fig:pos-ppmpmsal-corr-season}
+	\caption{\textbf{[Season]} Similar as figure \ref{fig:ppmpmsal-corr-season}, but only with positive effects (players with $PPM>0$ or $PM>0$). }\label{fig:pos-ppmpmsal-corr-season}
 \end{figure}
 
 \begin{figure}[htb!]
 	\centering
 	\begin{subfigure}[t]{0.5\textwidth}
 		\centering
-		\includegraphics[height=2.5in]{figures/salaryhist-1314-goals.pdf}
+		\includegraphics[height=2.5in]{figures/salaryhist-1314-goals-season.pdf}
 		\caption{Goals-based}
 	\end{subfigure}%
 	~ 
 	\begin{subfigure}[t]{0.5\textwidth}
 		\centering
-		\includegraphics[height=2.5in]{figures/salaryhist-1314-corsi.pdf}
+		\includegraphics[height=2.5in]{figures/salaryhist-1314-corsi-season.pdf}
 		\caption{Corsi-based}
 	\end{subfigure}
-	\caption{Histogram of 2013-2014 salaries for players with different player-effects labeled in three different colors.}
+	\caption{\textbf{[Season]} Histogram of 2013-2014 salaries for players with different player-effects labeled in three different colors.}
 \end{figure}
 
 \begin{figure}[htb!]
 	\centering
 	\begin{subfigure}[t]{0.5\textwidth}
 		\centering
-		\includegraphics[height=2.5in]{figures/salaryhist-goals.pdf}
+		\includegraphics[height=2.5in]{figures/salaryhist-goals-season.pdf}
 		\caption{Goals-based}
 	\end{subfigure}%
 	~ 
 	\begin{subfigure}[t]{0.5\textwidth}
 		\centering
-		\includegraphics[height=2.5in]{figures/salaryhist-corsi.pdf}
+		\includegraphics[height=2.5in]{figures/salaryhist-corsi-season.pdf}
 		\caption{Corsi-based}
 	\end{subfigure}
-	\caption{Histogram of all 11-season salaries for players with different player-effects labeled in three different colors.}
+	\caption{\textbf{[Season]} Histogram of all 11-season salaries for players with different player-effects labeled in three different colors.}
+\end{figure}
+
+\begin{figure}[htb!]
+	\centering
+	\includegraphics[width=0.8\textwidth]{figures/ppmpmsal-corr-regular.pdf}
+	\caption{\textbf{[Regular]} correlations between salary and PPM via different bases are shown by solid lines. And corresponding correlations between salary and PM are shown by dashed lines. Note season 2005-2006 (right after lockout) and 2012-2013 (lockout) are marked in red. }\label{fig:ppmpmsal-corr-regular}
+\end{figure}
+
+\begin{figure}[htb!]
+	\centering
+	\includegraphics[width=0.8\textwidth]{figures/probfpsal-corr-regular.pdf}
+	\caption{\textbf{[Regular]} correlations between salary and prob via different bases are shown by solid lines. And corresponding correlations between salary and FP are shown by dashed lines. Note season 2005-2006 (right after lockout) and 2012-2013 (lockout) are marked in red. }\label{fig:probfpsal-corr-regular}
+\end{figure}
+
+\begin{figure}[htb!]
+	\centering
+	\includegraphics[width=0.8\textwidth]{figures/pos-ppmpmsal-corr-regular.pdf}
+	\caption{\textbf{[Regular]} Similar as figure \ref{fig:ppmpmsal-corr-regular}, but only with positive effects (players with $PPM>0$ or $PM>0$). }\label{fig:pos-ppmpmsal-corr-regular}
+\end{figure}
+
+\begin{figure}[htb!]
+	\centering
+	\begin{subfigure}[t]{0.5\textwidth}
+		\centering
+		\includegraphics[height=2.5in]{figures/salaryhist-1314-goals-regular.pdf}
+		\caption{Goals-based}
+	\end{subfigure}%
+	~ 
+	\begin{subfigure}[t]{0.5\textwidth}
+		\centering
+		\includegraphics[height=2.5in]{figures/salaryhist-1314-corsi-regular.pdf}
+		\caption{Corsi-based}
+	\end{subfigure}
+	\caption{\textbf{[Regular]} Histogram of 2013-2014 salaries for players with different player-effects labeled in three different colors.}
+\end{figure}
+
+\begin{figure}[htb!]
+	\centering
+	\begin{subfigure}[t]{0.5\textwidth}
+		\centering
+		\includegraphics[height=2.5in]{figures/salaryhist-goals-regular.pdf}
+		\caption{Goals-based}
+	\end{subfigure}%
+	~ 
+	\begin{subfigure}[t]{0.5\textwidth}
+		\centering
+		\includegraphics[height=2.5in]{figures/salaryhist-corsi-regular.pdf}
+		\caption{Corsi-based}
+	\end{subfigure}
+	\caption{\textbf{[Regular]} Histogram of all 11-season salaries for players with different player-effects labeled in three different colors.}
 \end{figure}
 
 \section{Conclusion}\label{sec:conclusion}
@@ -843,25 +938,17 @@ modeling via the same latent variable techniques as in the linear case
 
 In closing, we remark that it is easy to find flaws in our approach to
 estimating partial player effects.  For example, although counting goals
-measures time in some sense, the statistical analysis does not directly
-utilize time-on-ice information.  A similar drawback would exist for methods
-which are instead tailored to shots, etc.  A method based on proportional
-hazards
+measures time in some sense, the analysis does not directly utilize
+time-on-ice information.  A similar drawback would exist for methods which are
+instead tailored to shots, etc.  A method based on proportional hazards
 \cite{ThoVenJen12}, however, does not suffer this drawback, as it incorporates
-time-on-ice directly.  Our PPM adjustment, which we couched as taking goal
-counts as a crude surrogate for time-on-ice, is perhaps more correctly
-characterized as using goal counts as a proxy for the {\em posterior variance}
-on player effects, which is not provided in the {\tt gamlr} output.  That
-variance is indeed provided by {\tt reglogit}, albiet at somewhat greater
-computational expense, and if ranking players is the ultimate goal then that
-posterior sample may be more valuable than point estimates of $\beta$ or their
-PPM-adjusted values.
+time-on-ice directly.  
 
-Regardless of these caveats and other possible complex extensions, we argue
-strongly that our simple linear-logistic approach has much to recommend it:
-simple interpretation, easy extension for additional flexibility and controls,
-and ultra fast inference.  These qualities make sophisticated real-time
-analysis of player effects possible as games and seasons progress.
+Regardless of these and other possible complex extensions, we argue strongly
+that our simple linear-logistic approach has much to recommend it: simple
+interpretation, easy extension for additional flexibility and controls, and
+ultra fast inference.  These qualities make sophisticated real-time analysis
+of player effects possible as games and seasons progress.
 
 \bibliographystyle{plain}
 \bibliography{hockey}

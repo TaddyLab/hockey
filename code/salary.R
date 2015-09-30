@@ -4,7 +4,7 @@
 setwd("/Users/Sen/Documents/hockey_new")
 # flags for CORSI/FENWICK/GOAL
 CORSI = FALSE
-FENWICK = TRUE
+FENWICK = FALSE
 if(CORSI & FENWICK){stop("Multiple flags")}
 
 ## grab performance estimates
@@ -53,32 +53,30 @@ avgsal <- tapply(milperyear,players,mean)
 perfavg <- aggregate(perf[,-(1:2)],by=list(players),FUN=mean)
 salarycorr["averaged",] <- cor(perfavg[,-1],avgsal)
 
-# add the max(ppm,0) and max(pm,0)
-# perf <- cbind(perf,max.ppm.0=pmax(perf$ppm.avg,0),max.pm.0=pmax(perf$pm.avg,0))
-# for ppm
-ind = perf$ppm.avg>0
-salcorr.posppm <- c(cor(perf[ind,"ppm.avg"],milperyear[ind]))
-players <- sub("\\_\\d+$","",names(milperyear[ind]))
-avgsal <- tapply(milperyear[ind],players,mean)
-perfavg <- tapply(perf[ind,"ppm.avg"],players,mean)
-salcorr.posppm <- c(salcorr.posppm, cor(perfavg,avgsal))
-for(s in seasons){
-  ps <- perf$season==s & perf$ppm.avg>0
-  salcorr.posppm <- c(salcorr.posppm, cor(perf[ps,"ppm.avg"], milperyear[ps]))
-}
-# for pm
-ind = perf$pm.avg>0
-salcorr.pospm <- c(cor(perf[ind,"pm.avg"],milperyear[ind]))
-players <- sub("\\_\\d+$","",names(milperyear[ind]))
-avgsal <- tapply(milperyear[ind],players,mean)
-perfavg <- tapply(perf[ind,"pm.avg"],players,mean)
-salcorr.pospm <- c(salcorr.pospm, cor(perfavg,avgsal))
-for(s in seasons){
-  ps <- perf$season==s & perf$pm.avg>0
-  salcorr.pospm <- c(salcorr.pospm, cor(perf[ps,"pm.avg"], milperyear[ps]))
-}
 
-salarycorr <- cbind(salarycorr, pos.ppm.avg=salcorr.posppm, pos.pm.avg=salcorr.pospm)
+########## Sen added
+# add the max(ppm,0) and max(pm,0)
+salcorr.pos <- function(metric){
+  ind = perf[,metric]>0
+  salcorr.pos <- c(cor(perf[ind,metric],milperyear[ind]))
+  players <- sub("\\_\\d+$","",names(milperyear[ind]))
+  avgsal <- tapply(milperyear[ind],players,mean)
+  perfavg <- tapply(perf[ind,metric],players,mean)
+  salcorr.pos <- c(salcorr.pos, cor(perfavg,avgsal))
+  for(s in seasons){
+    ps <- perf$season==s & perf[,metric]>0
+    salcorr.pos <- c(salcorr.pos, cor(perf[ps,metric], milperyear[ps]))
+  }
+  return(salcorr.pos)
+}
+# for ppm
+salcorr.posppm.reg <- salcorr.pos("ppm") # regular
+salcorr.posppm.avg <- salcorr.pos("ppm.avg") # overall
+# for pm
+salcorr.pospm.reg <- salcorr.pos("pm") # regular
+salcorr.pospm.avg <- salcorr.pos("pm.avg") # overall
+
+salarycorr <- cbind(salarycorr, pos.ppm=salcorr.posppm.reg, pos.pm=salcorr.pospm.reg,pos.ppm.avg=salcorr.posppm.avg, pos.pm.avg=salcorr.pospm.avg)
 (salarycorr <- round(salarycorr,3))
 
 write.csv(salarycorr, 

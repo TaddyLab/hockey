@@ -14,8 +14,10 @@ rownames(perf_fenwick) <- paste(perf_fenwick$player,perf_fenwick$season,sep="_")
 common <- intersect(intersect(rownames(perf_goals),rownames(perf_corsi)),rownames(perf_fenwick))
 # build a new data frame
 perf <- data.frame(player=perf_goals[common,]$player,season=perf_goals[common,]$season,
-                   ppm.goals=perf_goals[common,]$ppm.avg, ppm.corsi=perf_corsi[common,]$ppm.avg, ppm.fenwick=perf_fenwick[common,]$ppm.avg, 
-                   pm.goals=perf_goals[common,]$pm.avg, pm.corsi=perf_corsi[common,]$pm.avg, pm.fenwick=perf_fenwick[common,]$pm.avg,
+                   ppm.goals=perf_goals[common,]$ppm, ppm.corsi=perf_corsi[common,]$ppm, ppm.fenwick=perf_fenwick[common,]$ppm, 
+                   pm.goals=perf_goals[common,]$pm, pm.corsi=perf_corsi[common,]$pm, pm.fenwick=perf_fenwick[common,]$pm,
+                   ppm.goals.avg=perf_goals[common,]$ppm.avg, ppm.corsi.avg=perf_corsi[common,]$ppm.avg, ppm.fenwick.avg=perf_fenwick[common,]$ppm.avg, 
+                   pm.goals.avg=perf_goals[common,]$pm.avg, pm.corsi.avg=perf_corsi[common,]$pm.avg, pm.fenwick.avg=perf_fenwick[common,]$pm.avg,
                    row.names=common)
 
 # seasons
@@ -50,16 +52,27 @@ write.csv(perf,
           file="results/performance-salary-todo.csv", 
           row.names=FALSE,quote=FALSE)
 
+# histogram of salary in season 20132014
 perf <- read.csv("results/performance-salary-todo.csv")
 rownames(perf) <- paste(perf$player,perf$season,sep="_")
 perf_s <- perf[perf$season=="20132014",]
-ind <- which(perf_s$ppm.corsi==0|perf_s$ppm.goals==0)
-# histogram of salary in season 20132014
-pdf(file="write-up/figures/salaryhist.pdf", height=6, width=9)
-hist(perf_s$salary,xlab="salary (USD, million)", xlim=c(0,max(perf_s$salary)),col="blue",cex.main=1.2,cex.lab=1.2,main="")
-hist(perf_s$salary[ind],add=TRUE,col="white")
-legend("topright", legend="full-data", col="grey", pch=15, cex=1.2, bty="n")
+## corsi-based
+pdf(file="write-up/figures/salaryhist-1314-corsi-regular.pdf", height=6, width=9)
+hist(perf_s$salary,xlab="salary (USD, million)", xlim=c(0,max(perf_s$salary)),col="blue",cex.main=1.2,cex.lab=1.5,main="")
+hist(perf_s$salary[perf_s$ppm.corsi<=0],add=TRUE,col="green")
+hist(perf_s$salary[perf_s$ppm.corsi<0],add=TRUE,col="red")
+legend("topright", legend=c("players with positive player-effects","players with zero player-effects","players with negative player-effects")
+       , col=c("blue","green","red"), pch=15, cex=2, bty="n")
 dev.off()
+## goal-based
+pdf(file="write-up/figures/salaryhist-1314-goals-regular.pdf", height=6, width=9)
+hist(perf_s$salary,xlab="salary (USD, million)", xlim=c(0,max(perf_s$salary)),col="blue",cex.main=1.2,cex.lab=1.5,main="")
+hist(perf_s$salary[perf_s$ppm.goals<=0],add=TRUE,col="green")
+hist(perf_s$salary[perf_s$ppm.goals<0],add=TRUE,col="red")
+#legend("topright", legend=c("players with positive player-effects","players with zero player-effects","players with negative player-effects")
+#       , col=c("blue","green","red"), pch=15, cex=1.2, bty="n")
+dev.off()
+
 
 
 # remove 0 ppm
