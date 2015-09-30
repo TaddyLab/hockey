@@ -497,16 +497,21 @@ effects represent the estimated change in the log odds that, given a goal was
 scored, the goal was scored by player $j$'s team.
 
 
-The standard PM  score accounts not only for a players ability, but also the
-amount that they play {\color{red} (Bobby says: only in the very weak sense in
-that it limits the max and min PM)}.  This is important: it is relatively easy
-to show high performance if you only play a little bit; the stars in the NHL
-tend to log much longer minutes, and their value to the team is that they can
-maintain a high performance across this heavy workload.  In order to translate
-our estimated partial effects to the same scale as PM, we introduce the
-{\color{red} (I don't think this is quite right.  That's an issue primary addressed
-by the penalty term; one could argue that the PPM is thus double-penalizing, while
-at the same time not really accounting for time-on-ice.)}
+One disadvantage to estimated effects, $\hat{\beta}$ generically, is that
+their interpretation as contribution to the log odds of a goal is tough to get
+your head around, for experts as well as for laymen.  PM is much easier to
+intuit. Moreover, PM accounts not only for a players ability, but also the
+amount that they play in a limited sense: large absolute PM values arise only
+when players are on ice for many goals.  Note that it is possible to show
+positive performance in $\hat{\beta}$ terms if you only play a little bit,
+however the magnitude of $\hat{\beta}$ will likely be small.  The trouble from
+an interpretive standpoint is small values for players with little ice time
+can mask valuable information hidden in similar $\hat{\beta}$ for players that
+log much more ice time, and who are therefore on the ice for many more goals.
+We therefore find it helpful, for interpretive purposes, to translate our
+estimated $\hat{\beta}$ partial effects to the same scale as PM, by putting
+the (separated) number of goals for and against ``back in'', introducing what
+we call the {\em partial plus-minus (PPM).}
  \begin{itemize}
 \item[]\hskip -.5cm\textbf{Partial plus-minus (PPM)}
 \item Say that $q_{sj} = 1/\exp[\beta_{0j} + \beta_{sj}]$; this is the probability that, given a goal was scored in season $s$, it was scored by player $j$'s team {\it if we know nothing else other than that player $j$ was on the ice}.  
@@ -598,16 +603,15 @@ changes across seasons.
 The ranking in Table (\ref{hockeymod}) differs dramatically from those in
 \cite{gramacy:jensen:taddy:2013}.  One big change here is that we're ordering
 players by PPM rather than by $\beta$: this rewards those with more ice-time,
-and is a more realistic reflection of their team value {\color{red} (Bobby:
-The more I read about this PPM the more concerned I become; the orderings
-shouldn't be that different)}.  For example, Marian Hossa moves to the top of
-the list when ranked by $\beta$: he is immensely talented, but tends to log
-less ice time than many of his peers (in part, because the Blackhawks have
-many top forwards).  On the other hand, players ranked at the bottom by PPM
-are those who have a negative $\beta$ and get a large amount of ice-time.
-There are many players who have lower $\beta$s than Jack Johnson (e.g., John
-McCarthy at -0.5 and Thomas Pock at -0.4), but they do not get to play as much
-and thus don't show up in our bottom 20.
+using numbers of goals (for and against) as a crude surrogate, and is a more
+realistic reflection of their team value.  For example, Marian Hossa moves to
+the top of the list when ranked by $\beta$: he is immensely talented, but
+tends to log less ice time than many of his peers (in part, because the
+Blackhawks have many top forwards).  On the other hand, players ranked at the
+bottom by PPM are those who have a negative $\beta$ and get a large amount of
+ice-time. There are many players who have lower $\beta$s than Jack Johnson
+(e.g., John McCarthy at -0.5 and Thomas Pock at -0.4), but they do not get to
+play as much and thus don't show up in our bottom 20.
 
  The individual player
 $\beta$ effects also differ here from those in
@@ -1045,13 +1049,20 @@ measures time in some sense, the analysis does not directly utilize
 time-on-ice information.  A similar drawback would exist for methods which are
 instead tailored to shots, etc.  A method based on proportional hazards
 \cite{ThoVenJen12}, however, does not suffer this drawback, as it incorporates
-time-on-ice directly.  
+time-on-ice directly.  time-on-ice directly.  Our PPM adjustment, which we
+couched as taking goal counts as a crude surrogate for time-on-ice, is perhaps
+more correctly characterized as using goal counts as a proxy for the {\em
+posterior variance} on player effects, which is not provided in the {\tt
+gamlr} output.  That variance is indeed provided by {\tt reglogit}, albiet at
+somewhat greater computational expense, and if ranking players is the ultimate
+goal then that posterior sample may be more valuable than point estimates of
+$\beta$ or their PPM-adjusted values.
 
-Regardless of these and other possible complex extensions, we argue strongly
-that our simple linear-logistic approach has much to recommend it: simple
-interpretation, easy extension for additional flexibility and controls, and
-ultra fast inference.  These qualities make sophisticated real-time analysis
-of player effects possible as games and seasons progress.
+Regardless of these caveats and other possible complex extensions, we argue
+strongly that our simple linear-logistic approach has much to recommend it:
+simple interpretation, easy extension for additional flexibility and controls,
+and ultra fast inference.  These qualities make sophisticated real-time
+analysis of player effects possible as games and seasons progress.
 
 \bibliographystyle{plain}
 \bibliography{hockey}
