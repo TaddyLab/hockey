@@ -288,7 +288,7 @@ full-strength play. See Figure \ref{fig:data} for illustration.
         \node [draw=none, fill=none] {$y_i\in\{{-1},1\}$}; &
         \node [draw=none, fill=none] {$x_{Pij}\in\{{-1},0,1\}$}; &\\
         \node (y1) [draw, shape=rounded rectangle] {$\hspace{7pt}1$}; &
-        \node (xp1) [draw, shape=rounded rectangle, label={[label distance=0.1mm]90:\small $1 \hspace{145pt} n_p$}] {$0\, 1\, {-1}\, 1\, 0\, {-1}\, 0\, {-1}\, 1\, {-1}\, {-1}\,  0\, 0 \cdots 0\, 1\, 0\, 1\, 1$}; &\\
+        \node (xp1) [draw, shape=rounded rectangle, label={[label distance=0.1mm]90:\small $1 \hspace{190pt} n_p$}] {$0\, 1\, {-1}\, 1\, 0\, {-1}\, 0\, {-1}\, 1\, {-1}\, {-1}\,  0\, 0 \cdots 0\, 1\, 0\, 1\, 1$}; &\\
         \node [draw=none, fill=none] {$\vdots$}; &
         \node [draw=none, fill=none] {$\vdots$}; &\\
         \node [draw, shape=rounded rectangle] {$-1$}; &
@@ -696,8 +696,8 @@ instead of $\beta$ for direct comparison.
 
 {\color{red}  TO DO: 
 \begin{enumerate}
-    \item I'd like to clean up and augment \ref{fig:ppmsal-corr-season}.  Please make the axis, label, and title text larger.  Also, please remove the vertical lines except for one at 2004-2005 and at 2012-2013 for the lockouts.  Also remove the box around the legend. Finally, we should add the non-partial (i.e., just PM) analogues for each metric as a dashed line.
-    \item I'd also like to see two alternate versions of the updated \ref{fig:ppmsal-corr-season}: 
+    \item I'd like to clean up and augment \ref{fig:ppmpmsal-corr-season}.  Please make the axis, label, and title text larger.  Also, please remove the vertical lines except for one at 2004-2005 and at 2012-2013 for the lockouts.  Also remove the box around the legend. Finally, we should add the non-partial (i.e., just PM) analogues for each metric as a dashed line.
+    \item I'd also like to see two alternate versions of the updated \ref{fig:ppmpmsal-corr-season}: 
     \begin{itemize}
     \item salary correlation with the player-event probs $q$ in solid and with standard FP dashed.
     \item salary correlation with max(PPM,0) in solid and with max(PM,0) in dashed (i.e., correlation only with positive effect).
@@ -713,17 +713,53 @@ instead of $\beta$ for direct comparison.
 
 \begin{figure}[htb!]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/ppmsal-corr-season.pdf}
-    \caption{Correlation between salary and PPM over 11 seasons with the lockout season 2012-2013 marked in red.}\label{fig:ppmsal-corr-season}
+    \includegraphics[width=0.8\textwidth]{figures/ppmpmsal-corr-season.pdf}
+    \caption{Seasonal correlations between salary and PPM via different bases are shown by solid lines. And corresponding correlations between salary and PM are shown by dashed lines. Note season 2005-2006 (right after lockout) and 2012-2013 (lockout) are marked in red. }\label{fig:ppmpmsal-corr-season}
 \end{figure}
-
 
 \begin{figure}[htb!]
 	\centering
-	\includegraphics[width=0.8\textwidth]{figures/salaryhist.pdf}
-	\caption{Histogram of 2013-2014 salaries for players with non-zero PPM exteading to the full set in gray.}\label{fig:salaryhist}
+	\includegraphics[width=0.8\textwidth]{figures/probfpsal-corr-season.pdf}
+	\caption{Seasonal correlations between salary and prob via different bases are shown by solid lines. And corresponding correlations between salary and FP are shown by dashed lines. Note season 2005-2006 (right after lockout) and 2012-2013 (lockout) are marked in red. }\label{fig:probfpsal-corr-season}
 \end{figure}
 
+\begin{figure}[htb!]
+	\centering
+	\includegraphics[width=0.8\textwidth]{figures/pos-ppmpmsal-corr-season.pdf}
+	\caption{Similar as figure \ref{fig:ppmpmsal-corr-season}, but only with positive effects (players with $PPM>0$ or $PM>0$). }\label{fig:pos-ppmpmsal-corr-season}
+\end{figure}
+
+\begin{figure}[htb!]
+	\centering
+	\begin{subfigure}[t]{0.5\textwidth}
+		\centering
+		\includegraphics[height=2.5in]{figures/salaryhist-1314-goals.pdf}
+		\caption{Goals-based}
+	\end{subfigure}%
+	~ 
+	\begin{subfigure}[t]{0.5\textwidth}
+		\centering
+		\includegraphics[height=2.5in]{figures/salaryhist-1314-corsi.pdf}
+		\caption{Corsi-based}
+	\end{subfigure}
+	\caption{Histogram of 2013-2014 salaries for players with different player-effects labeled in three different colors.}
+\end{figure}
+
+\begin{figure}[htb!]
+	\centering
+	\begin{subfigure}[t]{0.5\textwidth}
+		\centering
+		\includegraphics[height=2.5in]{figures/salaryhist-goals.pdf}
+		\caption{Goals-based}
+	\end{subfigure}%
+	~ 
+	\begin{subfigure}[t]{0.5\textwidth}
+		\centering
+		\includegraphics[height=2.5in]{figures/salaryhist-corsi.pdf}
+		\caption{Corsi-based}
+	\end{subfigure}
+	\caption{Histogram of all 11-season salaries for players with different player-effects labeled in three different colors.}
+\end{figure}
 
 \section{Conclusion}\label{sec:conclusion}
 

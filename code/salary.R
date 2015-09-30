@@ -37,7 +37,6 @@ head(perf[nosal,])
 perf <- perf[-nosal,]
 milperyear <- milperyear[-nosal]
 
-
 ## summarize correlations
 salarycorr <- matrix(nrow=length(seasons)+2, ncol=ncol(perf)-2, 
     dimnames=list(c("overall","averaged",seasons),names(perf)[-(1:2)]))
@@ -53,7 +52,35 @@ players <- sub("\\_\\d+$","",names(milperyear))
 avgsal <- tapply(milperyear,players,mean)
 perfavg <- aggregate(perf[,-(1:2)],by=list(players),FUN=mean)
 salarycorr["averaged",] <- cor(perfavg[,-1],avgsal)
+
+# add the max(ppm,0) and max(pm,0)
+# perf <- cbind(perf,max.ppm.0=pmax(perf$ppm.avg,0),max.pm.0=pmax(perf$pm.avg,0))
+# for ppm
+ind = perf$ppm.avg>0
+salcorr.posppm <- c(cor(perf[ind,"ppm.avg"],milperyear[ind]))
+players <- sub("\\_\\d+$","",names(milperyear[ind]))
+avgsal <- tapply(milperyear[ind],players,mean)
+perfavg <- tapply(perf[ind,"ppm.avg"],players,mean)
+salcorr.posppm <- c(salcorr.posppm, cor(perfavg,avgsal))
+for(s in seasons){
+  ps <- perf$season==s & perf$ppm.avg>0
+  salcorr.posppm <- c(salcorr.posppm, cor(perf[ps,"ppm.avg"], milperyear[ps]))
+}
+# for pm
+ind = perf$pm.avg>0
+salcorr.pospm <- c(cor(perf[ind,"pm.avg"],milperyear[ind]))
+players <- sub("\\_\\d+$","",names(milperyear[ind]))
+avgsal <- tapply(milperyear[ind],players,mean)
+perfavg <- tapply(perf[ind,"pm.avg"],players,mean)
+salcorr.pospm <- c(salcorr.pospm, cor(perfavg,avgsal))
+for(s in seasons){
+  ps <- perf$season==s & perf$pm.avg>0
+  salcorr.pospm <- c(salcorr.pospm, cor(perf[ps,"pm.avg"], milperyear[ps]))
+}
+
+salarycorr <- cbind(salarycorr, pos.ppm.avg=salcorr.posppm, pos.pm.avg=salcorr.pospm)
 (salarycorr <- round(salarycorr,3))
+
 write.csv(salarycorr, 
     file=sprintf("results/salarycorr-%s.csv",suffix), 
     quote=FALSE)
