@@ -807,17 +807,25 @@ modeling via the same latent variable techniques as in the linear case
 
 In closing, we remark that it is easy to find flaws in our approach to
 estimating partial player effects.  For example, although counting goals
-measures time in some sense, the analysis does not directly utilize
-time-on-ice information.  A similar drawback would exist for methods which are
-instead tailored to shots, etc.  A method based on proportional hazards
+measures time in some sense, the statistical analysis does not directly
+utilize time-on-ice information.  A similar drawback would exist for methods
+which are instead tailored to shots, etc.  A method based on proportional
+hazards
 \cite{ThoVenJen12}, however, does not suffer this drawback, as it incorporates
-time-on-ice directly.  
+time-on-ice directly.  Our PPM adjustment, which we couched as taking goal
+counts as a crude surrogate for time-on-ice, is perhaps more correctly
+characterized as using goal counts as a proxy for the {\em posterior variance}
+on player effects, which is not provided in the {\tt gamlr} output.  That
+variance is indeed provided by {\tt reglogit}, albiet at somewhat greater
+computational expense, and if ranking players is the ultimate goal then that
+posterior sample may be more valuable than point estimates of $\beta$ or their
+PPM-adjusted values.
 
-Regardless of these and other possible complex extensions, we argue strongly
-that our simple linear-logistic approach has much to recommend it: simple
-interpretation, easy extension for additional flexibility and controls, and
-ultra fast inference.  These qualities make sophisticated real-time analysis
-of player effects possible as games and seasons progress.
+Regardless of these caveats and other possible complex extensions, we argue
+strongly that our simple linear-logistic approach has much to recommend it:
+simple interpretation, easy extension for additional flexibility and controls,
+and ultra fast inference.  These qualities make sophisticated real-time
+analysis of player effects possible as games and seasons progress.
 
 \bibliographystyle{plain}
 \bibliography{hockey}
