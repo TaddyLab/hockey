@@ -1,3 +1,32 @@
+gtab <- read.csv("results/performance-goals.csv")
+ctab <- read.csv("results/performance-corsi.csv")
+
+printline <- function(i, tab){
+  cat( i,sub("_"," ", tab[i,"player"]),
+    unlist(tab[i,c("season","prob","fp","ppm","pm",
+   "prob.po","fp.po", "ppm.po", "pm.po")]), sep="&")
+  cat("\\\\\n")
+}
+for(i in 1:25) printline(i,gtab)
+for(i in nrow(tab)-19:0) printline(i,gtab)
+
+octab <- ctab[order(-ctab$prob),]
+ogtab <- gtab[order(-gtab$prob),]
+
+printprob <- function(i){
+  cat( i,
+    sub("_"," ", ogtab[i,"player"]),
+    unlist(ogtab[i,c("season","prob")]), 
+    sub("_"," ", octab[i,"player"]),
+    unlist(octab[i,c("season","prob")]),sep="&")
+  cat("\\\\\n")
+}
+for(i in 1:20) printprob(i)
+
+
+
+
+
 # read salary performance correlations
 salcorr_goals <- read.csv("results/salarycorr-goals.csv", row.names=1)
 salcorr_corsi <- read.csv("results/salarycorr-corsi.csv", row.names=1)
