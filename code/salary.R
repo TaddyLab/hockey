@@ -99,10 +99,10 @@ printratio <- function(){
 
   for(i in 1:20){
     cat( i,
-      sub("_"," ", tabpfp[i,"player"]),
-      tab[i,"pfp.ratio"], 
+      #sub("_"," ", tabpfp[i,"player"]),
+      #tabpfp[i,"pfp.ratio"], 
       sub("_"," ", tabppm[i,"player"]),
-      tab[i,"ppm.ratio"],
+      round(tabppm[i,"ppm.ratio"],2),
         sep="&")
     cat("\\\\\n")
   }

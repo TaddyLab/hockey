@@ -1,6 +1,6 @@
 %!TEX root = book.tex
 
-\chapter{Hockey Player Ability via Regression}
+\chapter{Hockey Player Performance via Regularized Logistic Regression}
 
 \noindent
 {\bf Robert B.~Gramacy, Matt Taddy, Sen Tian}
@@ -520,18 +520,27 @@ a player with a very high PM must both perform well \textit{and} maintain this
 level of performance over an extended period of time (assuming that you need
 to be on the ice a long time to be on the ice for many goals).  Conversely,
 similar estimated $\beta$ values for two players might hide the fact that one
-of these two logs much more ice time and is thus more valuable to the team.
-\footnote{Note that, due to the role of the penalty in our regularized estimation scheme, 
-players with little ice time tend to have their effect estimated at zero; thus, the difference between $\beta$ or PFP and the PPM statistics should be less dramatic than the difference between FP and PM statistics. In a fully Bayesian analysis, such as the {\tt reglogit} approach discussed in our conclusion, one would be able to separate posterior uncertainty about $beta$ from the issue of the number of goals for which a player is on ice; for example, the {\tt reglogit} approach yields posterior uncertainty over a player's PPM.}  It is thus also important to be able to translate our partial player effects back to same scale as PM, and we do this in the {\em partial plus-minus (PPM).}
-Suppose player $j$ was on the ice for $g_{sj}$ total goals (for or against) during season $s$; then the PPM is defined
-\begin{equation}\label{eq:ppm}
- \text{PPM}_{sj} = g_{sj}\text{PFP}_{sj} - g_{sj}(1-\text{PFP}_{sj}) = g_{sj}(1 - 2\text{PFP}_{sj}).
- \end{equation} 
- Just as PFP is is the partial effect version of FP, PPM is the partial
-effect analogue to PM's marginal effect.  The same calculations apply for 
-post-season PFP and PPM, based upon $PFP_{spj} = 1/\exp[\beta_{0j} + \beta_{sj}+
-\beta_{pj}]$ and where $g_{spj}$ is the number of goals for which player $j$
-was on ice during the playoffs of season $j$.
+of these two logs much more ice time and is thus more valuable to the
+team.\footnote{Note that, due to the role of the penalty in our regularized
+estimation scheme,  players with little ice time tend to have their effect
+estimated at zero; thus, the difference between $\beta$ or PFP and the PPM
+statistics should be less dramatic than the difference between FP and PM
+statistics. In a fully Bayesian analysis, such as the {\tt reglogit} approach
+discussed in our conclusion, one would be able to separate posterior
+uncertainty about $\beta$ from the issue of the number of goals for which a
+player is on ice; for example, the {\tt reglogit} approach yields posterior
+uncertainty over a player's PPM.}  It is thus also important to be able to
+translate our partial player effects back to same scale as PM, and we do this
+in the {\em partial plus-minus (PPM).} Suppose player $j$ was on the ice for
+$g_{sj}$ total goals (for or against) during season $s$; then the PPM is
+defined \begin{equation}\label{eq:ppm}  \text{PPM}_{sj} =
+g_{sj}\text{PFP}_{sj} - g_{sj}(1-\text{PFP}_{sj}) = g_{sj}(1 -
+2\text{PFP}_{sj}).  \end{equation}   Just as PFP is is the partial effect
+version of FP, PPM is the partial effect analogue to PM's marginal effect.
+The same calculations apply for  post-season PFP and PPM, based upon
+$PFP_{spj} = 1/\exp[\beta_{0j} + \beta_{sj}+ \beta_{pj}]$ and where $g_{spj}$
+is the number of goals for which player $j$ was on ice during the playoffs of
+season $j$.
 
 Table \ref{tab:goals} provides a
 list of top and bottom players listed by their PPM, along with the
@@ -646,7 +655,7 @@ bottom 20.
         \centering\small
         \begin{tabular}{r | c c r  | c c r  }
         \multicolumn{7}{l}{\bf PFP player rankings}\\
-             \multicolumn{4}{c}{goal-based} & \multicolumn{3}{|c}{corsi-based}\\
+             \multicolumn{4}{c}{goal-based} & \multicolumn{3}{|c}{Corsi-based}\\
             Rank & Player & Season  & PFP  & Player & Season  & PFP  \\ 
             \hline\rule{0pt}{4ex} 
 1&PETER FORSBERG&20022003&0.68&DAVID VAN DER GULIK&20102011&0.64\\
@@ -671,7 +680,7 @@ bottom 20.
 20&JOE THORNTON&20092010&0.6&TYLER TOFFOLI&20132014&0.6\\
 \end{tabular}
 \vskip .25cm
-\caption{\label{tab:pfp} Top 2 player-seasons by goal and corsi-based PFP.}
+\caption{\label{tab:pfp} Top 2 player-seasons by goal and Corsi-based PFP.}
 \end{table}
 
 \section{Analysis: comparison to shot-based metrics}
@@ -834,26 +843,26 @@ contract in 2014; he now averages around \$3.5 million per year.
     \begin{tabular}{r c r   }
         Rank & Player & Goals per million  \\ 
         \hline\rule{0pt}{4ex} 
-1&ONDREJ PALAT&58.27402\\
-2&RYAN NUGENT-HOPKINS&2.314167\\
-3&GABRIEL LANDESKOG&3.435\\
-4&TYLER TOFFOLI&3.50087\\
-5&GUSTAV NYQUIST&3.758049\\
-6&JADEN SCHWARTZ&19.80541\\
-7&ERIC FEHR&2.801538\\
-8&ANDREW MACDONALD&2.610448\\
-9&BENOIT POULIOT&2.226667\\
-10&BRAD BOYES&1.725556\\
-11&TOMAS TATAR&16.73514\\
-12&AL MONTOYA&2.202857\\
-13&BRANDON SAAD&4.097143\\
-14&FRANS NIELSEN&4.703333\\
-15&JAROMIR JAGR&5.496\\
-16&LOGAN COUTURE&4.396667\\
-17&RADIM VRBATA&16.71895\\
-18&DAVID PERRON&2.093333\\
-19&HENRIK LUNDQVIST&3.169231\\
-20&ANDREI MARKOV&2.011667\\
+1&ONDREJ PALAT&58.27\\
+2&RYAN NUGENT-HOPKINS&19.81\\
+3&GABRIEL LANDESKOG&16.74\\
+4&TYLER TOFFOLI&16.72\\
+5&GUSTAV NYQUIST&9.08\\
+6&JADEN SCHWARTZ&8.43\\
+7&ERIC FEHR&7.51\\
+8&ANDREW MACDONALD&7.48\\
+9&BENOIT POULIOT&6.43\\
+10&BRAD BOYES&6.01\\
+11&TOMAS TATAR&5.83\\
+12&AL MONTOYA&5.79\\
+13&BRANDON SAAD&5.5\\
+14&FRANS NIELSEN&5.5\\
+15&JAROMIR JAGR&4.73\\
+16&LOGAN COUTURE&4.7\\
+17&RADIM VRBATA&4.4\\
+18&DAVID PERRON&4.1\\
+19&HENRIK LUNDQVIST&3.76\\
+20&ANDREI MARKOV&3.5\\
   \end{tabular}
     \vskip .5cm
     \caption{\label{tab:valueplayers} Top 20 value players as ranked by PPM/salary. }
