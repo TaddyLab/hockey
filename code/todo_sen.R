@@ -95,6 +95,9 @@ hist(perf_s$salary[perf_s$ppm.goals<0],add=TRUE,col="red")
 #       , col=c("blue","green","red"), pch=15, cex=1.2, bty="n")
 dev.off()
 
+## taddy salary stuff
+
+
 
 # histogram of salary for 11 seasons
 perf_s <- perf

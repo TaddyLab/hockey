@@ -783,316 +783,83 @@ our metrics and an outside measure of player quality: salary.
 \end{table}
 
 
+
+
+\begin{figure}[t]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{figures/salaryhist-goals-regular.pdf}
+        \caption{Goals-based}
+    \end{subfigure}%
+    ~ 
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{figures/salaryhist-corsi-regular.pdf}
+        \caption{Corsi-based}
+    \end{subfigure}
+    \caption{ \label{fig:salhist} Distribution of estimated player effects and salaries over all 11 seasons.}
+\end{figure}
+
 \section{Analysis: the relationship between salary and performance}
 \label{sec:salary}
 
+In our final analysis section, we consider how our partial effect statistics relate to the \textit{market} value of a player's worth as represented by their annual salary.
+The histograms in Figure \ref{fig:salhist} show, for the salary distribution over all 11 seasons, how the estimated player effects are distributed between negative, neutral (zeros), and positive.  Results are shown for both Goal and Corsi based regressions.  In both cases, the ratio of positive to negative effects increases with salary.  The main difference between the two plots is that fewer players have zero estimated effects under Corsi -- this is a result of its much larger event sample.
 
-\begin{table}[p]
-    \centering\small
-    \begin{tabular}{r c r | c r  }
-        Rank & Player & Goals.PPM  & Player & Corsi.PPM  \\ 
-        \hline\rule{0pt}{4ex} 
-        1     & SHEA WEBER & 1.49  & RYAN SUTER & 1.63 \\
-        2     & RYAN SUTER & 1.41  & SHEA WEBER & 1.62 \\
-        3     & JAY BOUWMEESTER & 1.32  & VINCENT LECAVALIER & 1.28 \\
-        4     & VINCENT LECAVALIER & 1.22  & ZACH PARISE & 1.23 \\
-        5     & ERIC STAAL & 1.15  & MATT CARLE & 1.18 \\
-        6     & ALEXANDER EDLER & 1.13  & DUNCAN KEITH & 1.18 \\
-        7     & ZACH PARISE & 1.08  & JAY BOUWMEESTER & 1.17 \\
-        8     & MIKE RICHARDS & 1.08  & ZDENO CHARA & 1.11 \\
-        9     & JAY ROSEHILL & 1     & HENRIK LUNDQVIST & 1.08 \\
-        10    & DUNCAN KEITH & 0.99  & ROBERTO LUONGO & 1.06 \\
-        11    & DAN BOYLE & 0.95  & ERIC STAAL & 1.04 \\
-        12    & ZDENO CHARA & 0.95  & JASON GARRISON & 0.99 \\
-        13    & CAM WARD & 0.89  & STEVEN STAMKOS & 0.98 \\
-        14    & JASON GARRISON & 0.86  & MARIAN GABORIK & 0.98 \\
-        15    & STEVEN STAMKOS & 0.85  & MIKE RICHARDS & 0.96 \\
-        16    & JACK JOHNSON & 0.83  & DAN BOYLE & 0.96 \\
-        17    & PATRICK SHARP & 0.83  & JAY ROSEHILL & 0.95 \\
-        18    & BRENT BURNS & 0.83  & ALEX OVECHKIN & 0.91 \\
-        19    & EVGENI MALKIN & 0.82  & BRIAN CAMPBELL & 0.91 \\
-        20    & BRIAN CAMPBELL & 0.82  & SIDNEY CROSBY & 0.91 \\
-        \hline\rule{0pt}{4ex} 
-        255   & BEN SCRIVENS & -1.26 & RYAN WHITE & -1.32 \\
-        256   & RYAN WHITE & -1.27 & CRAIG ADAMS & -1.32 \\
-        257   & BRANDON SAAD & -1.28 & BEN SCRIVENS & -1.32 \\
-        258   & GUSTAV NYQUIST & -1.33 & DERYK ENGELLAND & -1.39 \\
-        259   & JADEN SCHWARTZ & -1.34 & DEREK STEPAN & -1.4 \\
-        260   & ADAM HALL & -1.34 & GABRIEL LANDESKOG & -1.41 \\
-        261   & TIM JACKMAN & -1.37 & BRANDON SAAD & -1.44 \\
-        262   & STEPHANE VEILLEUX & -1.37 & STEPHANE VEILLEUX & -1.45 \\
-        263   & DERYK ENGELLAND & -1.39 & JOHN MCCARTHY & -1.46 \\
-        264   & RYAN CRAIG & -1.41 & ADAM HALL & -1.48 \\
-        265   & RYAN GARBUTT & -1.44 & RYAN CRAIG & -1.48 \\
-        266   & ROB KLINKHAMMER & -1.46 & TIM JACKMAN & -1.49 \\
-        267   & MIKE SANTORELLI & -1.47 & CAM JANSSEN & -1.57 \\
-        268   & CAM JANSSEN & -1.49 & TYLER TOFFOLI & -1.58 \\
-        269   & TOMAS TATAR & -1.5  & MIKE SANTORELLI & -1.63 \\
-        270   & GABRIEL LANDESKOG & -1.65 & RYAN GARBUTT & -1.64 \\
-        271   & ANDREW MACDONALD & -1.65 & ROB KLINKHAMMER & -1.67 \\
-        272   & TYLER TOFFOLI & -1.72 & BRENDAN GALLAGHER & -1.71 \\
-        273   & RYAN NUGENT-HOPKINS & -1.77 & TOMAS TATAR & -1.74 \\
-        274   & ONDREJ PALAT & -2.87 & ONDREJ PALAT & -1.75 \\
-        \end{tabular}
-    \vskip .5cm
-    \caption{\label{tab:over-underpaid-ls2-ppm} Top 20 overpaid and 20 underpaid players measured in PPM of season 2013-2014. Residuals of LS fit of log(salary) on PPM. }
-\end{table}
-
-
-\begin{table}[p]
-    \centering\small
-    \begin{tabular}{r c r | c r  }
-        Rank & Player & Goals.PPM  & Player & Corsi.PPM  \\ 
-        \hline\rule{0pt}{4ex} 
-        1     & ONDREJ PALAT & 58.27 & BRENDAN GALLAGHER & 428.83 \\
-        2     & RYAN NUGENT-HOPKINS & 19.81 & TOMAS TATAR & 388.83 \\
-        3     & GABRIEL LANDESKOG & 16.74 & TYLER TOFFOLI & 335.41 \\
-        4     & TYLER TOFFOLI & 16.72 & GABRIEL LANDESKOG & 296.55 \\
-        5     & GUSTAV NYQUIST & 9.08  & ONDREJ PALAT & 274.38 \\
-        6     & JADEN SCHWARTZ & 8.43  & BRANDON SAAD & 266.99 \\
-        7     & ERIC FEHR & 7.51  & DEREK STEPAN & 255.14 \\
-        8     & ANDREW MACDONALD & 7.48  & ROB KLINKHAMMER & 239.15 \\
-        9     & BENOIT POULIOT & 6.43  & RYAN GARBUTT & 199.78 \\
-        10    & BRAD BOYES & 6.01  & GUSTAV NYQUIST & 175.76 \\
-        11    & TOMAS TATAR & 5.83  & BENOIT POULIOT & 157.8 \\
-        12    & BRANDON SAAD & 5.5   & JADEN SCHWARTZ & 139.89 \\
-        13    & FRANS NIELSEN & 5.5   & JANNIK HANSEN & 127.05 \\
-        14    & JAROMIR JAGR & 4.73  & CRAIG SMITH & 124.67 \\
-        15    & LOGAN COUTURE & 4.7   & ERIC FEHR & 123.8 \\
-        16    & RADIM VRBATA & 4.4   & VLADIMIR SOBOTKA & 122.9 \\
-        17    & DAVID PERRON & 4.1   & RYAN NUGENT-HOPKINS & 118 \\
-        18    & HENRIK LUNDQVIST & 3.76  & JAROMIR JAGR & 117.49 \\
-        19    & ANDREI MARKOV & 3.5   & PATRIC HORNQVIST & 106 \\
-        20    & JOE THORNTON & 3.44  & NATHAN GERBE & 105.55 \\
-        \hline\rule{0pt}{4ex} 
-        255   & ZENON KONOPKA & -1.76 & CLAYTON STONER & -56.15 \\
-        256   & TRAVIS MOEN & -1.97 & TANNER GLASS & -57.3 \\
-        257   & STEPHANE VEILLEUX & -2.02 & FRANCIS BOUILLON & -61.39 \\
-        258   & MAXIM LAPIERRE & -2.08 & ROB SCUDERI & -62.77 \\
-        259   & ANDREW FERENCE & -2.72 & HENRIK LUNDQVIST & -63.22 \\
-        260   & DERYK ENGELLAND & -2.97 & ERIC BREWER & -65.21 \\
-        261   & ADAM HALL & -3.17 & BRADEN HOLTBY & -70.19 \\
-        262   & TANNER GLASS & -3.25 & JAY HARRISON & -70.2 \\
-        263   & JACK JOHNSON & -3.33 & JAMES REIMER & -72.71 \\
-        264   & SCOTT HANNAN & -3.73 & ANDREW FERENCE & -80.96 \\
-        265   & JAY MCCLEMENT & -4.21 & MIKE WEAVER & -83.77 \\
-        266   & BEN SCRIVENS & -4.45 & WILLIE MITCHELL & -89.26 \\
-        267   & ALEXEI EMELIN & -4.75 & MICHAL HANDZUS & -101.04 \\
-        268   & JAMES REIMER & -4.96 & SCOTT HANNAN & -115.56 \\
-        269   & BRIAN LASHOFF & -5.37 & ROBYN REGEHR & -135.65 \\
-        270   & ERIK GUDBRANSON & -5.42 & BEN SCRIVENS & -149.1 \\
-        271   & ALEXANDER EDLER & -6.3  & JARED COWEN & -156.31 \\
-        272   & ERIC NYSTROM & -6.52 & DERYK ENGELLAND & -181.62 \\
-        273   & JOHN MCCARTHY & -6.74 & BRIAN LASHOFF & -234.71 \\
-        274   & CRAIG ADAMS & -10.27 & ANDREW MACDONALD & -326.59 \\
-    \end{tabular}
-    \vskip .5cm
-    \caption{\label{tab:over-underpaid-ratio-ppm} Top 20 overpaid and 20 underpaid players measured in PPM of season 2013-2014. Ratio of PPM over salary. }
-\end{table}
-
-
-\begin{figure}[htb!]
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/ppmpmsal-corr-season.pdf}
-    \caption{\textbf{[Season]} correlations between salary and PPM via different bases are shown by solid lines. And corresponding correlations between salary and PM are shown by dashed lines. Note season 2005-2006 (right after lockout) and 2012-2013 (lockout) are marked in red. }\label{fig:ppmpmsal-corr-season}
-\end{figure}
-
-\begin{figure}[htb!]
-	\centering
-	\includegraphics[width=0.8\textwidth]{figures/probfpsal-corr-season.pdf}
-	\caption{\textbf{[Season]} correlations between salary and prob via different bases are shown by solid lines. And corresponding correlations between salary and FP are shown by dashed lines. Note season 2005-2006 (right after lockout) and 2012-2013 (lockout) are marked in red. }\label{fig:probfpsal-corr-season}
-\end{figure}
-
-\begin{figure}[htb!]
-	\centering
-	\includegraphics[width=0.8\textwidth]{figures/pos-ppmpmsal-corr-season.pdf}
-	\caption{\textbf{[Season]} Similar as figure \ref{fig:ppmpmsal-corr-season}, but only with positive effects (players with $PPM>0$ or $PM>0$). }\label{fig:pos-ppmpmsal-corr-season}
-\end{figure}
-
-\begin{figure}[htb!]
-	\centering
-	\begin{subfigure}[t]{0.5\textwidth}
-		\centering
-		\includegraphics[height=2.5in]{figures/salaryhist-1314-goals-season.pdf}
-		\caption{Goals-based}
-	\end{subfigure}%
-	~ 
-	\begin{subfigure}[t]{0.5\textwidth}
-		\centering
-		\includegraphics[height=2.5in]{figures/salaryhist-1314-corsi-season.pdf}
-		\caption{Corsi-based}
-	\end{subfigure}
-	\caption{\textbf{[Season]} Histogram of 2013-2014 salaries for players with different player-effects labeled in three different colors.}
-\end{figure}
-
-\begin{figure}[htb!]
-	\centering
-	\begin{subfigure}[t]{0.5\textwidth}
-		\centering
-		\includegraphics[height=2.5in]{figures/salaryhist-goals-season.pdf}
-		\caption{Goals-based}
-	\end{subfigure}%
-	~ 
-	\begin{subfigure}[t]{0.5\textwidth}
-		\centering
-		\includegraphics[height=2.5in]{figures/salaryhist-corsi-season.pdf}
-		\caption{Corsi-based}
-	\end{subfigure}
-	\caption{\textbf{[Season]} Histogram of all 11-season salaries for players with different player-effects labeled in three different colors.}
-\end{figure}
 
 \begin{figure}[htb!]
 	\centering
 	\includegraphics[width=0.8\textwidth]{figures/ppmpmsal-corr-regular.pdf}
-	\caption{\textbf{[Regular]} correlations between salary and PPM via different bases are shown by solid lines. And corresponding correlations between salary and PM are shown by dashed lines. Note season 2005-2006 (right after lockout) and 2012-2013 (lockout) are marked in red. }\label{fig:ppmpmsal-corr-regular}
+	\caption{Correlations between salary and various PPM and PM functionals, based on each of goal, Fenwick, and Corsi events.  Seasons following a labor dispute are marked. }\label{fig:salarycorr}
 \end{figure}
 
-\begin{figure}[htb!]
-	\centering
-	\includegraphics[width=0.8\textwidth]{figures/probfpsal-corr-regular.pdf}
-	\caption{\textbf{[Regular]} correlations between salary and prob via different bases are shown by solid lines. And corresponding correlations between salary and FP are shown by dashed lines. Note season 2005-2006 (right after lockout) and 2012-2013 (lockout) are marked in red. }\label{fig:probfpsal-corr-regular}
-\end{figure}
+Figure \ref{fig:salarycorr} shows the correlation between player salary and PPM or PM, calculated based upon our regressions for each of goal, Fenwick, and Corsi events.  The picture for PFP and FP is similar.  It is clear here that the player's goal-based PPM is much more correlated with their salary than the shot-based PPMs; as mentioned above, this should perhaps caution an over-emphasis of statistics such as Corsi or Fenwick.  Indeed, Corsi-PPM is even negatively correlated with salary for a period of time.
 
-\begin{figure}[htb!]
-	\centering
-	\includegraphics[width=0.8\textwidth]{figures/pos-ppmpmsal-corr-regular.pdf}
-	\caption{\textbf{[Regular]} Similar as figure \ref{fig:ppmpmsal-corr-regular}, but only with positive effects (players with $PPM>0$ or $PM>0$). }\label{fig:pos-ppmpmsal-corr-regular}
-\end{figure}
+The goal-based PPM is the only metric that tends to be more correlated with salary than the marginal PMs. Interestingly, the gap between PM and goal-PPM grows after the lockout in 2004-2005 that introduced the `salary cap' era: perhaps this forced teams to take more care in budgeting salaries and rewarding the individual performances represented by goal-PPM.  As an argument that supports hockey becoming more sophisticated in player performance measurement,  salary correlation with goal-PPM is trending upwards in time.
 
-\begin{figure}[htb!]
-	\centering
-	\begin{subfigure}[t]{0.5\textwidth}
-		\centering
-		\includegraphics[height=2.5in]{figures/salaryhist-1314-goals-regular.pdf}
-		\caption{Goals-based}
-	\end{subfigure}%
-	~ 
-	\begin{subfigure}[t]{0.5\textwidth}
-		\centering
-		\includegraphics[height=2.5in]{figures/salaryhist-1314-corsi-regular.pdf}
-		\caption{Corsi-based}
-	\end{subfigure}
-	\caption{\textbf{[Regular]} Histogram of 2013-2014 salaries for players with different player-effects labeled in three different colors.}
-\end{figure}
+Finally, we close with a look at the `highest value' players in the 2013-2014
+season: those for whom their salary was low relative to their goal-based PPM.
+Table \ref{tab:valueplayers} lists the top 20 players by goal-PPM/salary --
+that is, the top players measured by their goals-added-per-dollar.  The
+cheapest player contribution, by a massive margin, is from Ondrej Palat of
+Tampa Bay.  Palat was an inexpensive 7th round draft pick in
+2011, making \$500 thousand per year. After spending two seasons in the
+minors, he moved up to the NHL in 2013-2014 and had a season good enough to be
+nominated for rookie-of-the-year.  The Lightning re-signed Palat to a new
+contract in 2014; he now averages around \$3.5 million per year.
 
-\begin{figure}[htb!]
-	\centering
-	\begin{subfigure}[t]{0.5\textwidth}
-		\centering
-		\includegraphics[height=2.5in]{figures/salaryhist-goals-regular.pdf}
-		\caption{Goals-based}
-	\end{subfigure}%
-	~ 
-	\begin{subfigure}[t]{0.5\textwidth}
-		\centering
-		\includegraphics[height=2.5in]{figures/salaryhist-corsi-regular.pdf}
-		\caption{Corsi-based}
-	\end{subfigure}
-	\caption{\textbf{[Regular]} Histogram of all 11-season salaries for players with different player-effects labeled in three different colors.}
-\end{figure}
-
-
-
-\begin{table}[p]
-	\centering\small
-	\begin{tabular}{r c r | c r  }
-		Rank & Player & Goals.PPM  & Player & Corsi.PPM  \\ 
-		\hline\rule{0pt}{4ex} 
-		1     & ALEXANDER EDLER & 1.01  & RYAN SUTER & 0.76 \\
-		2     & JAY BOUWMEESTER & 0.72  & SHEA WEBER & 0.75 \\
-		3     & SHEA WEBER & 0.71  & MATT CARLE & 0.66 \\
-		4     & RYAN SUTER & 0.69  & VINCENT LECAVALIER & 0.65 \\
-		5     & VINCENT LECAVALIER & 0.63  & ZACH PARISE & 0.64 \\
-		6     & JACK JOHNSON & 0.62  & HENRIK LUNDQVIST & 0.63 \\
-		7     & ERIC STAAL & 0.6   & JAY BOUWMEESTER & 0.62 \\
-		8     & ZACH PARISE & 0.59  & DUNCAN KEITH & 0.61 \\
-		9     & MIKE RICHARDS & 0.57  & ZDENO CHARA & 0.58 \\
-		10    & JAY ROSEHILL & 0.54  & ROBERTO LUONGO & 0.57 \\
-		11    & DUNCAN KEITH & 0.53  & ERIC STAAL & 0.56 \\
-		12    & DAN BOYLE & 0.51  & SIDNEY CROSBY & 0.55 \\
-		13    & ZDENO CHARA & 0.51  & JASON GARRISON & 0.53 \\
-		14    & CAM WARD & 0.48  & STEVEN STAMKOS & 0.53 \\
-		15    & ERIC BREWER & 0.48  & MARIAN GABORIK & 0.52 \\
-		16    & STEVEN STAMKOS & 0.47  & MIKE RICHARDS & 0.51 \\
-		17    & JASON GARRISON & 0.46  & DAN BOYLE & 0.51 \\
-		18    & BRENT BURNS & 0.45  & JAY ROSEHILL & 0.51 \\
-		19    & EVGENI MALKIN & 0.45  & ALEX OVECHKIN & 0.51 \\
-		20    & PATRICK SHARP & 0.45  & BRIAN CAMPBELL & 0.49 \\
-		\hline\rule{0pt}{4ex} 
-		255   & BRENDAN GALLAGHER & -3.37 & BEN SCRIVENS & -3.72 \\
-		256   & RYAN WHITE & -3.45 & RYAN WHITE & -3.73 \\
-		257   & BRANDON SAAD & -3.55 & CRAIG ADAMS & -3.76 \\
-		258   & GUSTAV NYQUIST & -3.68 & GABRIEL LANDESKOG & -3.98 \\
-		259   & ADAM HALL & -3.72 & DEREK STEPAN & -4 \\
-		260   & JADEN SCHWARTZ & -3.76 & DERYK ENGELLAND & -4.04 \\
-		261   & STEPHANE VEILLEUX & -3.89 & BRANDON SAAD & -4.2 \\
-		262   & TIM JACKMAN & -3.9  & STEPHANE VEILLEUX & -4.42 \\
-		263   & DERYK ENGELLAND & -3.97 & JOHN MCCARTHY & -4.46 \\
-		264   & RYAN CRAIG & -4.15 & ADAM HALL & -4.58 \\
-		265   & RYAN GARBUTT & -4.3  & RYAN CRAIG & -4.6 \\
-		266   & MIKE SANTORELLI & -4.43 & TIM JACKMAN & -4.61 \\
-		267   & ROB KLINKHAMMER & -4.43 & TYLER TOFFOLI & -4.91 \\
-		268   & CAM JANSSEN & -4.53 & CAM JANSSEN & -5.08 \\
-		269   & TOMAS TATAR & -4.7  & MIKE SANTORELLI & -5.47 \\
-		270   & GABRIEL LANDESKOG & -4.94 & RYAN GARBUTT & -5.51 \\
-		271   & RYAN NUGENT-HOPKINS & -5.41 & BRENDAN GALLAGHER & -5.64 \\
-		272   & ANDREW MACDONALD & -5.58 & ROB KLINKHAMMER & -5.69 \\
-		273   & TYLER TOFFOLI & -5.65 & TOMAS TATAR & -5.93 \\
-		274   & ONDREJ PALAT & -13.5 & ONDREJ PALAT & -6.23 \\
-	\end{tabular}
-	\vskip .5cm
-	\caption{\label{tab:over-underpaid-ls-ppm} 20 overpaid and 20 underpaid players measured in PPM of season 2013-2014. The numbers are given by the ratio of the residual of the least square fit of salary on PPM, and the salary.  }
+\begin{table}[htb]
+    \centering\small
+    \begin{tabular}{r c r   }
+        Rank & Player & Goals per million  \\ 
+        \hline\rule{0pt}{4ex} 
+1&ONDREJ PALAT&58.27402\\
+2&RYAN NUGENT-HOPKINS&2.314167\\
+3&GABRIEL LANDESKOG&3.435\\
+4&TYLER TOFFOLI&3.50087\\
+5&GUSTAV NYQUIST&3.758049\\
+6&JADEN SCHWARTZ&19.80541\\
+7&ERIC FEHR&2.801538\\
+8&ANDREW MACDONALD&2.610448\\
+9&BENOIT POULIOT&2.226667\\
+10&BRAD BOYES&1.725556\\
+11&TOMAS TATAR&16.73514\\
+12&AL MONTOYA&2.202857\\
+13&BRANDON SAAD&4.097143\\
+14&FRANS NIELSEN&4.703333\\
+15&JAROMIR JAGR&5.496\\
+16&LOGAN COUTURE&4.396667\\
+17&RADIM VRBATA&16.71895\\
+18&DAVID PERRON&2.093333\\
+19&HENRIK LUNDQVIST&3.169231\\
+20&ANDREI MARKOV&2.011667\\
+  \end{tabular}
+    \vskip .5cm
+    \caption{\label{tab:valueplayers} Top 20 value players as ranked by PPM/salary. }
 \end{table}
 
-\begin{table}[p]
-	\centering\small
-	\begin{tabular}{r c r | c r  }
-		Rank & Player & Goals.PM  & Player & Corsi.PM  \\ 
-		\hline\rule{0pt}{4ex} 
-		1     & SHEA WEBER & 0.73  & JAY MCCLEMENT & 0.81 \\
-		2     & ERIC STAAL & 0.69  & SHEA WEBER & 0.79 \\
-		3     & VINCENT LECAVALIER & 0.68  & DION PHANEUF & 0.7 \\
-		4     & RYAN SUTER & 0.64  & RYAN SUTER & 0.68 \\
-		5     & ZACH PARISE & 0.63  & MATT CARLE & 0.64 \\
-		6     & CAM WARD & 0.56  & VINCENT LECAVALIER & 0.64 \\
-		7     & MIKE RICHARDS & 0.56  & ROB SCUDERI & 0.61 \\
-		8     & ROBERTO LUONGO & 0.56  & ZACH PARISE & 0.59 \\
-		9     & ALEX OVECHKIN & 0.54  & TOMAS PLEKANEC & 0.58 \\
-		10    & BRIAN CAMPBELL & 0.53  & ANDREW FERENCE & 0.54 \\
-		11    & SIDNEY CROSBY & 0.53  & SIDNEY CROSBY & 0.54 \\
-		12    & JAY ROSEHILL & 0.52  & JAY ROSEHILL & 0.53 \\
-		13    & ALEXANDER SEMIN & 0.52  & BOYD GORDON & 0.52 \\
-		14    & TIM THOMAS & 0.52  & JAY BOUWMEESTER & 0.51 \\
-		15    & JASON GARRISON & 0.51  & ZDENO CHARA & 0.51 \\
-		16    & MILAN MICHALEK & 0.5   & ERIC STAAL & 0.5 \\
-		17    & ALEX BURROWS & 0.48  & BRIAN GIONTA & 0.49 \\
-		18    & STEVEN STAMKOS & 0.46  & DEVAN DUBNYK & 0.49 \\
-		19    & MARIAN GABORIK & 0.46  & RYAN GETZLAF & 0.48 \\
-		20    & MARIAN HOSSA & 0.45  & ERIC BREWER & 0.48 \\
-		255   & RYAN NUGENT-HOPKINS & -3.53 & ANDREW MACDONALD & -3.21 \\
-		256   & BEN SCRIVENS & -3.75 & GABRIEL LANDESKOG & -3.24 \\
-		257   & GUSTAV NYQUIST & -3.91 & DERYK ENGELLAND & -3.33 \\
-		258   & DEREK STEPAN & -3.94 & MIKE BROWN & -3.34 \\
-		259   & ANDREW MACDONALD & -3.94 & JADEN SCHWARTZ & -3.5 \\
-		260   & BRANDON SAAD & -4.07 & STEPHANE VEILLEUX & -3.63 \\
-		261   & TIM JACKMAN & -4.42 & GUSTAV NYQUIST & -3.82 \\
-		262   & GABRIEL LANDESKOG & -4.42 & JOHN MCCARTHY & -3.9 \\
-		263   & RYAN CRAIG & -4.53 & RYAN GARBUTT & -3.99 \\
-		264   & STEPHANE VEILLEUX & -4.53 & RYAN CRAIG & -4.34 \\
-		265   & DERYK ENGELLAND & -4.55 & TIM JACKMAN & -4.36 \\
-		266   & JADEN SCHWARTZ & -4.62 & ONDREJ PALAT & -4.38 \\
-		267   & RYAN GARBUTT & -4.82 & DEREK STEPAN & -4.6 \\
-		268   & TYLER TOFFOLI & -5.05 & BRANDON SAAD & -4.78 \\
-		269   & ROB KLINKHAMMER & -5.19 & MIKE SANTORELLI & -4.78 \\
-		270   & CAM JANSSEN & -5.43 & CAM JANSSEN & -4.88 \\
-		271   & MIKE SANTORELLI & -5.43 & ROB KLINKHAMMER & -5.04 \\
-		272   & BRENDAN GALLAGHER & -5.83 & BRENDAN GALLAGHER & -5.61 \\
-		273   & TOMAS TATAR & -5.85 & TYLER TOFFOLI & -5.79 \\
-		274   & ONDREJ PALAT & -7.93 & TOMAS TATAR & -6.62 \\
-		\end{tabular}
-	\vskip .5cm
-	\caption{\label{tab:over-underpaid-ls-pm} 20 overpaid and 20 underpaid players measured in PM of season 2013-2014. }
-\end{table}
+
 
 \section{Conclusion}\label{sec:conclusion}
 

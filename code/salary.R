@@ -54,6 +54,60 @@ perfavg <- aggregate(perf[,-(1:2)],by=list(players),FUN=mean)
 salarycorr["averaged",] <- cor(perfavg[,-1],avgsal)
 
 
+printsal <- function(metric,xlab){
+  s <- which(perf$season=="20132014")
+  tab <- perf[s,]
+
+  linfit <- lm(log(milperyear[s]) ~ tab[,metric])
+  tab$resid <- linfit$resid
+
+  plot(tab[,metric], log(milperyear[s]),  
+    xlab=xlab, ylab="log( salary in millions ) ", pch=21, bg=8)
+  abline(a=coef(linfit)[1], b=coef(linfit)[2], col=2)
+
+  tab <- tab[order(tab$resid),]
+
+  for(i in 1:20){
+    l <- nrow(tab)-(i-1)  
+    cat( i,
+      sub("_"," ", tab[i,"player"]),
+      exp(tab[i,"resid"]), 
+      l,
+      sub("_"," ", tab[l,"player"]),
+      exp(tab[l,"resid"]),
+        sep="&")
+    cat("\\\\\n")
+  }
+}
+
+pdf("salaryscatter.pdf",width=3,height=8)
+par(mfrow=c(1,1), mai=c(.9,.9,.2,.2))
+#printsal("prob","goals-PFP")
+printsal("ppm","goals-PPM")
+dev.off()
+
+
+printratio <- function(){
+  s <- which(perf$season=="20132014")
+  tab <- perf[s,]
+
+  tab$pfp.ratio <- tab$prob/milperyear[s]
+  tab$ppm.ratio <- tab$ppm/milperyear[s]
+
+  tabpfp <- tab[order(-tab$pfp.ratio),]
+  tabppm <- tab[order(-tab$ppm.ratio),]
+
+  for(i in 1:20){
+    cat( i,
+      sub("_"," ", tabpfp[i,"player"]),
+      tab[i,"pfp.ratio"], 
+      sub("_"," ", tabppm[i,"player"]),
+      tab[i,"ppm.ratio"],
+        sep="&")
+    cat("\\\\\n")
+  }
+}
+printratio()
 ########## Sen added
 # add the max(ppm,0) and max(pm,0)
 salcorr.pos <- function(metric){
