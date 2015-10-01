@@ -515,7 +515,7 @@ account for who else was on the ice and other confounding factors.  Hence, PFP
 is the partial effect version of FP.
 
 An important feature of the standard PM statistic that differs from both
-\textit{for-\%} and $\beta$ or $q$ is that it -- in a limited sense -- accounts
+\textit{for-\%} and $\beta$ or PFP is that it -- in a limited sense -- accounts
 not only for player ability but also the amount that they play.  For example,
 a player with a very high PM must both perform well \textit{and} maintain this
 level of performance over an extended period of time (assuming that you need
@@ -532,7 +532,7 @@ uncertainty about $\beta$ from the issue of the number of goals for which a
 player is on ice; for example, the {\tt reglogit} approach yields posterior
 uncertainty over a player's PPM.}  It is thus also important to be able to
 translate our partial player effects back to same scale as PM, and we do this
-in the {\em partial plus-minus (PPM).} Suppose player $j$ was on the ice for
+in the {\em partial plus-minus} (PPM). Suppose player $j$ was on the ice for
 $g_{sj}$ total goals (for or against) during season $s$; then the PPM is
 defined \begin{equation}\label{eq:ppm}  \text{PPM}_{sj} =
 g_{sj}\text{PFP}_{sj} - g_{sj}(1-\text{PFP}_{sj}) = g_{sj}(1 -
@@ -644,11 +644,11 @@ major differences.  For example, Tyler Toffoli (ranks 9 and 10 by goal-based
 PFP) was a breakout star in 2013-2014 with the Los Angeles Kings; this was his
 first full season, after playing only a portion of 2012-2013 in the NHL.  As a
 rookie, his ice time was relatively limited; however he clearly has talent and
-this is reflected in his $\beta$ effect and PFP but less in his PPM.  On the
-other hand, players ranked at the bottom by PPM are those who have a negative
+this is reflected in his $\beta$  and PFP but less in his PPM.  On the
+other hand, players ranked at the bottom by PPM in Table \ref{tab:goals} are those who have a negative
 $\beta$ \textit{and} get a large amount of ice-time. There are many players who have
-lower $\beta$s than Jack Johnson (e.g., John McCarthy at -0.5 and Thomas Pock
-at -0.4), but they do not get to play as much and thus don't show up in our
+lower PFPs than Jack Johnson's 0.45 (e.g., John McCarthy at 0.38 and Thomas Pock
+at 0.40), but they do not get to play as much and thus don't show up in our
 bottom 20.
 
 
@@ -681,7 +681,7 @@ bottom 20.
 20&JOE THORNTON&20092010&0.6&TYLER TOFFOLI&20132014&0.6\\
 \end{tabular}
 \vskip .25cm
-\caption{\label{tab:pfp} Top 2 player-seasons by goal and Corsi-based PFP.}
+\caption{\label{tab:pfp} Top 20 player-seasons by goal and Corsi-based PFP.}
 \end{table}
 
 \section{Analysis: comparison to shot-based metrics}
