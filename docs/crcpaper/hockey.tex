@@ -1,6 +1,6 @@
 %!TEX root = book.tex
 
-\chapter{Hockey Player Performance via Regularized Logistic Regression}
+\chapter[Hockey Performance via Regression]{Hockey Player Performance via Regularized Logistic Regression}
 
 \noindent
 {\bf Robert B.~Gramacy, Matt Taddy, Sen Tian}
@@ -25,8 +25,8 @@ models and stabilizes estimation.  Such techniques  have proven useful in
 fields from genetics to finance over the past two decades, and have
 demonstrated an impressive ability to gracefully handle large and highly
 imbalanced data sets.  The latest software packages accompanying this new
-methodology---which exploit parallel computing environments, sparse matrices,
-and other features of modern data structures---are widely available and make
+methodology -- which exploit parallel computing environments, sparse matrices,
+and other features of modern data structures -- are widely available and make
 it straightforward for interested analysts to explore their own models of
 player contribution.
 
@@ -98,8 +98,8 @@ ability, which is the actual quantity of interest.  The ability of a player's
 teammates, or the quality of opponents, are not controlled for.  The amount of
 playing time is also not factored in, meaning plus-minus stats are much
 noisier for some players than others. Finally, goalies, teams, coaches,
-salaries, situations, special teams, etc.---which all clearly contribute to
-the nature of play, and thus to goals---are neither accounted for when
+salaries, situations, special teams, etc.~-- which all clearly contribute to
+the nature of play, and thus to goals -- are neither accounted for when
 determining player ability by plus-minus, and nor are they used to explain
 variation in the goals scored against a particular player or team.
 
@@ -157,7 +157,7 @@ advancements are driven by the demands of researchers in genetics and finance,
 for example, for whom resolving partial effects amongst  large sets of
 variables is the key to their science.  The most successful approaches
 introduce some amount of \textit{regularization}  to the estimation
-problem---an additional penalty term that rewards simplicity (e.g.,
+problem -- an additional penalty term that rewards simplicity (e.g.,
 \cite{hastie:tibsh:fried:2001}).  In our context, regularization shrinks
 towards a model where individual players don't make a huge difference while
 still allowing for large estimated player effects when the data warrant it.
@@ -166,7 +166,7 @@ neutral, or ``zero'', effect (relative to the NHL average), whereas some are
 stars and others are liabilities.     The amount of regularization is chosen
 to make the model perform as well as possible in out-of-sample prediction and,
 again, contemporary statistical learning tools are designed to do exactly
-this---reliably predict the future. To take advantage of these tools, we  need
+this -- reliably predict the future. To take advantage of these tools, we  need
 only to phrase partial player effect estimation  as a regression problem.
 
 
@@ -180,8 +180,8 @@ describe the model here for a goals-based analysis, but extend it to shots and
 other metrics in the analysis sections.
 
 Previous attempts at partial player effect estimation range from standard
-linear regression (usually on aggregate data)---the adjusted plus-minus
-scores of \cite{awa09}, \cite{schlocwel10},  and \cite{mac10}---to the complex
+linear regression (usually on aggregate data) -- the adjusted plus-minus
+scores of \cite{awa09}, \cite{schlocwel10},  and \cite{mac10} -- to the complex
 hazard model of
 \cite{ThoVenJen12}, which proposes a proportional hazards process for
 game events, allowing partial player effects to be backed out from high
@@ -250,7 +250,7 @@ $\beta_{0j} + \beta_{sj}$ is the regular-season-$s$ effect of player $j$ on the 
 odds that, given a goal has been scored, the goal was scored by their team.  Coefficient 
 $\beta_{0j} + \beta_{sj} + \beta_{pj}$ is the corresponding effect for post-season-$s$ (note that, under the regularization scheme in the next section, $\beta_{pj}$ will be fixed at zero unless player $j$ reaches the playoffs). 
 These effects are `partial' in that they control for who else was on the ice,
-special teams scenarios, and team-season effects---a player's
+special teams scenarios, and team-season effects -- a player's
 $\beta_{0j}$ or $\beta_{sj}$ only need be nonzero if that player effects play
 above or below the team average for a given season.  A test of
 understanding: what does the intercept $\alpha$ represent in
@@ -379,8 +379,9 @@ Under lasso $L_1$ penalization, estimation proceeds through optimization of
 l\left(\boldsymbol{\eta}; \mathbf{y}\right) + n\lambda \sum_{j=1}^p\left(|\beta_{0j}| + |\beta_{sj}| + |\beta_{pj}|\right).
 \end{equation}
 It is important to note there that we are \textit{penalizing only the player
-effects}.  The team-season effects ($\boldsymbol{\gamma}$).  This strategy of
-combining penalized and unpenalized estimation is advocated in, e.g.,
+effects}.  The team-season effects ($\boldsymbol{\gamma}$) are unpenalized.
+This strategy of combining penalized and unpenalized estimation is advocated
+in, e.g.,
 \cite{taddy_distributed_2015} and \cite{gentzkow_measuring_2015}.  It works
 nicely whenever you have a subset of covariates for which there is strong data
 signal (many repeated observations, which we have for team-season and special
@@ -410,8 +411,8 @@ from high to low penalization along $\lambda^1 > \lambda^2 \ldots >
 that (\ref{pendev}) is minimized at $\boldsymbol{\hat\beta} = \mathbf{0}$, and proceed
 down to some pre-set $\lambda^T$ (e.g., $\lambda^T= 0.01\lambda^1$).
 
- A common tool for choosing the optimal $\lambda$---that for which we report
- estimated player effects---is cross validation (CV).  In CV, the path of
+ A common tool for choosing the optimal $\lambda$ -- that for which we report
+ estimated player effects -- is cross validation (CV).  In CV, the path of
  coefficients is repeatedly fit to data subsamples and used to predict the
  response on the left-out data. The $\lambda$ leading to minimum error is then
  selected as optimal.  In this chapter, we instead use an analytic alternative
@@ -426,7 +427,7 @@ penalty $\lambda$ and $k$ is the number of non-zero estimated coefficients at
 this penalty. See \cite{taddy_one-step_2015} and \cite{flynn_efficiency_2013}
 for details on AICc selection in this context; we find AICc preferable to CV
 because it is computationally efficient (you only need to optimize once) and
-because there is no random Monte Carlo variation---it always gives the same
+because there is no random Monte Carlo variation -- it always gives the same
 answer on the same data.  However, all of our ideas here apply if you wish to
 use CV selection instead. 
 
@@ -439,7 +440,7 @@ For CV, just replace \verb!gamlr! with \verb!cv.gamlr!. The
 \verb!standardize=FALSE! flag tells \verb!gamlr! to \textit{not} weight the
 coefficient penalties by the standard deviation of the corresponding covariate
 (i.e., to use penalty $\lambda|\beta_j|$ instead of
-$\lambda\mathrm{sd}(\mathbf{x}_j)|\beta_j|$); this is appropriate here because
+$\lambda\,\mathrm{sd}(\mathbf{x}_j)|\beta_j|$); this is appropriate here because
 such standardization would \textit{up-weight} the influence of players who
 rarely play (and have low $\mathrm{sd}(\mathbf{x}_j)$) relative to those who
 have a lot of ice time (and thus high $\mathrm{sd}(\mathbf{x}_j)$).  The
@@ -474,13 +475,14 @@ is interpretable as Bayesian posterior maximization.
 
 This section attempts to quantify the performance of hockey players using data
 from NHL. It extends  analysis in \cite{gramacy:jensen:taddy:2013}, which used
-a smaller dataset, assumed constant player effects, and did not control for team-season 
-effects. The data, downloaded from \url{http://www.nhl.com}, comprise of play-
-by-play NHL game data for regular and playoff games during $11$ seasons of
-2002-2003 through 2013-2014\footnote{Season 2004-2005 was a lockout that
-resulted in a cancellation}. The data capture all the shifts in every single
-game, such as change, goal, shot, blocked shot, miss shot, penalty and etc.
-There were $p=2439$ players involved in $n_g=69449$ goals.
+a smaller dataset, assumed constant player effects, and did not control for
+team-season effects. The data, downloaded from \url{http://www.nhl.com},
+comprise of play-by-play NHL game data for regular and playoff games during
+$11$ seasons of 2002-2003 through 2013-2014\footnote{Season 2004-2005 was a
+lockout that resulted in a cancellation}. The data capture all signifigant
+events in every single game, such as change, goal, shot, blocked shot, miss
+shot, penalty and etc. There were $p=2439$ players involved in $n=69449$
+goals.
 
 
 The analysis proceeds through estimation of the model from (\ref{hockeymod}),
@@ -505,7 +507,7 @@ log-odds to that of probabilities. In particular, we define the `partial for-\%'
 This feeds the player effects through a logit link  to obtain  the
 probability that, given a goal was scored in season $s$, it was scored by
 player $j$'s team, {\it if we know nothing else other than that player $j$ was
-on the ice}. It lives on the same scale as the commonly used \textit{for\%}
+on the ice}. It lives on the same scale as the commonly used \textit{for-\%}
 (FP) statistic: the total number of events by a given player's team
 \textit{divided} by the total number of events by either team, while that
 player was on the ice.   Like PM, FP is a marginal effect that does not
@@ -513,7 +515,7 @@ account for who else was on the ice and other confounding factors.  Hence, PFP
 is the partial effect version of FP.
 
 An important feature of the standard PM statistic that differs from both
-\textit{for\%} and $\beta$ or $q$ is that it -- in a limited sense -- accounts
+\textit{for-\%} and $\beta$ or $q$ is that it -- in a limited sense -- accounts
 not only for player ability but also the amount that they play.  For example,
 a player with a very high PM must both perform well \textit{and} maintain this
 level of performance over an extended period of time (assuming that you need
@@ -537,7 +539,7 @@ g_{sj}\text{PFP}_{sj} - g_{sj}(1-\text{PFP}_{sj}) = g_{sj}(1 -
 2\text{PFP}_{sj}).  \end{equation}   Just as PFP is is the partial effect
 version of FP, PPM is the partial effect analogue to PM's marginal effect.
 The same calculations apply for  post-season PFP and PPM, based upon
-$PFP_{spj} = 1/\exp[\beta_{0j} + \beta_{sj}+ \beta_{pj}]$ and where $g_{spj}$
+$\text{PFP}_{spj} = 1/\exp[\beta_{0j} + \beta_{sj}+ \beta_{pj}]$ and where $g_{spj}$
 is the number of goals for which player $j$ was on ice during the playoffs of
 season $j$.
 
@@ -688,7 +690,7 @@ bottom 20.
 
 The analysis above is built around the event of a `goal'; this is the most
 reasonable baseline analysis, as it removes any subjectivity about whether or
-not the statistics are related to team performance---you score more you win.
+not the statistics are related to team performance -- you score more you win.
 However, it has recently become popular in hockey analysis to consider
 alternative metrics that are built from shots and other events; see
 \cite{vol10} for a review. The most popular of such statistics is Corsi, which
@@ -703,20 +705,20 @@ $n_{c}=1,329,679$ Corsi events and $n_{f}=1,034,154$ Fenwick events; this is
 an order of magnitude more events than the $n_g=69449$ goals.
 
 The standard way to report Corsi and Fenwick for a given player is as the
-\textit{for \%} (FP) described above.  Again, since the FP score does not reward players for the
-amount of time that they spend on the ice, we also consider both Corsi and
-Fenwick versions of the plus-minus statistic. Of course, all of
-these statistics---Corsi-FP, Corsi-PM, etc.---measure marginal effects.  They
-are thus subject to the same criticisms as the original PM: they fail to
-control for the influence of other players and confounding factors, and are
-thus less useful than a partial effect for predicting and measuring player
-performance.  However, we can apply the exact same regression analysis that
-we've used above for goal events to derive
-\textit{partial} versions of the Corsi and Fenwick statistics: simple replace
+\textit{for-\%} (FP) described above.  Again, since the FP score does not
+reward players for the amount of time that they spend on the ice, we also
+consider both Corsi and Fenwick versions of the plus-minus statistic. Of
+course, all of these statistics -- Corsi-FP, Corsi-PM, etc.~-- measure
+marginal effects.  They are thus subject to the same criticisms as the
+original PM: they fail to control for the influence of other players and
+confounding factors, and are thus less useful than a partial effect for
+predicting and measuring player performance.  However, we can apply the exact
+same regression analysis that we've used above for goal events to derive
+\textit{partial} versions of the Corsi and Fenwick statistics: simply replace
 $y_i$ with a response calculated from Corsi or Fenwick events.  For example, a
 Corsi regression applies the model as in (\ref{hockeymod}) but for response
 $y_i=+1$ if the event was a Corsi event (shot, goal, blocked shot) by the home
-team and $y_i=-1$ if it was a Corsi event by the away team. The partial \textit{for \%}
+team and $y_i=-1$ if it was a Corsi event by the away team. The partial \textit{for-\%}
 and plus-minus formulas of (\ref{eq:pfp}-\ref{eq:ppm}) apply to derive, e.g.,
 Corsi-PPF and Corsi-PPM.
 
@@ -797,13 +799,13 @@ our metrics and an outside measure of player quality: salary.
     \centering
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=2.5in]{figures/salaryhist-goals-regular.pdf}
+        \includegraphics[height=2.25in]{figures/salaryhist-goals-regular.pdf}
         \caption{Goals-based}
     \end{subfigure}%
     ~ 
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=2.5in]{figures/salaryhist-corsi-regular.pdf}
+        \includegraphics[height=2.25in]{figures/salaryhist-corsi-regular.pdf}
         \caption{Corsi-based}
     \end{subfigure}
     \caption{ \label{fig:salhist} Distribution of estimated player effects and salaries over all 11 seasons.}
@@ -897,29 +899,34 @@ automatically diminishes for strong signals.  If you believe that the current
 analysis has over-shrunk the influence of, say, total stars like Sidney Crosby
 or Pavel Datsyuk, then {\tt gamlr} and \cite{taddy_one-step_2015} will offer a
 preferable analysis framework.  On the other hand, if you think that all
-players should be shrunk \textit{closer} to zero----perhaps you believe that
-the current results over-state the effect of a few stars----then the elastic
+players should be shrunk \textit{closer} to zero -- perhaps you believe that
+the current results over-state the effect of a few stars -- then the elastic
 net penalization scheme of \cite{zou_regularization_2005} and {\tt glmnet}
 will be preferable.  In either case, simple $L_1$ penalization provides a
 useful reference baseline analysis.
 
 Beyond changes to the penalty specification, we think that there can be
 considerable value in moving from point-estimation to a fully Bayesian
-analysis. \cite{gramacy:jensen:taddy:2013}
-included exploration of the player effect posterior in their earlier analysis of a related model.  They apply the {\tt reglogit}
-package \cite{reglogit} for {\sf R}, which implements the Gibbs sampling strategy
-from \cite{gra:pols:2012}. The software takes advantage of
+analysis. \cite{gramacy:jensen:taddy:2013} included exploration of the player
+effect posterior in their earlier analysis of a related model.  They apply the
+{\tt reglogit} package \cite{reglogit} for {\sf R}, which implements the Gibbs
+sampling strategy from \cite{gra:pols:2012}. The software takes advantage of
 sparse matrix libraries ({\tt slam} \cite{slam}), and is multi-threaded via
-{\tt OpenMP} to engage multiple processors simultaneously.  
-It combines two scale-mixture of normals data-augmentation schemes, one for the logit
+{\tt OpenMP} to engage multiple processors simultaneously. It combines two
+scale-mixture of normals data-augmentation schemes, one for the logit
 \cite{holmes:held:2006} and one for the Laplace prior \cite{park:casella:2008}.
 Obtaining $T$ samples from the full posterior, is straightforward using the
 following {\sf R} code
 \begin{verbatim}
 bfit <- reglogit(T=T, y=Y, X=X, normalize=FALSE)
 \end{verbatim}
-The full posterior sample for $\beta$, residing in {\tt bfit}, is available for calculation of posterior means and covariances of player effects and other posterior functionals relevant to player performance. For example, \cite{gramacy:jensen:taddy:2013} use the \textit{probability} that one player is better than
-another as a basis for ranking players, and can even provide posterior credible intervals around these rankings.\footnote{see., e.g, 
+The full posterior sample for $\beta$, residing in {\tt bfit}, is available
+for calculation of posterior means and covariances of player effects and other
+posterior functionals relevant to player performance. For example,
+\cite{gramacy:jensen:taddy:2013} use the posterior \textit{probability} that
+one player is better than another as a basis for ranking players, and can even
+provide posterior credible intervals around these rankings.\footnote{see.,
+e.g,
 \url{https://github.com/Tad dyLab/hockey/blob/master/results/blog/logistic_pranks_betas.csv}
 }  This information can be used to construct teams of players under budget constraints and
 subsequently describe the probability that those teams will score more goals
