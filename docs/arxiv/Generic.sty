@@ -1,0 +1,147 @@
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{Generic}[2003/06/23 6.0 ITC Dictionary Document Style]
+
+
+\textheight 52pc
+\textwidth 39.14pc
+%\setlength{\baselineskip}{13pt}
+%\pagestyle{myheadings}
+\oddsidemargin 1in
+\evensidemargin 1in
+
+\def\@xiipt{12}
+\def\@xiiipt{13}
+\def\@xivpt{14}
+
+\setlength\parskip{12\p@}
+
+\renewcommand\normalsize{%
+  \@setfontsize\normalsize\@xiipt\@xiipt
+   \abovedisplayskip 10\p@ \@plus2\p@ \@minus5\p@
+   \abovedisplayshortskip \z@ \@plus3\p@
+   \belowdisplayshortskip 6\p@ \@plus3\p@ \@minus3\p@
+   \belowdisplayskip \abovedisplayskip
+   \let\@listi\@listI}
+
+
+%\newcommand\scriptsize{\@setfontsize\scriptsize\@viipt\@viiipt}
+%\newcommand\tiny{\@setfontsize\tiny\@vpt\@vipt}
+%\newcommand\large{\@setfontsize\large\@xiipt{14}}
+%\newcommand\Large{\@setfontsize\Large\@xivpt{18}}
+%\newcommand\LARGE{\@setfontsize\LARGE\@xviipt{22}}
+%\newcommand\huge{\@setfontsize\huge\@xxpt{25}}
+%\newcommand\Huge{\@setfontsize\Huge\@xxvpt{30}}
+
+\if@twocolumn
+  \setlength\parindent{1em}
+\else
+  \setlength\parindent{15\p@}
+\fi
+\setlength\smallskipamount{3\p@ \@plus 1\p@ \@minus 1\p@}
+\setlength\medskipamount{6\p@ \@plus 2\p@ \@minus 2\p@}
+\setlength\bigskipamount{12\p@ \@plus 4\p@ \@minus 4\p@}
+\setlength\headheight{12\p@}
+\setlength\headsep   {.25in}
+\setlength\topskip   {10\p@}
+\setlength\footskip{.35in}
+\if@compatibility \setlength\maxdepth{4\p@} \else
+\setlength\maxdepth{.5\topskip} \fi
+
+\setlength\footnotesep{6.65\p@}
+\setlength{\skip\footins}{9\p@ \@plus 4\p@ \@minus 2\p@}
+\setlength\floatsep    {12\p@ \@plus 2\p@ \@minus 2\p@}
+\setlength\textfloatsep{20\p@ \@plus 2\p@ \@minus 4\p@}
+\setlength\intextsep   {12\p@ \@plus 2\p@ \@minus 2\p@}
+\setlength\dblfloatsep    {12\p@ \@plus 2\p@ \@minus 2\p@}
+\setlength\dbltextfloatsep{20\p@ \@plus 2\p@ \@minus 4\p@}
+\setlength\@fptop{0\p@ \@plus 1fil}
+\setlength\@fpsep{8\p@ \@plus 2fil}
+\setlength\@fpbot{0\p@ \@plus 1fil}
+\setlength\@dblfptop{0\p@ \@plus 1fil}
+\setlength\@dblfpsep{8\p@ \@plus 2fil}
+\setlength\@dblfpbot{0\p@ \@plus 1fil}
+\setlength\partopsep{2\p@ \@plus 1\p@ \@minus 1\p@}
+\def\@listi{\leftmargin\leftmargini
+            \parsep 4\p@ \@plus2\p@ \@minus\p@
+            \topsep 8\p@ \@plus2\p@ \@minus4\p@
+            \itemsep4\p@ \@plus2\p@ \@minus\p@}
+\let\@listI\@listi
+\@listi
+\def\@listii {\leftmargin\leftmarginii
+              \labelwidth\leftmarginii
+              \advance\labelwidth-\labelsep
+              \topsep    4\p@ \@plus2\p@ \@minus\p@
+              \parsep    2\p@ \@plus\p@  \@minus\p@
+              \itemsep   \parsep}
+\def\@listiii{\leftmargin\leftmarginiii
+              \labelwidth\leftmarginiii
+              \advance\labelwidth-\labelsep
+              \topsep    2\p@ \@plus\p@\@minus\p@
+              \parsep    \z@
+              \partopsep \p@ \@plus\z@ \@minus\p@
+              \itemsep   \topsep}
+\def\@listiv {\leftmargin\leftmarginiv
+              \labelwidth\leftmarginiv
+              \advance\labelwidth-\labelsep}
+\def\@listv  {\leftmargin\leftmarginv
+              \labelwidth\leftmarginv
+              \advance\labelwidth-\labelsep}
+\def\@listvi {\leftmargin\leftmarginvi
+              \labelwidth\leftmarginvi
+              \advance\labelwidth-\labelsep}
+
+%%%%%%
+
+\def\authorhead#1{\fontsize{10}{10}\hskip40pt{\bf #1}\par}
+
+\newif\if@openbib
+\@openbibfalse
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Reference Section   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+\newdimen\bibindent
+%
+%\def\@biblabel#1{#1.}
+\renewenvironment{thebibliography}[1]
+     {\section*{References}%\bibfont
+      \def\arg{#1}%
+\ifx\arg\empty
+      \list{}%
+           {\labelwidth0pt
+           \labelsep0pt
+            \leftmargin8pt
+            \itemindent-\leftmargin
+            \itemsep0pt\parsep0pt
+            \usecounter{enumiv}%
+            \let\p@enumiv\@empty
+            \renewcommand\theenumiv{\arabic{enumiv}}}
+%
+\else      
+%
+    \list{\@biblabel{\arabic{enumiv}}}%
+           {\settowidth\labelwidth{\@biblabel{#1}}%
+           \labelsep.5em
+            \leftmargin\labelsep
+            \advance\leftmargin\labelwidth
+            \itemindent0pt\itemsep0pt\parsep0pt
+            \usecounter{enumiv}%
+            \let\p@enumiv\@empty
+            \renewcommand\theenumiv{\arabic{enumiv}}}%
+            \fi%
+      \sloppy\clubpenalty4000\widowpenalty4000%
+      \sfcode`\.=\@m}
+     {\def\@noitemerr
+       {\@latex@warning{Empty `thebibliography' environment}}%
+      \endlist}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  End Reference Section   %%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+
+
+\hoffset-6pc
+\voffset-.28pc
+
+
+
+\endinput

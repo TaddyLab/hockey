@@ -1,0 +1,166 @@
+\begin{thebibliography}{10}
+
+\bibitem{awa09}
+Tom Awad.
+\newblock {Numbers On Ice: Fixing Plus/Minus}.
+\newblock {\em Hockey Prospectus}, April 03, 2009, 2009.
+
+\bibitem{breiman:2001}
+L.~Breiman.
+\newblock Random forests.
+\newblock {\em Machine Learning}, 45:5--32, 2001.
+
+\bibitem{candes_enhancing_2008}
+Emmanuel~J. Candes, Michael~B. Wakin, and Stephen~P. Boyd.
+\newblock Enhancing sparsity by reweighted l1 minimization.
+\newblock {\em Journal of Fourier Analysis and Applications}, 14:877--905,
+  2008.
+
+\bibitem{ChipGeorMcCu2010}
+Hugh~A. Chipman, Edward~I. George, and Robert~E. McCulloch.
+\newblock {BART}: {B}ayesian additive regression trees.
+\newblock {\em The Annals of Applied Statistics}, 4:266--298, 2010.
+
+\bibitem{flynn_efficiency_2013}
+Cheryl Flynn, Clifford Hurvich, and Jefferey Simonoff.
+\newblock Efficiency for regularization parameter selection in penalized
+  likelihood estimation of misspecified models.
+\newblock {\em Journal of the American Statistical Association},
+  108:1031--1043, 2013.
+
+\bibitem{gentzkow_measuring_2015}
+Matthew Gentzkow, Jesse Shapiro, and Matt Taddy.
+\newblock Measuring polarization in high dimensional data.
+\newblock {\em Chicago Booth working paper}, 2015.
+
+\bibitem{reglogit}
+R.B. Gramacy.
+\newblock {\em {\tt reglogit}: {S}imulation-based Regularized Logistic
+  Regression}, 2012.
+\newblock {\sf R} package version 1.1.
+
+\bibitem{gra:pols:2012}
+R.B. Gramacy and N.G. Polson.
+\newblock Simulation-based regularized logistic regression.
+\newblock {\em Bayesian Analysis}, 7:1--24, 2012.
+
+\bibitem{gramacy:jensen:taddy:2013}
+Robert~B. Gramacy, Shane Jensen, and Matt Taddy.
+\newblock Estimating player contribution in hockey with regularized logistic
+  regression.
+\newblock {\em Journal of Quantitative Analysis in Sports}, 9:97--111, 2013.
+
+\bibitem{hastie:tibsh:fried:2001}
+Trevor Hastie, Robert Tibshirani, and Jerome Friedman.
+\newblock {\em The Elements of Statistical Learning: Data Mining, Inference,
+  and Prediction}.
+\newblock Springer, 2001.
+
+\bibitem{hoerl_ridge_1970}
+Arthur Hoerl and Robert Kennard.
+\newblock Ridge regression: Biased estimation for nonorthogonal problems.
+\newblock {\em Technometrics}, 12:55--67, 1970.
+
+\bibitem{holmes:held:2006}
+C.~Holmes and K.~Held.
+\newblock Bayesian auxilliary variable models for binary and multinomial
+  regression.
+\newblock {\em Bayesian Analysis}, 1(1):145--168, 2006.
+
+\bibitem{slam}
+Kurt Hornik, David Meyer, and Christian Buchta.
+\newblock {\em {\tt slam:} {S}parse {L}ightweight {A}rrays and {M}atrices},
+  2011.
+\newblock R package version 0.1-23.
+
+\bibitem{hurvich_regression_1989}
+Clifford~M. Hurvich and Chih-Ling Tsai.
+\newblock Regression and time series model selection in small samples.
+\newblock {\em Biometrika}, 76(2):297--307, 1989.
+
+\bibitem{ilabar08}
+Steve Ilardi and Aaron Barzilai.
+\newblock {Adjusted Plus-Minus Ratings: New and Improved for 2007-2008}.
+\newblock {\em 82games.com}, 2004.
+
+\bibitem{mac10}
+Brian Macdonald.
+\newblock A regression-based adjusted plus-minus statistic for nhl players.
+\newblock Technical report, ar{X}iv: 1006.4310, 2010.
+
+\bibitem{park:casella:2008}
+Trevor Park and George Casella.
+\newblock The bayesian lasso.
+\newblock {\em Journal of the American Statistical Association},
+  103(482):681--686, June 2008.
+
+\bibitem{ros04}
+Dan~T. Rosenbaum.
+\newblock {Measuring How NBA Players Help Their Teams Win}.
+\newblock {\em 82games.com}, April 30, 2004, 2004.
+
+\bibitem{schlocwel10}
+Michael~E. Schuckers, Dennis~F. Lock, Chris Wells, C.~J. Knickerbocker, and
+  Robin~H. Lock.
+\newblock National hockey league skater ratings based upon all on-ice events:
+  An adjusted minus/plus probability (ampp) approach.
+\newblock Technical report, St. Lawrence University, 2010.
+
+\bibitem{cranR}
+{{\sf R} Development Core Team}.
+\newblock {\em {\sf R}: A Language and Environment for Statistical Computing}.
+\newblock {\sf R} Foundation for Statistical Computing, Vienna, Austria, 2010.
+\newblock {ISBN} 3-900051-07-0.
+
+\bibitem{sheather:2009}
+Simon Sheather.
+\newblock {\em A modern approach to regression with {\sf R}}.
+\newblock Springer, 2009.
+
+\bibitem{gamlr}
+Matt Taddy.
+\newblock {\em {\tt gamlr}: Gamma Lasso Regression}, 2013.
+\newblock {\sf R} package version 1.11-2.
+
+\bibitem{taddy_distributed_2015}
+Matt Taddy.
+\newblock Distributed multinomial regression.
+\newblock {\em The Annals of Applied Statistics}, 2015.
+\newblock To appear.
+
+\bibitem{taddy_one-step_2015}
+Matt Taddy.
+\newblock One-step estimator paths for concave regularization.
+\newblock {\em {arXiv}:1308.5623}, 2015.
+
+\bibitem{taddy:eta:2015}
+Matt Taddy, Chun-Sheng Chen, Jun Yu, and Mitch Wyle.
+\newblock Bayesian and empirical bayesian forests.
+\newblock In {\em Proceedings of the 32nd International Conference on Machine
+  Learning (ICML-15)}, pages 967--976. JMLR Workshop and Conference
+  Proceedings, 2015.
+
+\bibitem{ThoVenJen12}
+A.~C. Thomas, Samuel~L. Ventura, Shane Jensen, and Stephen Ma.
+\newblock Competing process hazard function models for player ratings in ice
+  hockey.
+\newblock Technical report, ArXiv:1208.0799, 2012.
+
+\bibitem{tibshirani_regression_1996}
+Robert Tibshirani.
+\newblock Regression shrinkage and selection via the lasso.
+\newblock {\em Journal of the Royal Statistical Society, Series B},
+  58:267--288, 1996.
+
+\bibitem{vol10}
+Robert Vollman.
+\newblock {Howe and Why: Ten Ways to Measure Defensive Contributions}.
+\newblock {\em Hockey Prospectus}, March 04, 2010, 2010.
+
+\bibitem{zou_regularization_2005}
+Hui Zou and Trevor Hastie.
+\newblock Regularization and variable selection via the elastic net.
+\newblock {\em Journal of the Royal Statistical Society: Series B (Statistical
+  Methodology)}, 67(2):301--320, 2005.
+
+\end{thebibliography}
