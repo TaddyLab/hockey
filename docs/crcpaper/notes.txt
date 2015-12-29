@@ -1,0 +1,117 @@
+Oct 16/15 - Comments
+
+(1) Here are some [other] papers on player evaluation that you may want to reference:
+- Stair, Neral, Thomas and Mizak (2011). J of International Business Disciplines
+- Pettigrew (2015). From the MIT Sloan Conference
+- Mason and Foster (2007). Intl J of Sport Finance
+
+(2) On page 5, line -15, maybe add some references wrt genetics and finance
+
+(3) On page 7, in the discussion vector \mu_i, state the total number of parameters
+
+(4) On page 7, in the discussion of vector x_i, not everyone is familiar with
+the Hadamard product
+
+(5) On page 7, model (1.1), I have some confusion over the term p_i' \beta_p.
+This vector should have the same dimension as \beta_S but the transpose in
+p_i' makes this a row vector?
+
+The team parameter \mu_i vector makes sense to me since you have different 
+seasons. However, the season covariate s_i also appears. I would think that
+for a fixed season, once you have the players specified on the ice for a
+given season, the team parameter is redundant. Some explanation in the paper
+might be helpful.
+
+(6) This embarrasses me but I will ask anyway. I tried to confirm (1.3) but
+I keep getting  \Sum_i \eta_i y_i - \log ( 1 + \exp \[ \eta_i \] )
+
+(7) On page 10, line -5, ``sparse estimators''? Can you explain what you mean
+by this?
+
+(8) On page 10, the four scales in Fig 1.2 are greatly different. But without paying
+much attention to the scales, the four plots don't look that different.
+
+(9) On page 10, c_j is described as a coefficient cost function and an example is
+provided. The cost functions on beta are given in Fig 1.2. I think there is
+possibility for confusion. Some readers may think that the penalty term always
+has the form of the example.
+
+(10) On page 12, the AIC formula. I don't think you have defined n (the number
+of goals in the dataset?) and k (the number of parameters in the model?). But
+you actually did define k earlier and the number of special team scenarios.
+
+(11) On page 13, maybe a couple more sentences or a reference might help some
+readers. Something like saying that the posterior is the product of likelihood
+and prior, and that on a log scale, it is a sum. So maximizing the posterior
+to obtain posterior modes is equivalent to maximizing the log likelihood plus
+a penalty term which is the log of the prior. Also, it might be instructive
+to relate the prior to what we see in the plots of Fig 1.2.
+
+(12) In Table 1.1, why isn't PFP recorded with the same number of digits
+for each player. Also, should I be suspicious about all of the 0.6 entries?
+Should I be concerned that in the rankings, players tend to follow themselves
+but in different seasons. In this table, seasons like 20022003 would look 
+better as 2002/2003 or 02/03. Could we squeeze in the player's team? My
+intuition is that regular season PFP = 0.68 is too high.
+
+(13) Given that the postseason results are unchanged from regular season,
+might it be better to simplify the model and simply state that you 
+considered a postseason term? Postseason performance strikes me a little
+bit like the ``clutch'' player argument in baseball which I think has
+been dismissed by analytics.
+
+(14) Personally, I am not so sure about the preference of PPM over PFP.
+A good player on a weak team would tend to get more ice time than an
+equivalent player on a strong team, yes?  
+
+(15) Returning to one of my queries in (12), I see that the Corsi ratings 
+for a player in Table 1.3 do not result in a cluster of tied values for the
+player. And your discussion of the omission of D Sedin and A Ovechkin
+from the top of goal-based PPM also makes me wonder - isn't it agreed
+that they are great players?
+
+(16) Although I like the work very much, I was disappointed in Fig 1.4
+which tells me that the sophisticated statistics are not much better (i.e.
+only slightly more correlated with salary) than the widely criticized PM stat.
+Can you say more? For example, could one say that GMs are making salary
+decisions based on PM?
+
+(17) The labor dispute argument does not seem well supported by the graphs.
+
+(18) I like Table 1.4 and the related discussion. I am wondering if another
+column could be added, something like the difference between the salary
+expected by a player with such a PPM and their actual salary.
+
+(19) This is probably too much but it struck me that plots of the metric
+for a player versus his age would tell some interesting stories.
+
+
+Some Typos, etc
+
+- page 2, line -9, ``extension'' -> ``extensions''
+
+- page 2, line -7, ``in public'' -> ``in public via''
+
+- page 2, line -1, ``substitution'' -> ``substitutions''
+
+- page 3, line 3, ``both both'' -> ``both''
+
+- page 3, line -5, ``the player ability'' -> ``player ability''
+
+- page 3, line -4, ``controlled for'' -> ``taken into account''
+
+- page 4, line 8, ``of who he skates with'' -> ``with whom he skates''
+
+- page 6, line 6, add a space after [19]
+
+- page 13, line -12, ``extends analysis'' -> ``extends the analysis''
+
+- page 14, line -10, ``similar'' -> ``similarly''
+
+- page 17, line -11, ``has'' -> ``had''
+
+- page 18, line -10, ``apply to derive'' is awkward
+
+- page 22, first sentence is a bit long
+
+- References, inconsistency in using authors' full first names versus initials
