@@ -46,10 +46,10 @@ variables.  This metric is shown to be more highly correlated with salary than
 the standard (marginal) plus minus.  Moreover, we find that the goals-based
 metric is more correlated with salary than those based upon shots and blocked
 shots.   We conclude in Section \ref{sec:conclusion} with thoughts on further
-extension, in particular by breaking out of the linear framework to use
+extensions, in particular by breaking out of the linear framework to use
 classification models popular in the Machine Learning literature.
 
-The code for all empirical work in this chapter is provided in public a GitHub
+The code for all empirical work in this chapter is provided to the public via a GitHub
 repository (\verb!https://github.com/TaddyLab/hockey!) and utilizes open
 source libraries for {\sf R} \cite{cranR}, particularly the {\sf gamlr} \cite{gamlr} package from \cite{taddy_one-step_2015}.
 
@@ -60,10 +60,10 @@ source libraries for {\sf R} \cite{cranR}, particularly the {\sf gamlr} \cite{ga
 Hockey is played on ice, but that's not all that sets it apart from seemingly
 related  sports like soccer, basketball, or even field hockey.  At least not
 from an analytics perspective.  The unique thing about hockey is the rapid
-substitution transpiring continuously during play, as well as at stoppages in
+substitutions transpiring continuously during play, as well as at stoppages in
 play.  In the data sets we have compiled, which we discuss in more detail
 shortly, the median amount of time a particular on-ice player configuration
-(determined by unique players on the ice for both both teams) is a mere eight
+(determined by unique players on the ice for both teams) is a mere eight
 seconds. Although many ``shifts'' are much longer than that, a trickle of
 piecemeal substitutions on both sides, transpiring as play develops, makes it
 difficult to attribute credit or blame to players for significant events, such
@@ -93,9 +93,9 @@ if we didn't get to play next to Duncan Keith.
 
 Due to its simplicity and minimal data requirements, plus-minus has been a
 preferred metric for the last fifty-odd years.  But since it measures a
-marginal effect, the plus-minus is impacted by many factors beyond the player
+marginal effect, the plus-minus is impacted by many factors beyond player
 ability, which is the actual quantity of interest.  The ability of a player's
-teammates, or the quality of opponents, are not controlled for.  The amount of
+teammates, or the quality of opponents, are not taken into account.  The amount of
 playing time is also not factored in, meaning plus-minus stats are much
 noisier for some players than others. Finally, goalies, teams, coaches,
 salaries, situations, special teams, etc.~-- which all clearly contribute to
@@ -110,7 +110,7 @@ the change due to other influential variables.} In the example above, a
 partial effect for Duncan Keith would be unchanged if he plays with the
 authors of this article or with the current members of the Blackhawks.  In
 each case, the partial effect will attempt to measure how Duncan Keith can
-influence the box-score regardless of who he skates with. Because such partial
+influence the box-score regardless of with whom he skates. Because such partial
 effects help us predict how Keith would perform on a different team or with a
 different combination of line-mates, this information is more useful than
 knowing a marginal effect.
@@ -187,18 +187,20 @@ hazard model of
 game events, allowing partial player effects to be backed out from high
 resolution game data. 
 Adjusted plus-minus is built from similar ideas for Basketball analysis (see
-\cite{ros04}and \cite{ilabar08}). Its linear model analysis implies an
+\cite{ros04} and \cite{ilabar08}). Its linear model analysis implies an
 underlying normality assumption for the error structure; this may be a good
 approximation for basketball, where scoring is frequent and variability in
 player configurations is small, but it is  inappropriate for disaggregated
-data with a binary response (e.g., whether an individual goal is for-vs-against
-the home team).  Such misspecification becomes especially problematic when
-combined with the modern regularization techniques necessary for reliable
-estimation of high dimensional models.  On the other hand, more complex
-stochastic process modeling requires many additional assumptions on the data
-generating process and can be difficult to validate in practice; moreover,
-models such as that of \cite{ThoVenJen12} take far longer to run than we wish
-for our analysis.
+data with a binary response (e.g., whether an individual goal is
+for-vs-against the home team).  Such misspecification becomes especially
+problematic when combined with the modern regularization techniques necessary
+for reliable estimation of high dimensional models.  On the other hand, more
+complex stochastic process modeling requires many additional assumptions on
+the data generating process and can be difficult to validate in practice;
+moreover, models such as that of \cite{ThoVenJen12} take far longer to run
+than we wish for our analysis.  Some other important contributions to
+estimating player ability and attributing that to team success include
+\cite{stair:etal:2011,pettigrew:2015,mason:foster:2007}.
 
 The goal of our modeling is to provide a correct treatment of the binary
 `goals' data without introducing significant additional modeling complexity.
@@ -245,7 +247,14 @@ goal $i$, and $x_{ij}=0$ for everyone not on the ice. With $\circ$ denoting the 
 \item the post-season indicator $p_i$  for whether or not the goal was scored in the playoffs, with $p_{i} =1$ for the playoffs and zero for the regular season.
 \end{itemize}  
 \end{itemize}
-Thus coefficient
+In this full specification the number of parameters, i.e., $|\boldsymbol{\alpha}|+
+| \boldsymbol{\phi}| + |\boldsymbol{\beta}_0| + |\boldsymbol{\beta}_s| +
+|\boldsymbol{\beta}_p|$ is on the order of the number of players, $p$, in the league
+spanning the seasons/games of interest.  The exact number depends on modeling aspects, like the
+number of special teams scenarios (i.e., constant in $p$), and on quantities like the number
+of team-seasons which grow more slowly than $p$.
+
+To explain the coefficients and their interpretation, 
 $\beta_{0j} + \beta_{sj}$ is the regular-season-$s$ effect of player $j$ on the log
 odds that, given a goal has been scored, the goal was scored by their team.  Coefficient 
 $\beta_{0j} + \beta_{sj} + \beta_{pj}$ is the corresponding effect for post-season-$s$ (note that, under the regularization scheme in the next section, $\beta_{pj}$ will be fixed at zero unless player $j$ reaches the playoffs). 
@@ -474,7 +483,7 @@ is interpretable as Bayesian posterior maximization.
 
 
 This section attempts to quantify the performance of hockey players using data
-from NHL. It extends  analysis in \cite{gramacy:jensen:taddy:2013}, which used
+from NHL. It extends the analysis in \cite{gramacy:jensen:taddy:2013}, which used
 a smaller dataset, assumed constant player effects, and did not control for
 team-season effects. The data, downloaded from \url{http://www.nhl.com},
 comprise of play-by-play NHL game data for regular and playoff games during
@@ -520,7 +529,7 @@ not only for player ability but also the amount that they play.  For example,
 a player with a very high PM must both perform well \textit{and} maintain this
 level of performance over an extended period of time (assuming that you need
 to be on the ice a long time to be on the ice for many goals).  Conversely,
-similar estimated $\beta$ values for two players might hide the fact that one
+similarly estimated $\beta$ values for two players might hide the fact that one
 of these two logs much more ice time and is thus more valuable to the
 team.\footnote{Note that, due to the role of the penalty in our regularized
 estimation scheme,  players with little ice time tend to have their effect
@@ -719,8 +728,8 @@ $y_i$ with a response calculated from Corsi or Fenwick events.  For example, a
 Corsi regression applies the model as in (\ref{hockeymod}) but for response
 $y_i=+1$ if the event was a Corsi event (shot, goal, blocked shot) by the home
 team and $y_i=-1$ if it was a Corsi event by the away team. The partial \textit{for-\%}
-and plus-minus formulas of (\ref{eq:pfp}-\ref{eq:ppm}) apply to derive, e.g.,
-Corsi-PPF and Corsi-PPM.
+and plus-minus formulas of (\ref{eq:pfp}-\ref{eq:ppm}) can similarly be applied to 
+obtain Corsi-PPF and Corsi-PPM values.
 
 The results for Corsi-based performance analysis are in Table \ref{tab:corsi}
 and on the right side of Table \ref{tab:pfp}.  Comparison to the goal-based
@@ -811,7 +820,7 @@ our metrics and an outside measure of player quality: salary.
     \caption{ \label{fig:salhist} Distribution of estimated player effects and salaries over all 11 seasons.}
 \end{figure}
 
-\section{Analysis: the relationship between salary and performance}
+\section[Salary and Performance]{Analysis: the relationship between salary and performance}
 \label{sec:salary}
 
 In our final analysis section, we consider how our partial effect statistics

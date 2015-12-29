@@ -5,12 +5,20 @@ Oct 16/15 - Comments
 - Pettigrew (2015). From the MIT Sloan Conference
 - Mason and Foster (2007). Intl J of Sport Finance
 
++ Bobby added these to the end of a paragraph with other references on page 6.
+
 (2) On page 5, line -15, maybe add some references wrt genetics and finance
+
++ Bobby thinks adding these would detract from the paper.
 
 (3) On page 7, in the discussion vector \mu_i, state the total number of parameters
 
++ Bobby added that it is O(p) essentially, without getting too technical.
+
 (4) On page 7, in the discussion of vector x_i, not everyone is familiar with
 the Hadamard product
+
++ Bobby decided to make no changes here;  we explain that it means element-wise.
 
 (5) On page 7, model (1.1), I have some confusion over the term p_i' \beta_p.
 This vector should have the same dimension as \beta_S but the transpose in
@@ -90,28 +98,56 @@ Some Typos, etc
 
 - page 2, line -9, ``extension'' -> ``extensions''
 
++ Done
+
 - page 2, line -7, ``in public'' -> ``in public via''
+
++ Done
 
 - page 2, line -1, ``substitution'' -> ``substitutions''
 
++ Done.
+
 - page 3, line 3, ``both both'' -> ``both''
+
++ Done
 
 - page 3, line -5, ``the player ability'' -> ``player ability''
 
++ Done
+
 - page 3, line -4, ``controlled for'' -> ``taken into account''
+
++ Done
 
 - page 4, line 8, ``of who he skates with'' -> ``with whom he skates''
 
++ Done
+
 - page 6, line 6, add a space after [19]
+
++ Done
 
 - page 13, line -12, ``extends analysis'' -> ``extends the analysis''
 
++ Done
+
 - page 14, line -10, ``similar'' -> ``similarly''
+
++ Done
 
 - page 17, line -11, ``has'' -> ``had''
 
++ Done
+
 - page 18, line -10, ``apply to derive'' is awkward
+
++ Done
 
 - page 22, first sentence is a bit long
 
++ Not sure what sentence is being referred to ????
+
 - References, inconsistency in using authors' full first names versus initials
+
++ Which one is correct? I have to imagine that the copy editors will take care of this.
