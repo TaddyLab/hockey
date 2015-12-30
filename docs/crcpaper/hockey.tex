@@ -229,10 +229,12 @@ framing away team probabilities as $q_i$ rather than $1-q_i$, so we loose no
 generality by privileging home team goals in this way.}  Say that $\boldsymbol{q_i =
 \mathrm{p}(y_i = 1) =  \mathrm{p}(\textbf{home~team~scored~goal}~i)}$.  The
 logistic regression model of player contribution is, for goal $i$ in season
-$s$ with away team $a$ and home team $h$,  \begin{align}\label{hockeymod}
+$s$ with away team $a$ and home team $h$,  
+\begin{align}\label{hockeymod}
 \log\left[\frac{q_{i}}{1-q_{i}}\right] = \alpha + \mathbf{u}_i'\boldsymbol{\gamma} +
 \mathbf{v}_i'\boldsymbol{\varphi} + \mathbf{x}_i'\boldsymbol{\beta}_0 +
-(\mathbf{x}_i\circ\mathbf{s}_i)'(\boldsymbol{\beta}_s + p_i'\boldsymbol{\beta}_{p}), \end{align}  
+(\mathbf{x}_i\circ\mathbf{s}_i)'(\boldsymbol{\beta}_s + p_i \boldsymbol{\beta}_{p}), 
+\end{align}  
 where
 \begin{itemize}
 \item Vector $\mathbf{u}_i$ holds indicators for each team-season (e.g., the Blackhawks in 2012-2013 would correspond to a coordinate of $\mathbf{u}_i$), set 
@@ -246,13 +248,20 @@ goal $i$, and $x_{ij}=0$ for everyone not on the ice. With $\circ$ denoting the 
 \item  season (e.g., 2013-2013) vector $\mathbf{s}_i$, with $s_{ti} = 1$ if goal $i$ was scored in season $t$, and
 \item the post-season indicator $p_i$  for whether or not the goal was scored in the playoffs, with $p_{i} =1$ for the playoffs and zero for the regular season.
 \end{itemize}  
+By interacting players with seasons and with playoffs in this way, we have the
+potential to differentiate player ability over time both within (regular
+v.~post-) season(s) and across seasons.  There is potential for confounding
+with team--season effects $\mathbf{u}_i$ however, as very few players change
+teams during a season.
+
 \end{itemize}
-In this full specification the number of parameters, i.e., $|\boldsymbol{\alpha}|+
-| \boldsymbol{\phi}| + |\boldsymbol{\beta}_0| + |\boldsymbol{\beta}_s| +
-|\boldsymbol{\beta}_p|$ is on the order of the number of players, $p$, in the league
-spanning the seasons/games of interest.  The exact number depends on modeling aspects, like the
-number of special teams scenarios (i.e., constant in $p$), and on quantities like the number
-of team-seasons which grow more slowly than $p$.
+In this full specification the number of parameters, i.e., $K =
+|\boldsymbol{\alpha}|+ | \boldsymbol{\phi}| + |\boldsymbol{\beta}_0| +
+|\boldsymbol{\beta}_s| + |\boldsymbol{\beta}_p|$ is on the order of the number
+of players, $p$, in the league spanning the seasons/games of interest.  The
+exact number depends on modeling aspects, like the number of special teams
+scenarios (i.e., constant in $p$), and on quantities like the number of
+team-seasons which grow more slowly than $p$.
 
 To explain the coefficients and their interpretation, 
 $\beta_{0j} + \beta_{sj}$ is the regular-season-$s$ effect of player $j$ on the log
@@ -351,17 +360,21 @@ Our solution is to take a modern regularized approach to regression.  If
 $\eta_i = \log[ q_i/(1-q_i) ]$ is our linear equation for log odds from
 (\ref{hockeymod}), then the usual maximum likelihood estimation routine (e.g.,
 via {\sf glm} in {\sf R}) minimizes the negative log likelihood objective
-\begin{equation}\label{eq:nllhd} l\left(\boldsymbol{\eta}; \mathbf{y}\right) =
-\sum_i \log\left(1 + \exp[-y_i \eta_i]\right). \end{equation} Instead, a
+for $n$ goal events
+\begin{equation}
+\label{eq:nllhd} l\left(\boldsymbol{\eta}; \mathbf{y}\right) =
+\sum_{i=1}^n \log\left(1 + \exp[-y_i \eta_i]\right). 
+\end{equation} 
+Instead, a
 \textit{regularized} regression algorithm will minimize a penalized objective,
-say $ l\left(\boldsymbol{\eta}; \mathbf{y}\right) + n\lambda
+say for example $l\left(\boldsymbol{\eta}; \mathbf{y}\right) + n\lambda
 \sum_{j=1}^p\left[ c_j\left(|\beta_{0j}|\right) +
 c\left(|\beta_{sj}|\right)\right]$, where $\lambda>0$ controls overall penalty
 magnitude, $c_j(\cdot)$ are coefficient cost functions, while $n$ is the total
 number of goals and $p$ is the number of players.
 A few common cost functions are shown in Figure \ref{costs}.  Those that have
 a non-differentiable spike at zero (all but ridge) lead to sparse estimators,
-with some coefficients set to exactly zero.   The curvature of the penalty
+meaning that many coefficients are set to exactly zero.   The curvature of the penalty
 away from zero dictates the weight of shrinkage imposed on the nonzero
 coefficients:  $L_2$ costs increase with coefficient size,  lasso's $L_1$
 penalty has zero curvature and imposes constant shrinkage, and as curvature
@@ -383,7 +396,8 @@ computational tractability), the $L_1$ penalty is by far the most commonly
 used in contemporary regularized regression; see
 \cite{hastie:tibsh:fried:2001} for a broad-audience overview and
 \cite{taddy_one-step_2015} for details on the algorithms used in this chapter.
-Under lasso $L_1$ penalization, estimation proceeds through optimization of
+Under lasso $L_1$ penalization, estimation for the unknown parameters in 
+our particular hockey model (\ref{hockeymod}) proceeds through optimization of
 \begin{equation} \label{pendev}
 l\left(\boldsymbol{\eta}; \mathbf{y}\right) + n\lambda \sum_{j=1}^p\left(|\beta_{0j}| + |\beta_{sj}| + |\beta_{pj}|\right).
 \end{equation}
@@ -432,13 +446,15 @@ down to some pre-set $\lambda^T$ (e.g., $\lambda^T= 0.01\lambda^1$).
 AICc = 2\sum_{i=1}^{n} l(\boldsymbol{\hat\eta}_{\lambda};\mathbf{y}) + \frac{2kn}{n-k-1},
 \end{equation*}
 where $\boldsymbol{\hat\eta}_{\lambda}$ are the estimated log odds under
-penalty $\lambda$ and $k$ is the number of non-zero estimated coefficients at
-this penalty. See \cite{taddy_one-step_2015} and \cite{flynn_efficiency_2013}
-for details on AICc selection in this context; we find AICc preferable to CV
-because it is computationally efficient (you only need to optimize once) and
-because there is no random Monte Carlo variation -- it always gives the same
-answer on the same data.  However, all of our ideas here apply if you wish to
-use CV selection instead. 
+penalty $\lambda$ and $k \leq K$ is the number of non-zero estimated
+coefficients (likely far fewer than the total number of parameters $K$, as
+many players cannot be distinguished from the league average) at this penalty.
+See \cite{taddy_one-step_2015} and \cite{flynn_efficiency_2013} for details on
+AICc selection in this context; we find AICc preferable to CV because it is
+computationally efficient (you only need to optimize once) and because there
+is no random Monte Carlo variation -- it always gives the same answer on the
+same data.  However, all of our ideas here apply if you wish to use CV
+selection instead.
 
 The {\tt gamlr} package \cite{gamlr} can
 be called via {\sf R} to implement this procedure:
