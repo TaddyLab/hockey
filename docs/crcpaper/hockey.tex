@@ -490,8 +490,12 @@ estimation, adding a prior on $\beta_j$ centered at zero is equivalent to
 adding a penalty term for $\beta_k \ne 0$ in our objective function. Different
 choices of priors correspond to different penalty functions on $\beta_j \ne
 0$; a Laplace prior distribution on each $\beta_j$  corresponds to our $L_1$
-penalty in (\ref{pendev}).  Thus, our minimization of this objective function
-is interpretable as Bayesian posterior maximization.
+penalty in (\ref{pendev}). The posterior density is the product of likelihood
+and prior, and on the log scale that product becomes a a sum. So maximizing
+the posterior to obtain posterior modes is equivalent to maximizing the log
+likelihood plus a penalty term which is the log of the prior. Conversely, 
+minimizing (\ref{pendev}) may be interpreted as Bayesian
+posterior maximization.
 
 \section{Analysis: goal-based effects}
 \label{sec:goals}

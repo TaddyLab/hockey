@@ -83,6 +83,9 @@ to obtain posterior modes is equivalent to maximizing the log likelihood plus
 a penalty term which is the log of the prior. Also, it might be instructive
 to relate the prior to what we see in the plots of Fig 1.2.
 
++ Bobby essentially added these sentences into the paragraph.  It seemed too
+  complicated to relate back to Fig 1.2, but I'll leave that to Matt. ???
+
 (12) In Table 1.1, why isn't PFP recorded with the same number of digits
 for each player. Also, should I be suspicious about all of the 0.6 entries?
 Should I be concerned that in the rankings, players tend to follow themselves
@@ -90,15 +93,26 @@ but in different seasons. In this table, seasons like 20022003 would look
 better as 2002/2003 or 02/03. Could we squeeze in the player's team? My
 intuition is that regular season PFP = 0.68 is too high.
 
+??? Leaving this one to Matt and Sen.  We should probably have the same sig
+digits throughout.  This also applies to Tables 1.2 and 1.3.
+
 (13) Given that the postseason results are unchanged from regular season,
 might it be better to simplify the model and simply state that you 
 considered a postseason term? Postseason performance strikes me a little
 bit like the ``clutch'' player argument in baseball which I think has
 been dismissed by analytics.
 
+??? Also leaving this to you guys.  For me, it is confusing that the PM and
+PPM numbers are on a different scale for regular and post season.  I
+understand why that is (post season is shorter than regular season), but if
+we're trying to detect "clutch" performance that muddy's the picture.
+
 (14) Personally, I am not so sure about the preference of PPM over PFP.
 A good player on a weak team would tend to get more ice time than an
 equivalent player on a strong team, yes?  
+
+??? This has echo's of our earlier discussions.  I still feel like the PPM
+double-dips in some sense, and I think that's what this comment is getting at.
 
 (15) Returning to one of my queries in (12), I see that the Corsi ratings 
 for a player in Table 1.3 do not result in a cluster of tied values for the
@@ -106,21 +120,35 @@ player. And your discussion of the omission of D Sedin and A Ovechkin
 from the top of goal-based PPM also makes me wonder - isn't it agreed
 that they are great players?
 
+??? I'm not sure what is meant by cluster of tied values.  I think comparing
+  tables 1.3 to 1.2 is illustrative.  OV and Sedin are great players, but they
+  don't generate strong enough signals (compared to others) where it counts
+  the most for winning games: goal differential!
+
 (16) Although I like the work very much, I was disappointed in Fig 1.4
 which tells me that the sophisticated statistics are not much better (i.e.
 only slightly more correlated with salary) than the widely criticized PM stat.
 Can you say more? For example, could one say that GMs are making salary
 decisions based on PM?
 
+??? Not sure about this either.  There are a couple of stories here.
+Goal-based PPM is much better than the other PPMs, but only a little better
+than ordinary PPMs (after 2006).
+
 (17) The labor dispute argument does not seem well supported by the graphs.
+
+??? It does for one (2006) but not the other (2013) right?
 
 (18) I like Table 1.4 and the related discussion. I am wondering if another
 column could be added, something like the difference between the salary
 expected by a player with such a PPM and their actual salary.
 
+??? You guys.
+
 (19) This is probably too much but it struck me that plots of the metric
 for a player versus his age would tell some interesting stories.
 
+??? I think we're skipping this.
 
 Some Typos, etc
 
