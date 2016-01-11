@@ -67,9 +67,43 @@ sal <- sal[-noteam]
 #################################
 ## combine the data together
 nhldf <- cbind(team,sal,perf)
+saveRDS(nhldf, "results/perfsaldf.rds",compress=FALSE)
 
+################################
+## analysis
+nhldf <- readRDS("results/perfsaldf.rds")
+nhldf$season <- factor(nhldf$season)
+plot(sal ~ season, data=nhldf)
 
+## report coefficients on the pm and ppm statistics
+fulllm <- lm(log(sal) ~ pm.corsi, data=nhldf)
+coef(fulllm)[1:2]
 
-
+###############################
+## salary ratio stuff
+ printratio <- function(){
+   s <- which(perf$season=="20132014")
+   tab <- perf[s,]
+ 
+   tab$pfp.ratio <- tab$prob/milperyear[s]
+   tab$ppm.ratio <- tab$ppm/milperyear[s]
+ 
+   tabpfp <- tab[order(-tab$pfp.ratio),]
+   tabppm <- tab[order(-tab$ppm.ratio),]
+  
+    for(i in 1:20){
+      cat( i,
+        sub("_"," ", tabpfp[i,"player"]),
+        tab[i,"pfp.ratio"], 
+        #sub("_"," ", tabpfp[i,"player"]),
+        #tabpfp[i,"pfp.ratio"], 
+        sub("_"," ", tabppm[i,"player"]),
+        tab[i,"ppm.ratio"],
+        round(tabppm[i,"ppm.ratio"],2),
+          sep="&")
+      cat("\\\\\n")
+    }
+ }
+ printratio()
 
 
