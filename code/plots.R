@@ -69,6 +69,35 @@ plot.corr(filename="write-up/figures/pos-ppmpmsal-corr-regular.pdf", solid="pos.
 ################ 3. players over/under paid
 
 
+###############################
+## salary ratio stuff
+ printratio <- function(){
+   s <- which(perf$season=="20132014")
+   tab <- perf[s,]
+ 
+   tab$pfp.ratio <- tab$prob/milperyear[s]
+   tab$ppm.ratio <- tab$ppm/milperyear[s]
+ 
+   tabpfp <- tab[order(-tab$pfp.ratio),]
+   tabppm <- tab[order(-tab$ppm.ratio),]
+  
+    for(i in 1:20){
+      cat( i,
+        sub("_"," ", tabpfp[i,"player"]),
+        tab[i,"pfp.ratio"], 
+        #sub("_"," ", tabpfp[i,"player"]),
+        #tabpfp[i,"pfp.ratio"], 
+        sub("_"," ", tabppm[i,"player"]),
+        tab[i,"ppm.ratio"],
+        round(tabppm[i,"ppm.ratio"],2),
+          sep="&")
+      cat("\\\\\n")
+    }
+ }
+ printratio()
+
+
+
 
 
 
