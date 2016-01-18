@@ -62,12 +62,12 @@ related  sports like soccer, basketball, or even field hockey.  At least not
 from an analytics perspective.  The unique thing about hockey is the rapid
 substitutions transpiring continuously during play, as well as at stoppages in
 play.  In the data sets we have compiled, which we discuss in more detail
-shortly, the median amount of time a particular on-ice player configuration
-(determined by unique players on the ice for both teams) is a mere eight
-seconds. Although many ``shifts'' are much longer than that, a trickle of
-piecemeal substitutions on both sides, transpiring as play develops, makes it
-difficult to attribute credit or blame to players for significant events, such
-as goals or shots.
+shortly, the median amount of time observed for a particular on-ice player
+configuration (determined by unique players on the ice for both teams) is a
+mere eight seconds. Although many ``shifts'' are much longer than that, a
+trickle of piecemeal substitutions on both sides, transpiring as play
+develops, makes it difficult to attribute credit or blame to players for
+significant events, such as goals or shots.
 
 Plus-minus (PM) is a traditional metric for evaluating player contributions in
 hockey. It is calculated as the difference, for a given player, between the
@@ -339,8 +339,8 @@ regression, e.g., via {\tt step} in {\sf R} with a stopping rule based upon an
 information criteria like AIC and BIC.  But that also doesn't work on this
 data: the calculations take days, and turn up very few non-zero predictors
 (i.e., players whose presence have any effect on goals).  The trouble here is
-that players  can't be judged on their own, since they always play with and
-against eleven others.  Therefore the one-at-a-time judgments made by {\tt
+that players  can't be judged on their own, since they almost always play with
+and against eleven others.  Therefore the one-at-a-time judgments made by {\tt
 step} fail to discover many relevant players despite making a combinatorially
 huge number of such comparisons.  Moreover, stepwise regression results are
 well known to be highly variable: tiny jitter to the data can lead to massive
@@ -503,7 +503,7 @@ posterior maximization.
 
 
 This section attempts to quantify the performance of hockey players using data
-from NHL. It extends the analysis in \cite{gramacy:jensen:taddy:2013}, which used
+from the NHL. It extends the analysis in \cite{gramacy:jensen:taddy:2013}, which used
 a smaller dataset, assumed constant player effects, and did not control for
 team-season effects. The data, downloaded from \url{http://www.nhl.com},
 comprise of play-by-play NHL game data for regular and playoff games during
@@ -559,7 +559,7 @@ statistics. In a fully Bayesian analysis, such as the {\tt reglogit} approach
 discussed in our conclusion, one would be able to separate posterior
 uncertainty about $\beta$ from the issue of the number of goals for which a
 player is on ice; for example, the {\tt reglogit} approach yields posterior
-uncertainty over a player's PPM.}  It is thus also important to be able to
+uncertainty over a player's PPM.}  It is therefore also important to be able to
 translate our partial player effects back to same scale as PM, and we do this
 in the {\em partial plus-minus} (PPM). Suppose player $j$ was on the ice for
 $g_{sj}$ total goals (for or against) during season $s$; then the PPM is
@@ -860,11 +860,35 @@ its much larger event sample.
     \caption{ \label{fig:salhist} Distribution of estimated player effects and salaries over all 11 seasons.}
 \end{figure}
 
-Figure \ref{fig:salaryreg} takes a deeper look at the relationship between salary and performance for two of our goal-based metrics: the goal plus-minuses (PM and PPM) and for-percentages (FP and PFP).  
-For each metric, we use nonparametric Bayesian regression to fit expected log salary as a function of that metric.   In particular, we apply the {\tt tgp} package \cite{gramacy_tgp:_2007,gramacy_categorical_2010} to obtain posterior means for the Bayesian regression trees of 
-\cite{chipman_bayesian_2002}.  The trees are fit to salary and performance data that has first been aggregated by player, such that these surfaces represent the expected log average salary (per player) conditional upon their average performance across the years that they played.  This aggregation is done  to minimize dependence between observations, and because we assume that a player's salary is not determined by a single season.
+Figure \ref{fig:salaryreg} takes a deeper look at the relationship between
+salary and performance for two of our goal-based metrics: the goal
+plus-minuses (PM and PPM) and for-percentages (FP and PFP). For each metric,
+we use nonparametric Bayesian regression to fit expected log salary as a
+function of that metric.   In particular, we apply the {\tt tgp} package
+\cite{gramacy_tgp:_2007,gramacy_categorical_2010} to obtain posterior means
+for the Bayesian regression trees of
+\cite{chipman_bayesian_2002}.  The trees are fit to salary and performance
+data that has first been aggregated by player, such that these surfaces
+represent the expected log average salary (per player) conditional upon their
+average performance across the years that they played.  This aggregation is
+done  to minimize dependence between observations, and because we assume that
+a player's salary is not determined by a single season.
 
-The surfaces in \ref{fig:salaryreg} expose some interesting differences between the partial and sample performance statistics.  In the plus-minus case (PM and PPM), the two curves are similar -- they both show little relationship between salary and performance for negative plus-minus, while salaries rise with positive performance.   However, there is a larger jump up from zero for PPM  than for PM.  This occurs because the regression estimation only assigns a positive non-zero effect for statistically significant performances, so that players with small but positive PM values have their PPM shrunk to zero.  The difference between FP and PFP is more dramatic.  In the case of sample FP, the salaries are highest for players with with FP in the middle of the range (near and above 0.5).  This occurs because FPs outside of that range occur only for players with little ice-time.  In contrast, the PFP relationship with salary is very simple: salaries are low for PFP below 0.5, and high above that number.  If you make it more likely than not that a goal-scored is a goal-for, you can expect to make more money.
+The surfaces in \ref{fig:salaryreg} expose some interesting differences
+between the partial and marginal performance statistics.  In the plus-minus
+case (PM and PPM), the two curves are similar -- they both show little
+relationship between salary and performance for negative plus-minus, while
+salaries rise with positive performance.   However, there is a larger jump up
+from zero for PPM  than for PM.  This occurs because the regression estimation
+only assigns a positive non-zero effect for statistically significant
+performances, so that players with small but positive PM values have their PPM
+shrunk to zero.  The difference between FP and PFP is more dramatic.  In the
+case of marginal FP, the salaries are highest for players with with FP in the
+middle of the range (near and above 0.5).  This occurs because FPs outside of
+that range occur only for players with little ice-time.  In contrast, the PFP
+relationship with salary is very simple: salaries are low for PFP below 0.5,
+and high above that number.  If you make it more likely than not that a
+goal-scored is a goal-for, you can expect to make more money.
 
 
 \begin{figure}[tbh]
