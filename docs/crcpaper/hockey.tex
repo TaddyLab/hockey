@@ -567,26 +567,27 @@ defined \begin{equation}\label{eq:ppm}  \text{PPM}_{sj} =
 g_{sj}\text{PFP}_{sj} - g_{sj}(1-\text{PFP}_{sj}) = g_{sj}(1 -
 2\text{PFP}_{sj}).  \end{equation}   Just as PFP is is the partial effect
 version of FP, PPM is the partial effect analogue to PM's marginal effect.
-The same calculations apply for  post-season PFP and PPM, based upon
-$\text{PFP}_{spj} = 1/\exp[\beta_{0j} + \beta_{sj}+ \beta_{pj}]$ and where $g_{spj}$
-is the number of goals for which player $j$ was on ice during the playoffs of
-season $j$.
+% The same calculations apply for  post-season PFP and PPM, based upon
+% $\text{PFP}_{spj} = 1/\exp[\beta_{0j} + \beta_{sj}+ \beta_{pj}]$ and where $g_{spj}$
+% is the number of goals for which player $j$ was on ice during the playoffs of
+% season $j$.
 
-Table \ref{tab:goals} provides a
-list of top and bottom players listed by their PPM, along with the
-corresponding $\beta$ effects and their standard PM.  Since these PPMs and
-effects are calculated for each season, players will occur repeatedly in the
-table; for example, Sidney Crosby has 4 of the top 10 best player-seasons
-since 2002; he has been consistently the best, or near best, player in the
-league.  The number one player-season since 2002 by PPM is Peter Forsberg in 2002-2003,
-with a PPM of 55.5.  This is around 25\% better than the 2nd best PPM:
-Crosby's 43.5 in 2009-2010.  Notice that the $\beta$ effects in the table are
-all unchanged from regular and post-season: this is actually true for all
-10,000 player seasons: using goals data, we never see enough signal to conclude
-that a given player was significantly better or worse in the post-season than
-in the regular season.  However, many of the $\beta_{sj}$ are estimated at
-nonzero values: there is measurable signal indicating that player performance
-changes across seasons.
+Table \ref{tab:goals} provides a list of top and bottom players listed by
+their PPM, along with the corresponding $\beta$ effects and their standard PM.
+Since these PPMs and effects are calculated for each season, players will
+occur repeatedly in the table; for example, Sidney Crosby has 4 of the top 10
+best player-seasons since 2002; he has been consistently the best, or near
+best, player in the league.  The number one player-season since 2002 by PPM is
+Peter Forsberg in 2002-2003, with a PPM of 55.5.  This is around 25\% better
+than the 2nd best PPM: Crosby's 43.5 in 2009-2010.  These tabulated effects
+are all calculated based upon regular season performance alone.  However,
+ for all 10,000 player seasons, using goals data, we never see
+enough signal to conclude that a given player was significantly better or
+worse in the post-season than in the regular season.  That is, the $\hat
+\beta_{pj}$ are all zero and we have no evidence of `clutch' players who
+improve their play in the post-season.  At the same time, many of the
+$\beta_{sj}$ {\it are} estimated at nonzero values: there is measurable signal
+indicating that player performance changes across seasons.
 
 \begin{table}[p]
         \centering\small
@@ -815,14 +816,15 @@ obtain Corsi-PPF and Corsi-PPM values.
 The results for Corsi-based performance analysis are in Table \ref{tab:corsi}
 and on the right side of Table \ref{tab:pfp}.  Comparison to the goal-based
 rankings shows a distinctly different set of players are at both the top and
-bottom.  For example, Daniel Sedin and Alex Ovechkin are prominent players who
-rank highly in multiple seasons under Corsi-PPM but do not appear in the
-top-20 for goals-PPM.  At this point we are not looking to argue for either
-the goal or Corsi based metrics as `best'; however, the fact that they do
-differ dramatically should be a bit troubling for those who wish to focus
-exclusively on Corsi statistics (since only goal differentials dictate who
-wins the game).  In the next section, we consider a comparison between all of
-our metrics and an outside measure of player quality: salary.
+bottom.  For example, Daniel Sedin is a prominent player who ranks highly in
+multiple seasons under Corsi-PPM but does not appear in the top-20 for
+goals-PPM (his best goals-PPM is a still respectable 19.45 in 2010-2011, which
+ranks 152$^{nd}$ across all player-seasons).  At this point we are not looking
+to argue for either the goal or Corsi based metrics as `best'; however, the
+fact that they do differ dramatically should be a bit troubling for those who
+wish to focus exclusively on Corsi statistics (since only goal differentials
+dictate who wins the game).  In the next section, we consider a comparison
+between all of our metrics and an outside measure of player quality: salary.
 
 \section[Salary and Performance]{Analysis: the relationship between salary and performance}
 \label{sec:salary}
