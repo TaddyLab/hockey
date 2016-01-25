@@ -16,6 +16,11 @@ Emmanuel~J. Candes, Michael~B. Wakin, and Stephen~P. Boyd.
 \newblock {\em Journal of Fourier Analysis and Applications}, 14:877--905,
   2008.
 
+\bibitem{chipman_bayesian_2002}
+H.A. Chipman, E.I. George, and R.E. McCulloch.
+\newblock Bayesian {Treed} {Models}.
+\newblock {\em Machine Learning}, 48:303--324, 2002.
+
 \bibitem{ChipGeorMcCu2010}
 Hugh~A. Chipman, Edward~I. George, and Robert~E. McCulloch.
 \newblock {BART}: {B}ayesian additive regression trees.
@@ -33,6 +38,12 @@ Matthew Gentzkow, Jesse Shapiro, and Matt Taddy.
 \newblock Measuring polarization in high dimensional data.
 \newblock {\em Chicago Booth working paper}, 2015.
 
+\bibitem{gramacy_categorical_2010}
+R.~B. Gramacy and Matt Taddy.
+\newblock Categorical inputs, sensitivity analysis, optimization and importance
+  tempering with tgp version 2.
+\newblock {\em Journal of Statistical Software}, 33, 2010.
+
 \bibitem{reglogit}
 R.B. Gramacy.
 \newblock {\em {\tt reglogit}: {S}imulation-based Regularized Logistic
@@ -43,6 +54,13 @@ R.B. Gramacy.
 R.B. Gramacy and N.G. Polson.
 \newblock Simulation-based regularized logistic regression.
 \newblock {\em Bayesian Analysis}, 7:1--24, 2012.
+
+\bibitem{gramacy_tgp:_2007}
+Robert Gramacy.
+\newblock tgp: {An} {R} {Package} for {Bayesian} {Nonstationary},
+  {Semiparametric} {Nonlinear} {Regression} and {Design} by {Treed} {Gaussian}
+  {Process} {Models}.
+\newblock {\em Journal of Statistical Software}, 19, 2007.
 
 \bibitem{gramacy:jensen:taddy:2013}
 Robert~B. Gramacy, Shane Jensen, and Matt Taddy.
@@ -88,11 +106,22 @@ Brian Macdonald.
 \newblock A regression-based adjusted plus-minus statistic for nhl players.
 \newblock Technical report, ar{X}iv: 1006.4310, 2010.
 
+\bibitem{mason:foster:2007}
+Daniel Mason and William Foster.
+\newblock Putting moneyball on ice?
+\newblock {\em International Journal of Sport Finance}, 2(4):206--213, 2007.
+
 \bibitem{park:casella:2008}
 Trevor Park and George Casella.
 \newblock The bayesian lasso.
 \newblock {\em Journal of the American Statistical Association},
   103(482):681--686, June 2008.
+
+\bibitem{pettigrew:2015}
+Stephen Pettigrew.
+\newblock Assessing the offensive productivity of nhl players using in-game win
+  probabilities.
+\newblock In {\em MIT Sloan Sports Analytics Conference}, 2015.
 
 \bibitem{ros04}
 Dan~T. Rosenbaum.
@@ -117,6 +146,12 @@ Simon Sheather.
 \newblock {\em A modern approach to regression with {\sf R}}.
 \newblock Springer, 2009.
 
+\bibitem{stair:etal:2011}
+Anthony Stair, John Neral, Logan Thomas, and Daniel Mizak.
+\newblock Team performance characteristics which influence wins in the national
+  hockey league.
+\newblock {\em Journal of International Business Diciplines}, 6(2), 2011.
+
 \bibitem{gamlr}
 Matt Taddy.
 \newblock {\em {\tt gamlr}: Gamma Lasso Regression}, 2013.
@@ -125,8 +160,7 @@ Matt Taddy.
 \bibitem{taddy_distributed_2015}
 Matt Taddy.
 \newblock Distributed multinomial regression.
-\newblock {\em The Annals of Applied Statistics}, 2015.
-\newblock To appear.
+\newblock {\em The Annals of Applied Statistics}, 9:1394--1414, 2015.
 
 \bibitem{taddy_one-step_2015}
 Matt Taddy.
