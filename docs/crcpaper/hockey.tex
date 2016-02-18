@@ -369,9 +369,9 @@ for $n$ goal events
 Instead, a
 \textit{regularized} regression algorithm will minimize a penalized objective,
 say for example $l\left(\boldsymbol{\eta}; \mathbf{y}\right) + n\lambda
-\sum_{j=1}^p\left[ c_j\left(|\beta_{0j}|\right) +
+\sum_{j=1}^p\left[ c\left(|\beta_{0j}|\right) +
 c\left(|\beta_{sj}|\right)\right]$, where $\lambda>0$ controls overall penalty
-magnitude, $c_j(\cdot)$ are coefficient cost functions, while $n$ is the total
+magnitude and $c(\cdot)$ is a coefficient cost function, while $n$ is the total
 number of goals and $p$ is the number of players. The penalty $\lambda$ is
 discussed in some detail shortly.  A few common cost functions are shown in
 Figure \ref{costs}.  Those that have a non-differentiable spike at zero (all
