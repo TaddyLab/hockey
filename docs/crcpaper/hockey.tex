@@ -79,7 +79,7 @@ Boston, giving him a +4 PM for the series.
 % c(-1,1)[Y[64538:64569]+1]*XP[64538:64569,"DUNCAN_KEITH"]
 
 The PM score represents what statisticians call a \textit{marginal effect:}
-the average change in some response (goals for-vs-against) with change in some
+the aggregate change in some response (goals for-vs-against) with change in some
 covariate (a player being on the ice) \textit{without accounting for whatever
 else changes at the same time}. It is an aggregate measure that averages over
 the contributions of other factors, such as teammates and opponents.   For
@@ -220,7 +220,7 @@ converted back onto the scale of goals, resulting in a adjusted plus-minus
 statistic, but this time one which is a true partial effect.  
 
 Given $n$ goals throughout the National Hockey League (NHL) over some
-specified time period,  say $y_i$ is $+1$ for a goal by the \textit{home} team
+specified time period, define $y_i$ is $+1$ for a goal by the \textit{home} team
 and $-1$ for a goal by the \textit{away} team.\footnote{{\em home} and {\em
 away} are merely organizational devices, creating a consistent binary
 bifurcation for goals that can be applied across games, seasons, etc. Due to
@@ -245,7 +245,7 @@ $\mathbf{x}_i$ contains player-presence indicators, set $x_{ij}=1$ if player $j$
 home team and on ice for goal $i$, $x_{ij}=-1$ for away player $j$ on ice for
 goal $i$, and $x_{ij}=0$ for everyone not on the ice. With $\circ$ denoting the Hadamard (element-wise) product, this player vector is also interacted with 
 \begin{itemize}
-\item  season (e.g., 2013-2013) vector $\mathbf{s}_i$, with $s_{ti} = 1$ if goal $i$ was scored in season $t$, and
+\item  season (e.g., 2012-2013) vector $\mathbf{s}_i$, with $s_{ti} = 1$ if goal $i$ was scored in season $t$, and
 \item the post-season indicator $p_i$  for whether or not the goal was scored in the playoffs, with $p_{i} =1$ for the playoffs and zero for the regular season.
 \end{itemize}  
 By interacting players with seasons and with playoffs in this way, we have the
@@ -255,8 +255,8 @@ with team--season effects $\mathbf{u}_i$ however, as very few players change
 teams during a season.
 
 \end{itemize}
-In this full specification the number of parameters, i.e., $K =
-|\boldsymbol{\alpha}|+ | \boldsymbol{\phi}| + |\boldsymbol{\beta}_0| +
+In this full specification the number of parameters, i.e., $K = 1 +
+|\boldsymbol{\gamma}|+ | \boldsymbol{\varphi}| + |\boldsymbol{\beta}_0| +
 |\boldsymbol{\beta}_s| + |\boldsymbol{\beta}_p|$ is on the order of the number
 of players, $p$, in the league spanning the seasons/games of interest.  The
 exact number depends on modeling aspects, like the number of special teams
@@ -280,7 +280,7 @@ higher that the home team has scored any goal.}
 For intuition, consider a simple ``player-only'' version of our model that has
 only who-is-on-the-ice as a time-invariant influence on goal scoring.  This is the version of the model that was applied in \cite{gramacy:jensen:taddy:2013}.  Then
 there are no team-season-specific intercepts ($\alpha_{sh}=\alpha_{sa}=0$), no
-special teams effects ($\boldsymbol{\phi}=\mathbf{0})$, and no season-specific
+special teams effects ($\boldsymbol{\varphi}=\mathbf{0})$, and no season-specific
 player-effect changes ($\boldsymbol{\beta}_s = \mathbf{0}$ and $\boldsymbol{\beta}_p = \mathbf{0}$)  so that $\beta_j
 = \beta_{0j}$ is the constant effect of player $j$.  The log odds that the
 home team has scored a given goal become \begin{equation} \log
@@ -302,11 +302,11 @@ full-strength play. See Figure \ref{fig:data} for illustration.
     \begin{tikzpicture}
     \matrix [column sep=7mm, row sep=2mm] {
         \node [draw=none, fill=none] {$Y$: scoring team}; &
-        \node [draw=none, fill=none] {$X_P$: players}; &\\
+        \node [draw=none, fill=none] {$X$: players}; &\\
         \node [draw=none, fill=none] {$y_i\in\{{-1},1\}$}; &
-        \node [draw=none, fill=none] {$x_{Pij}\in\{{-1},0,1\}$}; &\\
+        \node [draw=none, fill=none] {$x_{ij}\in\{{-1},0,1\}$}; &\\
         \node (y1) [draw, shape=rounded rectangle] {$\hspace{7pt}1$}; &
-        \node (xp1) [draw, shape=rounded rectangle, label={[label distance=0.1mm]90:\small $1 \hspace{190pt} n_p$}] {$0\, 1\, {-1}\, 1\, 0\, {-1}\, 0\, {-1}\, 1\, {-1}\, {-1}\,  0\, 0 \cdots 0\, 1\, 0\, 1\, 1$}; &\\
+        \node (xp1) [draw, shape=rounded rectangle, label={[label distance=0.1mm]90:\small $1 \hspace{190pt} n$}] {$0\, 1\, {-1}\, 1\, 0\, {-1}\, 0\, {-1}\, 1\, {-1}\, {-1}\,  0\, 0 \cdots 0\, 1\, 0\, 1\, 1$}; &\\
         \node [draw=none, fill=none] {$\vdots$}; &
         \node [draw=none, fill=none] {$\vdots$}; &\\
         \node [draw, shape=rounded rectangle] {$-1$}; &
@@ -316,21 +316,22 @@ full-strength play. See Figure \ref{fig:data} for illustration.
     \caption{Diagram of a simple design matrix for a `players only model' and two example goals (rows). The two goals are shown in the same season under the same configuration of teams except that the first goal was scored by the home team while the second goal was by the away team. The configurations of players are only differed by the first player since the home team was on a 6v5 power play for the first goal. }\label{fig:data}
 \end{figure}
 
-The model in \ref{hockeymod} is simple and transparent; if you wish to
-control for new variables or situations you just need to add covariates to the
+The model in \ref{hockeymod} is simple and transparent; if you wish to control
+for new variables or situations you just need to add covariates to the
 logistic regression. In theory, one could fit the model easily in  {\sf R} by
 typing \begin{verbatim} R> fit <- glm(y~X, family="binomial") \end{verbatim}
-But unfortunately, that just doesn't work.   The problem is that hockey data
-is too high dimensional (too many covariates) for ordinary logistic regression
-software, and the design matrices are too highly imbalanced to obtain
-meaningful (low variance) estimates of player effects.   In almost all
-regressions one is susceptible to the temptations of rich modeling when the
-data set is large, and our hockey setup is no different. One must be careful
-not to {\em over-fit}, wherein parameters are optimized to statistical noise
-rather than fit to the relationship of interest.  And one must be aware of
-{\em multicollinearity}, where groups of covariates are correlated with each
-other making it difficult to identify individual effects, as happens when
-players are grouped into lines.  
+But unfortunately, that is problematic on both statistical and computational
+grounds.   Hockey data involving player indicators is too high dimensional
+(too many covariates) for ordinary logistic regression software, and the
+design matrices are too highly imbalanced to obtain meaningful (low variance)
+estimates of player effects.   In almost all regressions one is susceptible to
+the temptations of rich modeling when the data set is large, and our hockey
+setup is no different. One must be careful not to {\em over-fit}, wherein
+parameters are optimized to statistical noise rather than fit to the
+relationship of interest.  And one must be aware of {\em multicollinearity},
+where groups of covariates are correlated with each other making it difficult
+to identify individual effects, as happens when players are grouped into
+lines.
 
 
 
@@ -371,14 +372,15 @@ say for example $l\left(\boldsymbol{\eta}; \mathbf{y}\right) + n\lambda
 \sum_{j=1}^p\left[ c_j\left(|\beta_{0j}|\right) +
 c\left(|\beta_{sj}|\right)\right]$, where $\lambda>0$ controls overall penalty
 magnitude, $c_j(\cdot)$ are coefficient cost functions, while $n$ is the total
-number of goals and $p$ is the number of players.
-A few common cost functions are shown in Figure \ref{costs}.  Those that have
-a non-differentiable spike at zero (all but ridge) lead to sparse estimators,
-meaning that many coefficients are set to exactly zero.   The curvature of the penalty
-away from zero dictates the weight of shrinkage imposed on the nonzero
-coefficients:  $L_2$ costs increase with coefficient size,  lasso's $L_1$
-penalty has zero curvature and imposes constant shrinkage, and as curvature
-goes towards $-\infty$ one approaches the $L_0$ penalty of subset selection.
+number of goals and $p$ is the number of players. The penalty $\lambda$ is
+discussed in some detail shortly.  A few common cost functions are shown in
+Figure \ref{costs}.  Those that have a non-differentiable spike at zero (all
+but ridge) lead to sparse estimators, meaning that many coefficients are set
+to exactly zero.   The curvature of the penalty away from zero dictates the
+weight of shrinkage imposed on the nonzero coefficients:  $L_2$ costs increase
+with coefficient size,  lasso's $L_1$ penalty has zero curvature and imposes
+constant shrinkage, and as curvature goes towards $-\infty$ one approaches the
+$L_0$ penalty of subset selection.
 
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{figures/penalties}
@@ -446,7 +448,9 @@ down to some pre-set $\lambda^T$ (e.g., $\lambda^T= 0.01\lambda^1$).
 AICc = 2\sum_{i=1}^{n} l(\boldsymbol{\hat\eta}_{\lambda};\mathbf{y}) + \frac{2kn}{n-k-1},
 \end{equation*}
 where $\boldsymbol{\hat\eta}_{\lambda}$ are the estimated log odds under
-penalty $\lambda$ and $k \leq K$ is the number of non-zero estimated
+penalty $\lambda$, via estimates of parameters $(\hat{\alpha}, \hat{\boldsymbol{\varphi}}, \hat{\boldsymbol{\beta}}_{0,s,p})$
+in equation (\ref{hockeymod}), 
+and $k \leq K$ is the number of non-zero estimated
 coefficients (likely far fewer than the total number of parameters $K$, as
 many players cannot be distinguished from the league average) at this penalty.
 See \cite{taddy_one-step_2015} and \cite{flynn_efficiency_2013} for details on
@@ -731,7 +735,7 @@ do offer a big advantage to the statistician: they lead to a larger sample
 size, so that you can hopefully better identify the competing influences of
 different players and confounding factors. Our data contain
 $n_{c}=1,329,679$ Corsi events and $n_{f}=1,034,154$ Fenwick events; this is
-an order of magnitude more events than the $n_g=69449$ goals.
+an order of magnitude more events than the $n=69449$ goals.
 
 
 \begin{table}[p]
@@ -894,7 +898,8 @@ goal-scored is a goal-for, you can expect to make more money.
 \begin{figure}[tbh]
     \centering
     \includegraphics[width=\textwidth]{figures/salreg-goals.pdf}
-    \caption{Nonparametric regression for log average salary (per player) onto their average performance metric: PPM, PM, PFP, and FP.  }\label{fig:salaryreg}
+    \caption{Nonparametric regression for log average salary (per player) onto their average performance metric: 
+    partial (PPM, PFP) and sample/marginal (PFP, FP) analogues.  }\label{fig:salaryreg}
 \end{figure}
 
 Finally, we close with a look at the `highest value' players in the 2013-2014
