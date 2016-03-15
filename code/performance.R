@@ -60,12 +60,6 @@ if(length(postbeta)>0){
         sep=",", col.names=FALSE, quote=FALSE)
 }
 
-### per-season player effects without sessions
-fit <- gamlr(cBind(XS,XT[,-grep(".Playoffs", colnames(XT))],XP,XPS[,-grep("_Playoffs", colnames(XPS))]), Y, gamma=0, 
-             standardize=FALSE, verb=1,
-             family="binomial", free=1:c(ncol(XS)+ncol(XT[,-grep(".Playoffs", colnames(XT))])))
-B_overall <- coef(fit)[-1,] # corrected AICc selection
-
 ### tabulate metrics
 # traditional plus minus
 getpm <- function(now) colSums(XP[now,]*c(-1,1)[Y[now]+1]) 
@@ -114,15 +108,6 @@ for(s in seasons){
     bpost[is.na(bpost)] <- 0
     probpost <- getprob(bpost)
     ppmpost <- getppm(probpost,ngpost)
-    # average of playoff-regular 
-    boverall <- B_overall[who] + B_overall[paste(who,s,sep="_")]
-    boverall[is.na(boverall)] <- 0
-    now <- goal$season==s
-    pmoverall <- getpm(now)
-    fpoverall <- getfp(now)
-    ngoverall <- getng(now)
-    proboverall <- getprob(boverall)
-    ppmoverall <- getppm(proboverall,ngoverall)
     # tabulate
     tab <- data.frame(
         player=who,
@@ -136,12 +121,7 @@ for(s in seasons){
         prob.po=round(probpost,2),
         ppm.po=round(ppmpost,2),
         pm.po=pmpost,
-        fp.po=round(fppost,2),
-        beta.avg=round(boverall,2),
-        prob.avg=round(proboverall,2),
-        ppm.avg=round(ppmoverall,2),
-        pm.avg=pmoverall,
-        fp.avg=round(fpoverall,2)
+        fp.po=round(fppost,2)
         )
     rownames(tab) <- paste(tab$player, s, sep="_")
     # add to total

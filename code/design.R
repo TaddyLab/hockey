@@ -5,7 +5,6 @@
 ## wherever you store the nhlgames hockey scrape
 ## e.g., `ln -s /project/rbgramacy/hockey external'
 
-setwd("/Users/Sen/Documents/hockey_new")
 ## flags for whether pull up goals, corsi or fenwick
 # Corsi = goal + missed shots + blocked shots
 CORSI = FALSE
