@@ -44,7 +44,7 @@
 \begin{frame}[plain]
 \begin{center}
 
-{\bf \LARGE \theme Regularized Estimation of \\\vskip .25cm Player Performance}
+{\bf \LARGE \theme Regularized Estimation of \\\vskip .25cm Hockey Player Performance}
 \end{center}
 
 \vskip 1cm
@@ -92,7 +92,7 @@ The standard model for such problems is logistic regression, say
 where $\beta_{HG}$ is Home-Goalie and $\beta_{AR}$ is Away-Right-wing, etc. 
 
 \vskip .25cm\gr
-Then, for player $j$ and given a goal was scored, $e^\beta_j$ is the multiplier\\ on odds that it was scored by his team if he's on the ice. 
+Then, for player $j$ and given a goal was scored, $e^{\beta_j}$ is the multiplier\\ on odds that it was scored by his team if he's on the ice. 
 \end{frame}
 
 \begin{frame}
@@ -145,7 +145,7 @@ We use the estimated logistic regression model to produce `partial'
 (i.e., without effect of confounders) versions of standard statistics.
 \vskip .1cm
 \begin{itemize}
-\item For-Percent: $\theme \displaystyle PFP_j = \frac{e^{\beta_j}}{(1+e^{\beta_j})}$
+\item For-Probability: $\theme \displaystyle PFP_j = \frac{e^{\beta_j}}{(1+e^{\beta_j})}$
 \item[]
 \item Plus-Minus: $ \theme PPM_j = G_j PFP_j - G_j(1-PFP_j)$\\{ ~~~where $G_j$ is the total goals with player $j$ on-ice.}
 \end{itemize}
